@@ -1,0 +1,35 @@
+---
+title: "Best Practices in Environmental Data Science"
+subtitle: "FISH 549 &nbsp; &nbsp; University of Washington &nbsp; &nbsp; Winter 2023"
+output: html_document
+---
+
+<style>
+h1 {
+  text-align: center;
+}
+
+h2 {
+  text-align: center;
+}
+
+h3 {
+  text-align: center;
+}
+</style>
+
+<br>
+
+
+<p align="center">
+    <img width="346" height="400" src="FISH549_hex_sticker.png">
+</p>
+
+<br>
+
+<center>&copy; Mark Scheuerell 2023</center>
+
+<br>
+
+<center>*This site was last updated at `r format(Sys.time(), "%H:%M")` on `r format(Sys.Date(), "%d %b %Y")`*</center>
+

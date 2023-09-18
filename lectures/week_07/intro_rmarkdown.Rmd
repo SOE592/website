@@ -1,0 +1,832 @@
+---
+title: "Introduction to R Markdown"
+date: "10 February 2023"
+output:
+  html_document:
+    theme: spacelab
+    highlight: textmate
+    css: ["lecture_inst.css", "fontawesome.css", "solid.css"]
+    toc: true
+    toc_float: true
+    toc_depth: 3
+bibliography: "references.bib"
+csl: "ecology.csl"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# What is R Markdown?
+
+Markdown is a simple formatting syntax for authoring HTML, PDF, MS Word, and many other document formats. When you click the "Knit" button in **RStudio**, a document will be generated that includes text content as well as the output of any embedded **R** code chunks within the document. Markdown is written in plain text, which means you can use any text editor for writing or editing Markdown documents. For a much more detailed treatment of R Markdown and its inner workings, please see the [resources page](https://rmarkdown.rstudio.com/lesson-1.html) from RStudio.
+
+# Document layout
+
+## Front Matter (YAML)
+
+Every Markdown document begins with a section of plain text written in [YAML](https://en.wikipedia.org/wiki/YAML) ("YAML Ain't Markup Language"). This block of human readable code is used to define some of the document's metadata such as the title, author, and date. It is also used to specify the document's format (eg, HTML or pdf) and its layout (eg, theme, font).
+
+The front matter is defined in a block of text that begins and ends with 3 dashes `---`. For example, here is the YAML for a simple HTML document:
+
+```
+---
+title: "I really like R Markdown"
+author: "Mark Scheuerell"
+date: "10 February 2023"
+output: html_document
+---
+```
+
+The YAML can include a lot more information as well, including fields for various pre-defined themes, a table of contents, adding citations and formatting references, and whether to use other files as formatting templates. For example, here is the YAML for this document:
+
+```
+---
+title: "Introduction to R Markdown"
+date: "10 February 2023"
+output:
+  html_document:
+    theme: spacelab
+    highlight: textmate
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+```
+
+## Body
+
+The body of a Markdown document can contain a mix of variously formatted text, equations, and code. The code can be written so that it is executed upon "knitting" the document with the output displayed in the document or hidden from view. The code can also be flagged so that it is only shown for example purposes and not actually executed.
+
+# Writing text
+
+The text in a Markdown document can be formatting in a number of ways. At a basic level, it's just various forms of text that are converted to nicely formatted features when the file is rendered.
+
+## Headings
+
+You can specify different levels of headings using the hash tag (pound) symbol `#`. By adding more `#` signs you can decrease the heading level. So, for example, the following
+
+```
+# Heading 1
+## Heading 2
+### Heading 3
+#### Heading 4
+```
+
+will render to 
+
+> # Heading 1
+> ## Heading 2
+> ### Heading 3
+> #### Heading 4
+
+## Emphasis
+
+### Italics
+
+It's easy to add emphasis to text. For *italic* face, wrap the text with either a single asterisk (`*`) or an underscore (`_`). For example,
+
+```
+This is *italic*, but then so is _this_.
+```
+
+will render to 
+
+> This is *italic*, but then so is _this_.
+
+### Bold
+
+For **bold** face, wrap the text with either two asterisks (`**`) or an underscores (`__`). For example,
+
+```
+This is **bold**, but then so is __this__.
+```
+
+will render to 
+
+> This is **bold**, but then so is __this__.
+
+### Bold & italic
+
+For combined ***bold and italics*** face, wrap the text with three asterisks (`***`), such that
+
+```
+This is ***bold and italic***.
+```
+
+renders to
+
+> This is ***bold and italic***.
+
+### Strike-through
+
+If you want to indicate a deletion or ~~strike-through~~, just wrap the text in two tilde's (`~~`), such that
+
+```
+Oops, this is ~~a mistake~~.
+```
+
+will render to 
+
+> Oops, this is ~~a mistake~~.
+
+### Underline
+
+Unfortunately, Markdown does not include a built-in format for <u>underlining text</u>. You can, however, use regular HTML tags to do so. So, for example,
+
+```
+This bit is <u>underlined</u>.
+```
+
+results in
+
+> This bit is <u>underlined</u>.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** You can use all kinds of HTML tags within Markdown documents for additional formatting options.
+</div>
+
+
+## Block quotes
+
+You can specify a block quote by preceding it with the `>` symbol, such that
+
+```
+> I have a dream that one day this nation will rise up and live out the true meaning of its creed: 'We hold these truths to be self-evident, that all men are created equal.'
+```
+
+yields
+
+> I have a dream that one day this nation will rise up and live out the true meaning of its creed: 'We hold these truths to be self-evident, that all men are created equal.'
+
+## Lists
+
+You can include ordered (numbered) lists, unordered (bulleted) lists, or a combination of the two in Markdown documents as well. Numbered lists simply use a number and period (`1.`) followed by a space and the text. For example, this text
+
+```
+1. This is item 1  
+2. Item 2 comes next
+```
+     
+will render to
+     
+> 1. This is item 1  
+> 2. Item 2 comes next
+
+It also turns out that you don't even have to use consecutive numbers to make it work. For example,
+
+```
+1. This is item 1  
+7. Item 2 comes next
+```
+
+will render to
+
+> 1. This is item 1  
+> 7. Item 2 comes next
+
+You can specify unordered list with either an asterisk (`*`) or dash (`-`). For example, the following text 
+
+```
+* This is a thing 
+* Here is another
+- And yet another
+```
+
+will render to
+
+> * This is a thing 
+> * Here is another
+> - And yet another
+
+Mixed lists simply use a mixture of the two constructs, such that 
+
+```
+1. This is item 1
+   * This is a thing
+   * Here is another  
+2. Item 2 comes next
+   - And yet another
+```
+
+will render to
+
+> 1. This is item 1
+>    * This is a thing
+>    * Here is another  
+> 2. Item 2 comes next
+>    - And yet another
+  
+## Links
+
+### Inline
+
+You can insert links to websites, other files, and other locations within a file. For websites, there are several options. The first is to simply write out the full address inline (eg, http://www.google.com) and it will parse correctly. You can also use shorthand text to hide the full address or make a sentence more readable. To do that, include the name in square brackets followed by the address inside parentheses For example,
+
+```
+Please conduct your search from [this link](http://www.google.com).
+```
+
+will render as
+
+> Please conduct your search from [this link](http://www.google.com).
+
+### Referenced
+
+It's also possible to include a short numbered reference to the full address rather than writing it out immediately following the link's text. To do so, replace the parenthetic statement with a number inside square brackets (eg, `[1]`)., and then write out the full address *anywhere* in the document. This can be useful if you want to keep a separate section that includes all of the links within a document. So, for example, we could have written the example above as 
+
+```
+Please conduct your search from [this link][1].
+```
+
+and then provided the full address as `[1]: http://www.google.com` at the end of the section below on "Inserting pictures". If so, it would have rendered and worked just as above:
+
+> Please conduct your search from [this link][1].
+
+## Inserting pictures
+
+### Inline
+
+Inserting links to images works much the same as for websites, but you add an exclamation point (`!`) at the beginning of the construct (and the text inside the square brackets in optional). For example, here is how to include an inline link to a picture of the Ray Troll mural in the SAFS lobby, which exists in the same directory as this Markdown document.
+
+```
+Check out the SAFS mural: ![](safs_mural.jpeg)
+```
+
+which will yield this
+
+> Check out the SAFS mural: ![](safs_mural.jpeg)
+
+### Referenced
+
+Referenced links work just as above for websites, but instead of the site's address, include the name of the image file. For example, we could have used
+
+```
+Check out the SAFS mural: ![][2]
+```
+
+which yields the same result:
+
+> Check out the SAFS mural: ![][2]
+
+(NOTE that we used `[1]` for the referenced Google link above, so we used `[2]` here.)
+
+Here are the references for the links. For some reason I put the full address here for the web link in the above section on "Referenced links", but it works just fine.
+
+```
+[1]: http://www.google.com
+[2]: safs_mural.jpeg
+```
+
+[1]: http://www.google.com
+[2]: safs_mural.jpeg
+
+
+# Writing code
+
+One of the truly great features of Markdown is the ability to include code within a document, have it executed as written, and the results of the code displayed inline, in blocks, or even hidden from sight. This course uses **R**, but people also use many other languages in Markdown documents (eg, Python).
+
+## Blocks
+
+The most common method for including code in your document is via code blocks, which can be numerous and separated by text, equations, images, etc. Just as with a typical **R** script, all of the code is executed in sequence, which means code can reference objects, use packages, etc that were defined or called in previous blocks. Code blocks are delimited at the beginning and end by three back-ticks (\`\`\`). In addition, you need to add `{r}` after the beginning ``` so Markdown knows what language interpreter to use (in this case **R**). So, for example, here is a really basic code block
+
+````
+`r ''````{r}
+a <- 1
+b <- 2
+a / b
+```
+````
+
+By default, Markdown will show the code and the output when the document is rendered, such that above code block would look like
+
+```{r}
+a <- 1
+b <- 2
+a / b
+```
+
+### Naming code blocks
+
+If your document will have multiple blocks of code, I strongly suggest you give them meaningful titles. This will help you navigate through your entire Markdown document if you use the "Outline" feature in **RStudio**. It will also help when debugging issues encountered during the rendering ("knitting") process. To add a title to a code block, simply include it after the `r` on the first line (note that names cannot contain spaces). For example,
+
+````
+`r ''````{r simple_arithmetic}
+a <- 1
+b <- 2
+a / b
+```
+````
+
+### Chunk options
+
+Sometimes it's convenient to hide either the code or the output. For example, many Markdown documents begin with a code block to set global options to be used throughout, but most people don't need or want to see them. That's easy to with "chunk options" listed in side the `{r}` statement at the beginning of the block. Here's how to hide the code from view while still executing it:
+
+````
+`r ''````{r simple_arithmetic, echo = FALSE}
+a <- 1
+b <- 2
+a / b
+```
+````
+
+Alternatively, you may want to show a chunk of code for demonstration purposes, but not actually execute it. In that case you would write
+
+````
+`r ''````{r simple_arithmetic, eval = FALSE}
+a <- 1
+b <- 2
+a / b
+```
+````
+
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** There are [many other chunk options](https://yihui.org/knitr/options/#chunk-options) available for customizing code evaluation, results, etc.
+</div>
+
+## Inline
+
+Sometimes it can be nice to include small snippets of hidden **R** code within a sentence. For example, an object is defined once at the beginning of a document and referenced later. Or, in a dynamic report we might want the reported results to reflect any changes to inputs, models, etc. To include inline **R** code, you wrap the call in back-ticks and preface it with `r` (eg, `` `r
+object` ``). You can also replace `object` with a valid **R** `expression`. For example, imagine we had two variables, `x` and `y`, that had been defined in a previous block of code, such that `x = 2` `r x <- 2` and `y = 3` `r y <- 3`. If we write
+
+```{r inline_ex, eval = FALSE}
+The sum of x and y is `r x + y`.
+```
+
+the rendered Markdown document will read
+
+> The sum of x and y is `r x + y`.
+
+# Writing equations
+
+Fields like ecology and statistics often include lots of equations in journal articles and presentations. You can also use Markdown to write nicely formatted equations using **LaTeX** language constructs. Although the initial leap into **LaTeX** can be a bit daunting, it gets much easier with some practice and help from the many guides available online. There are also pdf documents with [math](latex_math_sheet.pdf) and [document](latex_cheat_sheet.pdf) codes on the course website.
+
+Here are a few things to help you get started (with examples below):
+
+* The default typeface is italic, which is commonly used to indicate a scalar; vectors and matrices are typically denoted with **bold** face, but need special coding to indicate (see below);
+
+* Sub- and superscripts are denoted by `_` and `^`, respectively; any text/number longer than one character/digit must be enclosed in curly braces `{}`
+
+## Inline
+
+You can include equations inline by enabling the "inline math mode" through the use of a single dollar sign (`$`) at the beginning and end of the equation. For example,
+
+```
+The errors are normally distributed, such that $e_{i,j} \sim \text{N}(0, \sigma^2)$.
+```
+
+will render as
+
+> The errors are normally distributed, such that $e_{i,j} \sim \text{N}(0, \sigma^2)$.
+
+## Stand alone
+
+In many cases, you may want to have your equations set apart from the text on lines by themselves. To do this in Markdown, begin and end the equation block with 2 dollar signs (`$$`). If you want equations on multiple lines, use `\\` to indicate a line break. For example,
+
+````
+$$
+y_{i,j} = \alpha + \beta x_{i,j} + e_{i,j} \\
+e_{i,j} \sim \text{N}(0, \sigma^2)
+$$
+````
+
+will render to
+
+$$
+y_{i,j} = \alpha + \beta x_{i,j} + e_{i,j} \\
+e_{i,j} \sim \text{N}(0, \sigma^2)
+$$
+
+and 
+
+````
+$$
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{C} \mathbf{c}_t + \mathbf{w}_t \\
+\mathbf{y}_t = \mathbf{Z} \mathbf{x}_t + \mathbf{a} + \mathbf{v}_t
+$$
+````
+
+would give
+
+$$
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{C} \mathbf{c}_t + \mathbf{w}_t \\
+\mathbf{y}_t = \mathbf{Z} \mathbf{x}_t + \mathbf{a} + \mathbf{v}_t
+$$
+
+You can also use some additional **LaTeX** options inside the equation block for additional formatting options. For example, the `aligned` command can be used with an ampersand `&` to align multiple equations, such that 
+
+````
+\begin{aligned}
+\text{Var}(p_{ex}) &= \text{Var}(o) - \text{Var}(e) + 2 ~ \text{Cov}(p_{ex}, e) \\
+  &= \text{Var}(o) - \text{RMSE}_{ex}^2 + 2 ~ \text{Cov}(p_{ex}, e) \\
+  &\approx 3.6 - 1^2 + 2 ~ \text{Cov}(p_{ex}, e).
+\end{aligned}
+````
+
+yields
+
+$$
+\begin{aligned}
+\text{Var}(p_{ex}) &= \text{Var}(o) - \text{Var}(e) + 2 ~ \text{Cov}(p_{ex}, e) \\
+  &= \text{Var}(o) - \text{RMSE}_{ex}^2 + 2 ~ \text{Cov}(p_{ex}, e) \\
+  &\approx 3.6 - 1^2 + 2 (0.4) = 3.4
+\end{aligned}
+$$
+
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** If your preferred output format is pdf, there are additional **LaTeX** options for formatting equations.
+</div>
+
+***
+
+# Tables
+
+There are several ways to create tables in **R Markdown** documents, but they vary in format based on your chosen output format. For `.html` documents, you can create simple tables with pipes (`|`) and colons (`:`). For example,
+
+```
+| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| col 1 is      | left-aligned  |    $1 | 
+```
+
+will result in
+
+| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| col 1 is      | left-aligned  |    $1 | 
+
+Note that the above code has been formatted for easier reading, but you wouldn't have to do that. For example, 
+
+```
+| Tables | Are | Cool |
+| --- |:---:| ---:|
+| col 3 is | right-aligned | $1600 |
+| col 2 is | centered | $12 |
+| col 1 is | left-aligned | $1 | 
+```
+
+will give the same result
+
+| Tables | Are | Cool |
+| --- |:---:| ---:|
+| col 3 is | right-aligned | $1600 |
+| col 2 is | centered | $12 |
+| col 1 is | left-aligned | $1 | 
+
+## `{kableExtra}`
+
+You can create much fancier tables with the `{kableExtra}` package (click [here](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html) for the vignette with lots of examples). For example, the following code will create a table with striped rows, custom column widths, and a scroll box.
+
+```{r kableExtra}
+## load package
+library(kableExtra)
+
+## create exanple data frame
+tbl_txt <- palmerpenguins::penguins[1:20, c(1, 2, 8, 7, 6)]
+colnames(tbl_txt) <- c("Species", "Island", "Year", "Sex", "Body mass")
+
+## generate table
+kable(tbl_txt, format = "html",
+      caption = "Table 1. An example of a `kableExtra` table.",
+      align = "ccccr", escape = FALSE) %>%
+  kable_styling(bootstrap_options = "striped",
+                full_width = FALSE,
+                position = "left") %>%
+  column_spec(c(1,3,4,5), width = "6em") %>%
+  column_spec(2, width = "12em") %>%
+  scroll_box(height = "300px", extra_css = "border-style: none;")
+```
+
+
+***
+
+# Figures
+
+Another of Markdown's strengths is its ability to render high-quality figures. This can be done by either inserting links to saved figures/images as shown above, or executing **R** code to do so. For example, this code
+
+````
+`r ''````{r xy_plot}
+set.seeed(123)
+n <- 100
+x <- runif(nn, 0, 10)
+e <- rnorm(nn)
+y <- 1 + 0.5 * x + e
+plot(x, y)
+```
+````
+
+would produce the following plot
+
+```{r xy_plot, echo = FALSE}
+set.seed(497)
+n <- 100
+x <- runif(n, 0, 10)
+e <- rnorm(n)
+y <- 1 + 0.5 * x + e
+plot(x, y)
+```
+
+You can also add chunk options to change the figure's size, location, etc. For example,
+
+````
+`r ''````{r xy_plot, fig.height = 4, fig.width = 4, fig.align = "center"}
+set.seed(497)
+n <- 100
+x <- runif(n, 0, 10)
+e <- rnorm(n)
+y <- 1 + 0.5 * x + e
+plot(x, y)
+```
+````
+
+would instead yield
+
+```{r xy_plot_2, echo = FALSE, fig.height = 4, fig.width = 4, fig.align = "center"}
+set.seed(497)
+n <- 100
+x <- runif(n, 0, 10)
+e <- rnorm(n)
+y <- 1 + 0.5 * x + e
+plot(x, y)
+```
+
+***
+
+# References
+
+**R Markdown** is set up to use **BibTeX**-style references and format the citations accordingly. To do so, you'll need to have your references in a **BibTeX** library with a `.bib` extension. 
+
+## Creating a `.bib` file
+
+One option is to manually create reference entries, but there are several methods for exporting references from reference management software, such as **EndNote** or **Zotero**.
+
+### Export from Zotero
+
+To export your citations from **Zotero**, do the following
+
+* Select the library you wish to export  
+* From the menu, choose  `File > Export Library`  
+* On the next screen, choose `BibTeX` from the dropdown menu & click `OK`  
+* Navigate to the directory where you want to save your file & save it with a `.bib` suffix  
+
+### Export from EndNote
+
+To export a reference library from **EndNote**, do the following
+
+* From the main menu, select `Edit > Output Styles > Open Style Manager...`
+
+![](images/endnote_1.png)
+
+* Enter "bibtex" into the search bar at the top of the pop-up window and check the box next to `BibTeX Export`
+
+* Close the window when you're finished
+
+![](images/endnote_2.png)
+
+* From the main menu, select `Edit > Output Styles` and check the `BibTeX Export` option
+
+![](images/endnote_3.png)
+
+* From the main menu, select `File > Export...`
+
+* Make sure to give your filename a `.bib` suffix and verify that the options `Text only` and `BibTeX Export` are selected
+
+* Click **Save** when you're finished
+
+![](images/endnote_4.png)
+
+### Export from Mendeley
+
+To export a reference library from **Mendeley**, do the following
+
+* Go to the Mendeley `Preferences` menu  
+
+* Click on the BibTeX tab  
+
+* Check the box next to `Enable BibTeX syncing`  
+
+* Click the radio button next to `Create one BibTeX file per group`
+
+* Change the `Path` to your desired location for the library files
+
+* Click **OK** when you are finished
+
+![](images/mendeley.png)
+
+## Citations
+
+### YAML
+
+The first step in getting properly formatted citations and references in **R Markdown** documents is to specify two pieces of information in the documents YAML:
+
+1) the name of of the `.bib` file containing the references
+
+2) the name of the style file that specifies how the references will be formatted in the printed docuement.
+
+So, for example, the information for this document is
+
+```{r, eval = FALSE}
+bibliography: "references.bib"
+csl: "ecology.csl"
+```
+
+You can download just about any journal's style file [here](https://www.zotero.org/styles).
+
+
+## In-text
+
+There are two options for citations in **R Markdown** documents, both based upon the standard `Author Year` format. **BibTeX** entries have a "citekey" that begins with `@` by which they can be referenced. So, for example, if we had this reference in our `.bib` library
+
+```
+@Article{Smith_2021,
+  year = {2021},
+  publisher = {The Ecological Society of America},
+  volume = {123},
+  number = {2},
+  pages = {1-10},
+  author = {Sarah Smith and Joe Johnson},
+  title = {Probably the best paper ever written},
+  journal = {Ecology},
+}
+```
+
+we could use `[@Smith_2021]` to format the in-text reference as "(Smith and Johnson 2021)", or we could use `@Smith_2021` to format the in-text reference as "Smith and Johnson (2021)".
+
+
+***
+
+# `{knitcitations}` package
+
+[Carl Boettiger](https://www.carlboettiger.info/) and colleagues have created a really neat package called **{knitcitations}** for creating and citing **BibTeX**-style references via several mechanisms. To begin, you load the package and then use the `cleanbib()` function to remove any old `.bib` files.
+
+```{r load_knitcitations}
+## load the package
+library("knitcitations")
+
+## clean out any existing .bib files
+cleanbib()
+
+## set pandoc for formatting
+options("citation_format" = "pandoc")
+```
+
+## Cite by DOI
+
+You can cite an article by its DOI, using either `citep()` or `citet()`, and the full citation information will be gathered automatically. For example, the inline command
+
+```{r eval = FALSE}
+`r citep("10.1890/11-0011.1")`
+```
+
+will do two things:
+
+1) create an `(Author[s] Year)` inline citation that looks like **`r citep("10.1890/11-0011.1")`**
+
+2) create the following **BibTeX** reference that can be cited elsewhere using `[@Abrams_2012]` or `@Abrams_2012`:
+
+```
+@Article{Abrams_2012,
+  doi = {10.1890/11-0011.1},
+  url = {https://doi.org/10.1890/11-0011.1},
+  year = {2012},
+  month = {feb},
+  publisher = {Wiley},
+  volume = {93},
+  number = {2},
+  pages = {281--293},
+  author = {Peter A. Abrams and Lasse Ruokolainen and Brian J. Shuter and Kevin S. McCann},
+  title = {Harvesting creates ecological traps: consequences of invisible mortality risks in predator{\textendash}prey metacommunities},
+  journal = {Ecology},
+}
+```
+
+On the other hand, the inline command
+
+```{r eval = FALSE}
+`r citet("10.1098/rspb.2013.1372")`
+```
+
+will do two things:
+
+1) create an `Author[s] (Year)` inline citation that looks like **`r citet("10.1098/rspb.2013.1372")`**
+
+2) create the following **BibTeX** reference that can be cited elsewhere using `[@Boettiger_2013]` or `@Boettiger_2013`:
+
+```
+@Article{Boettiger_2013,
+  doi = {10.1098/rspb.2013.1372},
+  url = {https://doi.org/10.1098/rspb.2013.1372},
+  year = {2013},
+  month = {sep},
+  publisher = {The Royal Society},
+  volume = {280},
+  number = {1766},
+  pages = {20131372},
+  author = {Carl Boettiger and Alan Hastings},
+  title = {No early warning signals for stochastic transitions: insights from large deviation theory},
+  journal = {Proceedings of the Royal Society B: Biological Sciences},
+}
+```
+
+## Cite **BibTeX** objects directly
+
+We can also cite **BibTeX** objects directly, such as those that **R** provides for citing packages using the `citation()` function. So, for example, here are the citations for the `{knitr}` package
+
+```{r}
+citation("knitr")
+```
+
+We can use the following inline command
+
+```{r, eval = FALSE}
+`r citep(citation("knitr"))`
+```
+
+to generate the 3 **BibTeX** objects as
+
+```
+@InCollection{Xie_2014,
+  booktitle = {Implementing Reproducible Computational Research},
+  editor = {Victoria Stodden and Friedrich Leisch and Roger D. Peng},
+  title = {knitr: A Comprehensive Tool for Reproducible Research in {R}},
+  author = {Yihui Xie},
+  publisher = {Chapman and Hall/CRC},
+  year = {2014},
+  note = {ISBN 978-1466561595},
+  url = {http://www.crcpress.com/product/isbn/9781466561595},
+}
+
+@Book{Xie_2015,
+  title = {Dynamic Documents with {R} and knitr},
+  author = {Yihui Xie},
+  publisher = {Chapman and Hall/CRC},
+  address = {Boca Raton, Florida},
+  year = {2015},
+  edition = {2nd},
+  note = {ISBN 978-1498716963},
+  url = {https://yihui.org/knitr/},
+}
+
+@Manual{Xie_2020,
+  title = {knitr: A General-Purpose Package for Dynamic Report Generation in R},
+  author = {Yihui Xie},
+  year = {2020},
+  note = {R package version 1.30},
+  url = {https://yihui.org/knitr/},
+}
+```
+
+and also create the citation
+
+**`r citep(citation("knitr"))`**
+
+We can now cite the package with normal **BibTeX** entries and pandoc will correctly avoid duplicating the author's name. For example,
+
+`[@Xie_2014; @Xie_2015; @Xie_2020]`
+
+will produce
+
+**[@Xie_2014; @Xie_2015; @Xie_2020]**
+
+Similarly, we can cite references that are already included in our `.bib` file using the standard notation, such that
+
+`[@Boettiger_2013]` or `@Boettiger_2013`
+
+will render as
+
+**[@Boettiger_2013]** or **@Boettiger_2013**
+
+
+## Re-using **BibTeX** keys
+
+When `citep()` or `citet()` are called, they automatically generate a **BibTeX** key in the format `AuthorLastName_Year`. We can then use this key to cite a reference without remembering its DOI. For example,
+
+```{r, eval = FALSE}
+`r citep("Abrams_2012")`
+```
+
+will simply create the citation
+
+**[@Abrams_2012]**
+
+
+## Creating the references cited section
+
+Creating the final references cited section is straightforward. All we have to do is call the function `write.bibtex()` with the name of the `.bib` file and the references will be cited with the formatting specified in the `.cls` file supplied in the document's YAML. For example, we can generate the references cited section  from the citations in this tutorial with the following:
+
+```{r, eval = FALSE}
+## create ref cited section
+write.bibtex(file = "references.bib")
+```
+
+## References
+
+```{r, echo = FALSE, message = FALSE}
+## create ref cited section
+write.bibtex(file = "references.bib")
+```
+
