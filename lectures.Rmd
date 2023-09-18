@@ -24,49 +24,27 @@ output: html_document
 
 ```{r week_lecs, include = FALSE}
 ## empty list for lecs
-week_lecs <- vector("list", 30)
-names(week_lecs) <- paste0("L", seq(30))
+week_lecs <- vector("list", 15)
+names(week_lecs) <- paste0("L", seq(15))
 ## lecture topics
-## week 1: Jan 4-6
+## day 1
 week_lecs$L1 <- intro_1
 week_lecs$L2 <- intro_2
 week_lecs$L3 <- analysis_steps
-## week 2: Jan 9-13
 week_lecs$L4 <- organization_styles
 week_lecs$L5 <- github
+## day 2
 week_lecs$L6 <- version_control
-## week 3: Jan 16-20
 week_lecs$L7 <- holiday_1
 week_lecs$L8 <- remotes
 week_lecs$L9 <- workflows
-## week 4: Jan 23-27
 week_lecs$L10 <- working_with_data
+## day 3
 week_lecs$L11 <- data_ingest
 week_lecs$L12 <- getting_help
-## week 5: Jan 30 - Feb 3
 week_lecs$L13 <- databases_1
 week_lecs$L14 <- databases_2
 week_lecs$L15 <- databases_3
-## week 6: Feb 6-10
-week_lecs$L16 <- metadata
-week_lecs$L17 <- analysis_visualization
-week_lecs$L18 <- markdown_1
-## week 7: Feb 13-17
-week_lecs$L19 <- markdown_2
-week_lecs$L20 <- markdown_3
-week_lecs$L21 <- markdown_4
-## week 8: Feb 20-24
-week_lecs$L22 <- holiday_2
-week_lecs$L23 <- packages_1
-week_lecs$L24 <- packages_2
-## week 9: Feb 27 - Mar 3
-week_lecs$L25 <- shiny_1
-week_lecs$L26 <- shiny_2
-week_lecs$L27 <- guest_holmes
-## week 10: Mar 6-10
-week_lecs$L28 <- code_reviews
-week_lecs$L29 <- ethics
-week_lecs$L30 <- docker
 ```
 
 ```{r topics, include = FALSE, eval = FALSE}
@@ -89,11 +67,11 @@ slide_links <- lapply(week_lecs, function(x) { if(is.list(x)) {c(x$html)} else {
 slide_links_html <- sapply(lapply(slide_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("file-alt", height = "2em", fill = "#3399f3")),
+                   as.character(fontawesome::fa("file-alt", height = "2em", fill = "#d9230f")),
                    " (", 1:length(x), ")](")
     } else {
       tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("file-alt", height = "2em", fill = "#3399f3")),
+                     as.character(fontawesome::fa("file-alt", height = "2em", fill = "#d9230f")),
                      "](")
       }
   tmp2 <- ")"
@@ -107,11 +85,11 @@ source_links <- lapply(week_lecs, function(x) { if(is.list(x)) {c(x$rmd)} else {
 source_links_html <- sapply(lapply(source_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("file-code", height = "2em", fill = "#3399f3")),
+                   as.character(fontawesome::fa("file-code", height = "2em", fill = "#d9230f")),
                    " (", 1:length(x), ")](")
     } else {
       tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("file-code", height = "2em", fill = "#3399f3")),
+                     as.character(fontawesome::fa("file-code", height = "2em", fill = "#d9230f")),
                      "](")
       }
   tmp2 <- ")"
@@ -125,11 +103,11 @@ pdf_links <- lapply(week_lecs, function(x) { if(is.list(x)) {c(x$pdf)} else {""}
 pdf_links_html <- sapply(lapply(pdf_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("file-pdf", height = "2em", fill = "#3399f3")),
+                   as.character(fontawesome::fa("file-pdf", height = "2em", fill = "#d9230f")),
                    " (", 1:length(x), ")](")
     } else {
       tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("file-pdf", height = "2em", fill = "#3399f3")),
+                     as.character(fontawesome::fa("file-pdf", height = "2em", fill = "#d9230f")),
                      "](")
       }
   tmp2 <- ")"
@@ -145,11 +123,11 @@ zoom_links <- lapply(week_lecs, function(x) { if(is.list(x)) {x$zoom} else {""} 
 zoom_links_html <- sapply(lapply(zoom_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
-                   as.character(fontawesome::fa("file-video", height = "2em", fill = "#3399f3")),
+                   as.character(fontawesome::fa("file-video", height = "2em", fill = "#d9230f")),
                    " (", 1:length(x), ")](")
     } else {
       tmp1 <- paste0("[",
-                     as.character(fontawesome::fa("file-video", height = "2em", fill = "#3399f3")),
+                     as.character(fontawesome::fa("file-video", height = "2em", fill = "#d9230f")),
                      "](")
       }
   tmp2 <- ")"
@@ -181,7 +159,8 @@ names(background_links_html) <- NULL
 ```{r generate_table, echo=FALSE}
 ## data frame with dates & topics
 syl_txt <- data.frame(
-  date = qtr,
+  date = week,
+  session = periods,
   lec_topics = lec_topics_html,
   lec_links = slide_links_html,
   # rmd_links = source_links_html,
@@ -190,7 +169,7 @@ syl_txt <- data.frame(
   # youtube_links = youtube_links_html,
   background_links = background_links_html
 )
-colnames(syl_txt) <- c("Date", "Topics",
+colnames(syl_txt) <- c("Date", "Session", "Topics",
                        "Notes", # "Source (Rmd)", "Slides (pdf)",
                        # "Zoom recording",
                        "Background")
@@ -198,7 +177,7 @@ rownames(syl_txt) <- NULL
 
 ## generate table
 kableExtra::kable(syl_txt, format = "html", caption = " ",
-                  align = "clcc", escape = FALSE) %>%
+                  align = "cclcc", escape = FALSE) %>%
   kable_styling(bootstrap_options = "striped",
                 full_width = FALSE,
                 position = "left") %>%
