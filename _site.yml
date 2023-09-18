@@ -1,6 +1,6 @@
 name: "docs"
 navbar:
-  title: "FISH 549"
+  title: "SOE 592"
   right:
     - text: "Syllabus"
       href: syllabus.html
@@ -8,15 +8,13 @@ navbar:
       href: lectures.html
     - text: "Assignments"
       href: homework.html
-    - text: "Package reviews"
-      href: pkg_reviews.html
     - text: "References"
       href: references.html
     - text: ""
       icon: fab fa-github
-      href: https://github.com/FISH549
+      href: https://github.com/SOE592
 output_dir: "docs"
 output:
   html_document:
-    theme: spacelab
+    theme: simplex
     highlight: textmate
