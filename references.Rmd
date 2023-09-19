@@ -9,36 +9,60 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <br>
 
-Students are not required to purchase any materials for the course, as we will rely upon freely available software and information sources. As the course progresses, more references will be added to this page.
+**Students are not required to purchase any materials for the course, as we will rely upon freely available software and information sources**.
 
 <br>
 
-## Background information
+### Books & vignettes with specific `R` examples
 
-[Creating a GitHub account](./references/github_signup.html)
+* Holmes, E. E., M. D. Scheuerell, and E. J. Ward. *Applied Time Series Analysis for Fisheries and Environmental data*. [eBook available here](https://atsa-es.github.io/atsa-labs/)
 
-[Creating a GitHub Personal Access Token](./references/github_pat_creation.html)
+* Holmes EE, Ward EJ, Scheuerell MD. 2014. *Analysis of Multivariate Time Series Using the MARSS Package*. [pdf available here](https://cran.r-project.org/web/packages/MARSS/vignettes/UserGuide.pdf)
 
-[Installing Git on Windows](./references/git_install_windows.html)
-
-[Ignoring files in Git](./references/set_global_gitignore.html)
+* Hyndman RJ, Athanasopoulos G. 2018. *Forecasting: Principles and Practice*. [eBook available here](https://otexts.org/fpp2/)
 
 <br>
 
-## Online books
+### Some classic textbooks that you may find helpful
 
-Jenny Bryan (and others) [*Happy Git and GitHub for the useR*](https://happygitwithr.com/) [abbreviated "HGG" elsewhere on this site]
+* Box GEP, Jenkins GM, Reinsel GC. 2008. *Time Series Analysis: Forecasting and Control*. John Wiley & Sons, Hoboken, New Jersey.
 
-Hadley Wickham & Garrett Grolemund [*R for Data Science*](https://r4ds.had.co.nz/index.html)
+* Brockwell PJ, Davis RA. 2010. *Introduction to Time Series and Forecasting*. Springer, New York.
 
-Natalie Cooper & Pen-Yuan Hsing (Editors) [*A Guide to Reproducible Code in Ecology and Evolution*](https://www.britishecologicalsociety.org/wp-content/uploads/2017/12/guide-to-reproducible-code.pdf)
+* Durbin J, Koopman SJ. 2012. *Time Series Analysis by State Space Methods*. Oxford University Press, Oxford.
 
-Scott Chacon & Ben Straub [Pro Git](https://git-scm.com/book/en/v2)
+* Harvey AC. 1991. *Forecasting, Structural Time Series Models and the Kalman Filter*. Cambridge University Press, Cambridge.
+
+* Petris G, Petrone S, Campaginoli P. 2009. *Dynamic Linear Models with R*. Springer, New York.
+
+* Pole A, West M, Harrison J. 1994. *Applied Bayesian Forecasting and Time Series Analysis*. Chapman & Hall/CRC, Boca Raton, Florida. 
+
+* Shumway DH, Stoffer DS. 2006. *Time Series Analysis and Its Applications: With R Examples*. Springer, New York. [R scripts and data here](https://github.com/nickpoison/tsa4)
+
+* West M, Harrison J. 1997. *Bayesian Forecasting and Dynamic Models*. Springer, New York.
 
 <br>
 
-## Tutorials
+### Using Git & GitHub
 
-R-bloggers [*R tutorials for Data Science*](https://www.r-bloggers.com/2016/06/curated-list-of-r-tutorials-for-data-science/) 
+* [Creating a GitHub account](./references/github_signup.html)
+
+* [Creating a GitHub Personal Access Token](./references/github_pat_creation.html)
+
+* [Intro to GitHub](https://fish549.github.io/website/lectures/week_02/lec_04_intro_github.html)
+
+* [Installing Git on Windows](./references/git_install_windows.html)
+
+* [Ignoring files in Git](./references/set_global_gitignore.html)
+
+* [Intro to Git](https://fish549.github.io/website/lectures/week_02/lec_05_intro_git.html)
+
+* [*Happy Git and GitHub for the useR*](https://happygitwithr.com/)
+
+<br>
+
+### R Tutorials
+
+* [*R tutorials for Data Science*](https://www.r-bloggers.com/2016/06/curated-list-of-r-tutorials-for-data-science/) 
 
 
