@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Syllabus</title>
+
+<script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/sandstone.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.4.0/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.0/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">SOE 592</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="syllabus.html">Syllabus</a>
+</li>
+<li>
+  <a href="lectures.html">Schedule &amp; materials</a>
+</li>
+<li>
+  <a href="homework.html">Assignments</a>
+</li>
+<li>
+  <a href="references.html">References</a>
+</li>
+<li>
+  <a href="https://github.com/SOE592">
+    <span class="fab fa-github"></span>
+     
+    
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Syllabus</h1>
+
+</div>
+
+
+<p><br></p>
+<div id="course-overview" class="section level1">
+<h1>Course overview</h1>
+<p>This course is intended to give students an overview of the theory
+and practical aspects of fitting time series models to fisheries and
+environmental data. The course will cover topics ranging from
+autocorrelation and crosscorrelation, autoregressive (AR) and moving
+average (MA) models, univariate and multivariate state-space models, and
+estimating model parameters. This course also covers various aspects of
+assessing model performance and evaluating model diagnostics. The course
+is focused almost exclusively on problems and analyses in the time
+domain, and only briefly addresses methods for the frequency domain. In
+general, students will focus on conceptualizing analyses, implementing
+analyses, and making inference from the results.</p>
+<p><br></p>
+</div>
+<div id="learning-objectives" class="section level1">
+<h1>Learning objectives</h1>
+<p>By the end of the course, students should be able to:</p>
+<ul>
+<li><p>Understand the elements to classical decomposition</p></li>
+<li><p>Understand how to use ACF and PACF to identify orders of
+ARMA(<em>p</em>,<em>q</em>) models for time series data</p></li>
+<li><p>Apply appropriate diagnostic measures to identify any
+shortcomings in model assumptions</p></li>
+<li><p>Understand how to use information theoretic methods and cross
+validation for model selection</p></li>
+<li><p>Understand how to combine state and observation models into a
+state-space model</p></li>
+<li><p>Use multivariate time series models with covariates to identify
+influential explanatory variables and do perturbation analyses</p></li>
+<li><p>Use Dynamic Factor Analysis to identify common patterns among
+many time series</p></li>
+<li><p>Use Dynamic Linear Models to allow for changing relationships
+between a response variable and any explanatory variable(s)</p></li>
+<li><p>Prepare forecasts with uncertainty using time series
+models</p></li>
+</ul>
+<p><br></p>
+</div>
+<div id="instructor" class="section level1">
+<h1>Instructor</h1>
+<p><a
+href="https://fish.uw.edu/faculty/mark-scheuerell/"><strong>Dr. Mark
+Scheuerell</strong></a><br />
+Assistant Unit Leader, Washington Cooperative Fish and Wildlife Research
+Unit<br />
+Associate Professor, School of Aquatic &amp; Fishery Sciences<br />
+<a href="mailto:scheuerl@uw.edu">scheuerl@uw.edu</a></p>
+<p><br></p>
+</div>
+<div id="meeting-times-locations" class="section level1">
+<h1>Meeting times &amp; locations</h1>
+<p>W/Th/F from 8:30-5:00</p>
+<p><br></p>
+</div>
+<div id="pre-requisites" class="section level1">
+<h1>Pre-requisites</h1>
+<p>Students should have a working knowledge of the <a
+href="https://www.r-project.org/"><strong>R</strong></a> computing
+software, such as that provided in FISH 552/553.</p>
+<p><br></p>
+</div>
+<div id="classroom-conduct" class="section level1">
+<h1>Classroom conduct</h1>
+<p>I am dedicated to providing a welcoming and supportive learning
+environment for all students, regardless of their background, identity,
+physical appearance, or manner of communication. Any form of language or
+behavior used to exclude, intimidate, or cause discomfort will not be
+tolerated. In order to foster a positive and professional learning
+environment, I ask the following:</p>
+<ul>
+<li><p>Please let me know if you have a name or set of preferred
+pronouns that you would like me to use</p></li>
+<li><p>Please let me know if <em>anyone</em> in class says something
+that makes you feel uncomfortable<sup>[<a
+href="#endnotes">1</a>]</sup></p></li>
+</ul>
+<p>In addition, I encourage the following kinds of behaviors:</p>
+<ul>
+<li><p>Use welcoming and inclusive language</p></li>
+<li><p>Show courtesy and respect towards others</p></li>
+<li><p>Acknowledge different viewpoints and experiences</p></li>
+<li><p>Gracefully accept constructive criticism</p></li>
+</ul>
+<p>Although I strive to create and use inclusive materials in this
+course, there may be overt or covert biases in the course material due
+to the lens with which it was written. Your suggestions about how to
+improve the value of diversity in this course are encouraged and
+appreciated.</p>
+<p><strong>Please note</strong>: If you believe you have been a victim
+of an alleged violation of the <a
+href="https://www.washington.edu/admin/rules/policies/WAC/478-121TOC.html">Student
+Conduct Code</a> or you are aware of an alleged violation of the <a
+href="https://www.washington.edu/admin/rules/policies/WAC/478-121TOC.html">Student
+Conduct Code</a>, you have the right to <a
+href="https://www.washington.edu/cssc/for-students-2/">report it to the
+University</a>.</p>
+<p><br></p>
+</div>
+<div id="technology" class="section level1">
+<h1>Technology</h1>
+<p>This course will revolve around hands-on computing exercises that
+demonstrate the topics of interest. Therefore, students are strongly
+recommended to bring their own laptop to class, although students are
+certainly free to work with one another. <strong>For students without
+access to a personal laptop</strong>: it is possible to check out UW
+laptops for an entire quarter (see the <a
+href="https://education.uw.edu/admissions/office-of-student-services">Student
+Services office</a> for details).</p>
+<p>All of the software we will be using is free and platform
+independent, meaning students may use macOS, Linux, or Windows operating
+systems. In addition to a web browser, we will be using the free <a
+href="https://www.r-project.org/"><strong>R</strong></a> software and
+the desktop version of the <a
+href="https://www.rstudio.com/products/rstudio-desktop/"><strong>R
+Studio</strong></a> integrated development environment (IDE). We will
+also be using various packages not contained in the base installation of
+<strong>R</strong>, but we will wait and install them at the necessary
+time. The instructor will be available during the first week of class to
+help students troubleshoot any software installation problems.</p>
+<p>We will be using <a
+href="https://git-scm.com/downloads"><strong>Git</strong></a>, a free
+and open source version control system for tracking changes to our
+files.</p>
+<p>We will be using <a
+href="https://www.postgresql.org/download/"><strong>PostgreSQL</strong></a>
+to create and access relational databases.</p>
+<p>Students will also be required to have a user account on <a
+href="https://github.com/"><strong>GitHub</strong></a>, which we will be
+using for file hosting and communications via “issues”. If you do not
+already have an account, you can sign up for a free one <a
+href="https://github.com/join?source=header-home">here</a>. The
+instructor will provide training on how to use the intended features in
+<strong>GitHub</strong>.</p>
+<p><br></p>
+</div>
+<div id="teaching-methodology" class="section level1">
+<h1>Teaching methodology</h1>
+<p>This course will introduce new material primarily through prepared
+slides and hands-on demonstrations. Students will be expected to work
+both individually and collaboratively (to the extent possible given the
+current conditions); course content and evaluation will emphasize the
+communication of ideas and the ability to think critically more so than
+a specific pathway or method. Other areas of this website provide an
+overview of the topics to be covered, including links to weekly reading
+assignments, lecture materials, computer labs, and homework
+assignments.</p>
+<p><br></p>
+</div>
+<div id="communication" class="section level1">
+<h1>Communication</h1>
+<p>This course will involve a <em>lot</em> of communication between and
+among students and the instructor. Short questions should be addressed
+to me via email; I will try my best to respond to your message within 24
+hours. Under more normal circumstances, detailed questions would be
+addressed to me in person–either after class or during a scheduled
+meeting. In this case, however, we will schedule one-on-one or group
+Zoom calls as needed.</p>
+<p>In addition to email and Zoom, we will use the “Issues” feature in
+<strong>GitHub</strong> to ask questions and assist others.
+Specifically, questions and answers can be posted to the issues in the
+course’s “assistance” repository <a
+href="https://github.com/FISH497/assistance/issues">here</a>.</p>
+<p><br></p>
+</div>
+<div id="evaluation" class="section level1">
+<h1>Evaluation</h1>
+<p>Students will be evaluated on their knowledge of course content and
+their ability to communicate their understanding of the material via
+individual homework assignments (80%) and their active participation in
+class (20%). There will be 8 homework assignments, each counting toward
+10% of the final grade. Please note, <strong>all assignments must be
+turned in to achieve a passing grade</strong>.</p>
+<div id="homework" class="section level3">
+<h3>Homework</h3>
+<p>Homework will be assigned each Friday of weeks 2-9 and will be due by
+11:59 PM 9 days later on the following Sunday (weeks 3-10). The
+instructor will evaluate and return student homework assignments within
+one week of their due date. <strong>If for some reason you cannot meet
+the homework deadline, contact the instructor as soon as possible to
+discuss other options</strong>. Please see the <a
+href="homework.html">Homework</a> page for more details.</p>
+</div>
+<div id="participation" class="section level3">
+<h3>Participation</h3>
+<p>Data science is about communicating your ideas and findings to
+others. As such, this course will require students to engage with the
+instructor and one another in small groups. I expect all students to
+contribute to our discussions of concepts, results, bugs/errors,
+etc.</p>
+<p>Students should discuss any potential schedule conflicts with the
+instructor during the first week of class.</p>
+<p><br></p>
+</div>
+<div id="endnotes" class="section level2">
+<h2>Endnotes</h2>
+<p>[1] If the instructor should be the one to say something that makes a
+student uncomfortable, the student should feel free to contact the
+Director of the School of the Environment.</p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
