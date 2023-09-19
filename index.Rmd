@@ -1,6 +1,6 @@
 ---
-title: "Best Practices in Environmental Data Science"
-subtitle: "FISH 549 &nbsp; &nbsp; University of Washington &nbsp; &nbsp; Winter 2023"
+title: "Introduction to Time Series Analysis"
+subtitle: "SOE 592 &nbsp; &nbsp; Washington State University &nbsp; &nbsp; Spring 2024"
 output: html_document
 ---
 
@@ -22,7 +22,7 @@ h3 {
 
 
 <p align="center">
-    <img width="346" height="400" src="FISH549_hex_sticker.png">
+    <img width="800" height="400" src="ts_example.png">
 </p>
 
 <br>
