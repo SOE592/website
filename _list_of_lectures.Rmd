@@ -1,5 +1,5 @@
 ---
-title: "2021 List of Lectures"
+title: "2024 List of Lectures"
 output: html_document
 ---
 
@@ -8,90 +8,65 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
-## day 0 ####
-intro_1 <- list(
-  title = "Introduction",
-  topics = c("<b>Course overview</b>"),
-  pdf = c(""),
-  rmd = c("lectures/week_01/lec_00_class_overview.Rmd"),
-  html = c("lectures/week_01/lec_00_class_overview.html"),
-  background = c(""),
-  zoom = ""
-)
-
-## day 1 ####
+## session 1 ####
 intro_2 <- list(
-  title = "Introduction",
-  topics = c("<b>What is data science?</b>", "Types of questions", "Storytelling"),
+  title = "",
+  topics = c(""),
   pdf = c(""),
-  rmd = c("lectures/week_01/lec_01_class_overview.Rmd"),
-  html = c("lectures/week_01/lec_01_class_overview.html"),
-  background = c("[Leek & Peng (2015)](references/Leek_Peng_2015_what_is_the_Q.pdf)", "[D’Agostino McGowan (2020)](https://docs.google.com/presentation/d/1pZe8Sp350iYzsKsweZzR374179gvRwpI3cAX_NObgj8/edit#slide=id.p)", "[Peng (2018)](https://simplystatistics.org/posts/2018-06-04-trustworthy-data-analysis/)"),
+  rmd = "",
+  html = "",
+  background = "",
   zoom = ""
 )
 
-## day 2 ####
+## session 2 ####
 analysis_steps <- list(
-  title = "Steps to an analysis",
-  topics = c("<b>Steps to an analysis</b>", "Informal vs formal", "Rubrics", "Required software"),
+  title = "",
+  topics = c(""),
   pdf = c(""),
-  rmd = c("lectures/week_01/lec_02_analysis_steps_software.Rmd"),
-  html = c("lectures/week_01/lec_02_analysis_steps_software.html"),
-  background = c("[Cooper & Hsing (2017)](references/BES_guide_to_reproducible_code.pdf)"),
+  rmd = "",
+  html = "",
+  background = "",
   zoom = ""
 )
 
-## day 3 ####
+## session 3 ####
 organization_styles <- list(
-  title = "Organization & styles",
-  topics = c("<b>Organization & styles</b>", "Research compendia", "Coding styles"),
+  title = "",
+  topics = c(""),
   pdf = c(""),
-  rmd = c("lectures/week_01/lec_03_orgs_styles.Rmd"),
-  html = c("lectures/week_01/lec_03_orgs_styles.html"),
-  background = c("[Marwick et al (2018)](references/Marwick_etal_2018_research_compendia.pdf)",
-                 "[Tidyverse Style Guide](https://style.tidyverse.org/)"),
+  rmd = "",
+  html = "",
+  background = "",
   zoom = ""
 )
 
-## day 4 ####
+## session 4 ####
 github <- list(
-  title = "Introduction to GitHub",
-  topics = c("<b>Introduction to GitHub</b>", "Repositories", "Markdown", "Issues", "Projects"),
+  title = "",
+  topics = c(""),
   pdf = c(""),
-  rmd = c("lectures/week_02/lec_04_intro_github.Rmd"),
-  html = c("lectures/week_02/lec_04_intro_github.html"),
-  background = c("[Intro to GitHub](https://guides.github.com/activities/hello-world/)"),
+  rmd = "",
+  html = "",
+  background = "",
   zoom = ""
 )
 
-## day 5 ####
+## session 5 ####
 version_control <- list(
-  title = "Version control",
-  topics = c("<b>Version control with Git</b>", "Adding files", "Committing file", "Exploring history", "Reverting files"),
+  title = "",
+  topics = c(""),
   pdf = c(""),
-  rmd = c("lectures/week_02/lec_05_intro_git.Rmd"),
-  html = c("lectures/week_02/lec_05_intro_git.html"),
-  background = c("[Blischak et al (2016)](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004668)",
-                 "[Chap 20 of HGG](https://happygitwithr.com/git-basics.html)"),
+  rmd = "",
+  html = "",
+  background = "",
   zoom = ""
 )
 
-## day 6 ####
+## session 6 ####
 remotes <- list(
-  title = "Remote repositories",
-  topics = c("<b>Remote repositories</b>", "Remotes in GitHub", "RStudio projects", "Pushing/pulling"),
-  pdf = c(""),
-  rmd = c("lectures/week_02/lec_06_git_remotes.Rmd"),
-  html = c("lectures/week_02/lec_06_git_remotes.html"),
-  background = c("[RStudio cheatsheet](references/rstudio_cheatsheet.pdf)",
-                 "[Chaps 9 & 10 of HGG](https://happygitwithr.com/)"),
-  zoom = ""
-)
-
-## day 7 ####
-holiday_1 <- list(
-  title = "Martin Luther King Jr. Day",
-  topics = c("<i>Martin Luther King, Jr. Day</i>", "<b>No class</b>"),
+  title = "",
+  topics = c(""),
   pdf = c(""),
   rmd = "",
   html = "",
@@ -99,50 +74,43 @@ holiday_1 <- list(
   zoom = ""
 )
 
-## day 8 ####
+## session 7 ####
+holisession_1 <- list(
+  title = "",
+  topics = c(""),
+  pdf = c(""),
+  rmd = "",
+  html = "",
+  background = "",
+  zoom = ""
+)
+
+## session 8 ####
 workflows <- list(
-  title = "Understanding workflows",
-  topics = c("<b>Understanding workflows</b>", "Centralized", "Feature branch", "Forking"),
+  title = "",
+  topics = c(""),
   pdf = c(""),
-  rmd = c("lectures/week_03/lec_08_workflows.Rmd",
-          "lectures/week_03/lec_08_workflows_ex.Rmd"),
-  html = c("lectures/week_03/lec_08_workflows.html",
-           "lectures/week_03/lec_08_workflows_ex.html"),
-  background = c("[Sec VI of HGG](https://happygitwithr.com/workflows-intro.html)",
-                 "[Learn Git branching](https://pcottle.github.com/learnGitBranching/)"),
+  rmd = "",
+  html = "",
+  background = "",
   zoom = ""
 )
 
-## day 9 ####
+## session 9 ####
 working_with_data <- list(
-  title = "Working with data",
-  topics = c("<b>Working with data</b>", "Chain of custody", "Tidy data", "Manual entry"),
+  title = "",
+  topics = c(""),
   pdf = c(""),
-  rmd = "lectures/week_03/lec_09_working_with_data.Rmd",
-  html = "lectures/week_03/lec_09_working_with_data.html",
-  background = c("[Ellis & Leek (2017)](references/Ellis_Leek_2017_how_to_share_data.pdf)",
-                 "[Broman & Woo (2018)](references/Broman_Woo_2018_data_in_spreadsheets.pdf)"),
+  rmd = "",
+  html = "",
+  background = "",
   zoom = ""
 )
 
-## day 10 ####
+## session 10 ####
 data_ingest <- list(
-  title = "Reading data",
-  topics = c("<b>Reading data</b>", "Importing text files", "Reading from Excel & Google"),
-  pdf = c(""),
-  rmd = "lectures/week_04/lec_10_getting_data.Rmd",
-  html = "lectures/week_04/lec_10_getting_data.html",
-  background = c("[readr pkg](https://readr.tidyverse.org/)",
-                 "[readxl pkg](https://readxl.tidyverse.org/)",
-                 "[googlesheets pkg](https://googlesheets4.tidyverse.org/index.html)",
-                 "[jsonlite pkg](https://cran.r-project.org/web/packages/jsonlite/vignettes/json-aaquickstart.html)"),
-  zoom = ""
-)
-
-## day 11 ####
-data_cleaning <- list(
-  title = "Data cleaning",
-  topics = c("<b>Data cleaning</b>", "Reshaping", "Filtering", "Summarizing"),
+  title = "",
+  topics = c(""),
   pdf = c(""),
   rmd = "",
   html = "",
@@ -150,260 +118,58 @@ data_cleaning <- list(
   zoom = ""
 )
 
-## day 11 ####
+## session 11 ####
 getting_help <- list(
-  title = "Getting help",
-  topics = c("<b>Getting help</b>", "Minimal", "Complete", "Reproducible"),
+  title = "",
+  topics = c(""),
   pdf = c(""),
-  rmd = "lectures/week_04/lec_11_getting_help.Rmd",
-  html = "lectures/week_04/lec_11_getting_help.html",
-  background = c("[Maelle Salmon's blog](https://masalmon.eu/2018/07/22/wheretogethelp/)",
-                 "[Reprex do's & don'ts](https://reprex.tidyverse.org/articles/reprex-dos-and-donts.html)"),
+  rmd = "",
+  html = "",
+  background = "",
   zoom = ""
 )
 
-## day 12 ####
+## session 12 ####
 guest_woo <- list(
-  title = "Data science for fun and nonprofit",
-  topics = c("<i>Kara Woo</i>", "<b>Data science for fun and nonprofit</b>",
-             "Guest presentation"),
+  title = "",
+  topics = c(""),
   pdf = c(""),
   rmd = "",
-  html = "lectures/week_04/lec_12_kara_woo.html",
-  background = "[Kara's website](https://karawoo.com/)",
+  html = "",
+  background = "",
   zoom = ""
 )
 
-## day 13 ####
+## session 13 ####
 databases_1 <- list(
-  title = "Intro to relational databases",
-  topics = c("<i>Jennifer Scheuerell</i>", "<b>Intro to relational databases</b>", "SQL programming language", "PostgreSQL & its community"),
+  title = "",
+  topics = c(""),
   pdf = c(""),
-  rmd = "lectures/week_05/lec_13_intro_databases.Rmd",
-  html = "lectures/week_05/lec_13_intro_databases.html",
-  background = c("[About PostgreSQL](https://www.postgresql.org/about/)",
-                 "[Installing PostgreSQL](https://github.com/sureL/postgres-tutorial/issues/4)",
-                 "[Troubleshooting PostgreSQL](https://github.com/sureL/postgres-tutorial/issues/23)"),
+  rmd = "",
+  html = "",
+  background = "",
   zoom = ""
 )
 
-## day 14 ####
+## session 14 ####
 databases_2 <- list(
-  title = "Database design (pt 1)",
-  topics = c("<i>Jennifer Scheuerell</i>", "<b>Creating a database</b>", "New users & databases", "Adding data"),
+  title = "",
+  topics = c(""),
   pdf = c(""),
-  rmd = "lectures/week_05/lec_14_intro_databases.Rmd",
-  html = "lectures/week_05/lec_14_intro_databases.html",
+  rmd = "",
+  html = "",
   background = "",
   zoom = ""
 )
 
-## day 15 ####
+## session 15 ####
 databases_3 <- list(
-  title = "Database design (pt 2)",
-  topics = c("<i>Jennifer Scheuerell</i>", "<b>Working with a database</b>", "Cleaning data", "Joining tables"),
-  pdf = c(""),
-  rmd = "lectures/week_05/lec_15_intro_databases.Rmd",
-  html = "lectures/week_05/lec_15_intro_databases.html",
-  background = "",
-  zoom = ""
-)
-
-## day 16 ####
-review <- list(
-  title = "Topic reviews",
-  topics = c("<b>Review session</b>", "Workflows", "Reprexes", "Databases"),
+  title = "",
+  topics = c(""),
   pdf = c(""),
   rmd = "",
   html = "",
   background = "",
-  zoom = ""
-)
-
-## day 17 ####
-metadata <- list(
-  title = "Metadata",
-  topics = c("<b>Metadata</b>", "Types of metadata", "Ecological Metadata Language"),
-  pdf = c(""),
-  rmd = "lectures/week_06/lec_17_metadata.Rmd",
-  html = "lectures/week_06/lec_17_metadata.html",
-  background = c("[Michener (2005)](references/Michener_2005_meta_info_concepts.pdf)",
-                 "[Fegraus et al (2005)](references/Fegraus_2005_intro_EML.pdf)",
-                 "[EML specification](https://eml.ecoinformatics.org/)",
-                 "[EML package](https://docs.ropensci.org/EML/)"),
-  zoom = ""
-)
-
-## day 18a ####
-visualization <- list(
-  title = "Data visualization",
-  topics = c("<b>Data visualization</b>", "Design principles", "Exploratory figures", "Expository figures"),
-  pdf = c(""),
-  rmd = "",
-  html = "",
-  background = "",
-  zoom = ""
-)
-
-## day 18b ####
-analysis_visualization <- list(
-  title = "Data analysis & visualization",
-  topics = c("<b>Data analysis & visualization</b>", "Data summaries", "Design principles", "Exploratory figures", "Expository figures"),
-  pdf = c(""),
-  rmd = "lectures/week_06/lec_18_analysis_viz.Rmd",
-  html = "lectures/week_06/lec_18_analysis_viz.html",
-  background = c("[R Graph Gallery](https://www.r-graph-gallery.com/)",
-                 "[STAT 545 Do's & Don'ts](https://stat545.com/effective-graphs.html)"),
-  zoom = ""
-)
-
-## day 19 ####
-holiday_2 <- list(
-  title = "President's Day",
-  topics = c("<i>President's Day</i>", "<b>No class</b>"),
-  pdf = c(""),
-  rmd = "",
-  html = "",
-  background = "",
-  zoom = ""
-)
-
-## day 20 ####
-markdown_1 <- list(
-  title = "R Markdown",
-  topics = c("<b>R Markdown</b>", "Introduction", "Publishing papers"),
-  pdf = c(""),
-  rmd = "lectures/week_07/lec_20_markdown_1.Rmd",
-  html = "lectures/week_07/lec_20_markdown_1.html",
-  background = "[Intro to R Markdown](lectures/week_07/intro_rmarkdown.html)",
-  zoom = ""
-)
-
-## day 21 ####
-markdown_2 <- list(
-  title = "R Markdown",
-  topics = c("<b>R Markdown</b>", "Publishing papers", "Reporting"),
-  pdf = c(""),
-  rmd = "lectures/week_07/lec_21_markdown_2.Rmd",
-  html = "lectures/week_07/lec_21_markdown_2.html",
-  background = "[Chap 6 of Markdown Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/latex-output.html)",
-  zoom = ""
-)
-
-## day 22 ####
-guest_holmes <- list(
-  title = "Guest presentation",
-  topics = c("<i>Dr. Elizabeth Holmes</i>", "<b>Data science teamwork & data science sprints</b>",
-             "Guest presentation"),
-  pdf = c(""),
-  rmd = "lectures/week_09/Agile-Mar-3-2023.qmd",
-  html = "https://rverse-tutorials.github.io/quarto_slides/Agile-Mar-3-2023.html",
-  background = "[Short Agile Videos](https://rverse-tutorials.github.io/quarto_slides/Agile-Mar-3-2023.html#/videos-to-learn-more)",
-  zoom = ""
-)
-
-## day 23 ####
-packages_1 <- list(
-  title = "R packages",
-  topics = c("<b>R packages</b>", "Functions", "Documentation"),
-  pdf = c(""),
-  rmd = "lectures/week_08/lec_23_packages_1.Rmd",
-  html = "lectures/week_08/lec_23_packages_1.html",
-  background = "[Wickham & Bryan (2020)](https://r-pkgs.org/index.html)",
-  zoom = ""
-)
-
-## day 24 ####
-packages_2 <- list(
-  title = "R packages",
-  topics = c("<b>R packages</b>", "Unit tests", "Vignettes", "Websites"),
-  pdf = c(""),
-  rmd = "lectures/week_08/lec_24_packages_2.Rmd",
-  html = "lectures/week_08/lec_24_packages_2.html",
-  background = "[Wickham & Bryan (2020)](https://r-pkgs.org/index.html)",
-  zoom = ""
-)
-
-## day 25 ####
-shiny_1 <- list(
-  title = "Shiny apps",
-  topics = c("<i>Dr. Margaret Siple</i>", "<b>Shiny apps</b>", "Introduction"),
-  pdf = c(""),
-  rmd = "lectures/week_09/lec_25_intro_shiny_1.Rmd",
-  html = "lectures/week_09/lec_25_intro_shiny_1.html",
-  background = c("[RStudio Shiny apps](https://shiny.rstudio.com/)",
-                 "[Sievert (2019)](https://plotly-r.com/)"),
-  zoom = ""
-)
-
-## day 26 ####
-shiny_2 <- list(
-  title = "Shiny apps",
-  topics = c("<i>Dr. Margaret Siple</i>", "<b>Shiny apps</b>", "Development", "Deployment"),
-  pdf = c(""),
-  rmd = "lectures/week_09/lec_26_intro_shiny_2.Rmd",
-  html = "lectures/week_09/lec_26_intro_shiny_2.html",
-  background = "[Shiny App Contest](https://blog.rstudio.com/2020/07/13/winners-of-the-2nd-shiny-contest/)",
-  zoom = ""
-)
-
-## day 27 ####
-markdown_3 <- list(
-  title = "R Markdown",
-  topics = c("<b>R Markdown</b>", "Designing presentations"),
-  pdf = c(""),
-  rmd = "lectures/week_09/lec_27_presentations.Rmd",
-  html = "lectures/week_09/lec_27_presentations.html",
-  background = ("[Chap 4 of Xie et al. (2014)](https://bookdown.org/yihui/rmarkdown/presentations.html)"),
-  zoom = ""
-)
-
-## day 28 ####
-markdown_4 <- list(
-  title = "R Markdown",
-  topics = c("<b>R Markdown</b>", "Building simple websites"),
-  pdf = c(""),
-  rmd = "lectures/week_10/lec_28_websites.Rmd",
-  html = "lectures/week_10/lec_28_websites.html",
-  background = c("[GitHub Pages](https://pages.github.com/)",
-                 "[Chap 17 of HGG](https://happygitwithr.com/existing-github-last.html)"),
-  zoom = ""
-)
-
-## day ?? ####
-docker <- list(
-  title = "Dockers",
-  topics = c("<i>Dr. Dara Farrell</i>", "<b>Dockers</b>", "Containers", "Images"),
-  pdf = "",
-  rmd = "",
-  html = c("lectures/week_10/rocker_workflow.pdf"),
-  background = c("[Rocker Project](https://rocker-project.org/)",
-                 "[Intro to Docker for R Users](https://colinfay.me/docker-r-reproducibility/)"),
-  zoom = ""
-)
-
-## day 29 ####
-code_reviews <- list(
-  title = "Code reviews",
-  topics = c("<b>Code reviews</b>", "Checklists", "Do's and Don'ts"),
-  pdf = c(""),
-  rmd = "lectures/week_10/lec_29_code_reviews.Rmd",
-  html = "lectures/week_10/lec_29_code_reviews.html",
-  background = c("[rOpenSci Guide](https://devguide.ropensci.org/index.html)"),
-  zoom = ""
-)
-
-## day 30 ####
-ethics <- list(
-  title = "Ethics in data science",
-  topics = c("<b>Ethics in data science</b>", "Data selection", "Analysis & inference"),
-  pdf = c(""),
-  rmd = "lectures/week_10/lec_30_data_ethics.Rmd",
-  html = "lectures/week_10/lec_30_data_ethics.html",
-  background = c("[FAIR data principles](https://www.go-fair.org/fair-principles/)",
-                 "[CARE data principles](https://static1.squarespace.com/static/5d3799de845604000199cd24/t/5da9f4479ecab221ce848fb2/1571419335217/CARE+Principles_One+Pagers+FINAL_Oct_17_2019.pdf)",
-                 "[Lum (2018) Bias in data](https://www.youtube.com/watch?v=5zxDwA99soA)",
-                 "[Fox (2020) Faculty job market](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1002/bes2.1624)"),
   zoom = ""
 )
 ```
