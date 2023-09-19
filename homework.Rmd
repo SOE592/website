@@ -21,30 +21,25 @@ Students will have occasional assignments that will require them to demonstrate 
 
 All assignments will be submitted, reviewed, and returned via GitHub.
 
-```{r week_hw, include = FALSE}
+```{r day_hw, include = FALSE}
 ## empty list for labs
-week_hw <- vector("list", 8)
-names(week_hw) <- paste0("L", seq(8))
+day_hw <- vector("list", 3)
+names(day_hw) <- paste0("L", seq(3))
 ## hw topics
-week_hw$L1 <- github
-week_hw$L2 <- forking_workflows
-week_hw$L3 <- getting_help
-week_hw$L4 <- databases
-week_hw$L5 <- data_viz
-week_hw$L6 <- publishing
-week_hw$L7 <- packages 
-week_hw$L8 <- presentations
+day_hw$L1 <- github
+day_hw$L2 <- forking_workflows
+day_hw$L3 <- getting_help
 ```
 
 ```{r topics, include = FALSE}
-topics <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$topics)} else {""} })
+topics <- lapply(day_hw, function(x) { if(is.list(x)) {c(x$topics)} else {""} })
 ## topics formatted for html
 topics_html <- sapply(lapply(topics, paste, "<br>", collapse = ""), c)
 names(topics_html) <- NULL
 ```
 
 ```{r assignment_links, include = FALSE}
-assignment_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$html)} else {""} })
+assignment_links <- lapply(day_hw, function(x) { if(is.list(x)) {c(x$html)} else {""} })
 assignment_links_html <- sapply(lapply(assignment_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
@@ -62,7 +57,7 @@ assignment_links_html <- sapply(lapply(assignment_links, function(x) {
 ```
 
 ```{r template_links, include = FALSE}
-template_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$rmd)} else {""} })
+template_links <- lapply(day_hw, function(x) { if(is.list(x)) {c(x$rmd)} else {""} })
 template_links_html <- sapply(lapply(template_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
@@ -80,7 +75,7 @@ template_links_html <- sapply(lapply(template_links, function(x) {
 ```
 
 ```{r data_links, include = FALSE}
-data_links <- lapply(week_hw, function(x) { if(is.list(x)) {x$data} else {""} })
+data_links <- lapply(day_hw, function(x) { if(is.list(x)) {x$data} else {""} })
 data_links_html <- sapply(lapply(data_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
@@ -98,7 +93,7 @@ data_links_html <- sapply(lapply(data_links, function(x) {
 ```
 
 ```{r key_links, include = FALSE}
-key_links <- lapply(week_hw, function(x) { if(is.list(x)) {c(x$key)} else {""} })
+key_links <- lapply(day_hw, function(x) { if(is.list(x)) {c(x$key)} else {""} })
 key_links_html <- sapply(lapply(key_links, function(x) {
   if(length(x)>1) {
     tmp1 <- paste0("[",
@@ -120,25 +115,25 @@ names(key_links_html) <- NULL
 ```{r generate_table, echo=FALSE}
 ## data frame with dates & topics
 syl_txt <- data.frame(
-  assign_date = seq(8),
-  due_date = seq(8),
+  assign_date = seq(3),
+  # due_date = seq(3),
   topics = topics_html,
   assignment_links = assignment_links_html,
   # template_links = template_links_html,
   data_links = data_links_html,
   key_links = key_links_html
 )
-colnames(syl_txt) <- c("Assigned", "Due", "Topic(s)", "Instructions", "Data", "Answer key")
+colnames(syl_txt) <- c("Number", "Topic", "Instructions", "Data", "Answer key")
 rownames(syl_txt) <- NULL
 
 ## generate table
 kable(syl_txt, format = "html", caption = " ",
-      align = "cclccc", escape = FALSE) %>%
+      align = "clccc", escape = FALSE) %>%
   kable_styling(bootstrap_options = "striped",
                 full_width = FALSE,
                 position = "left") %>%
-  column_spec(c(1, 2), width = "6em") %>%
-  column_spec(c(4, 5), width = "7em") %>%
-  column_spec(6, width = "8em")
+  column_spec(c(1), width = "6em") %>%
+  column_spec(c(3, 4), width = "7em") %>%
+  column_spec(5, width = "8em")
 ```
 
