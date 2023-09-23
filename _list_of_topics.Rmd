@@ -1,0 +1,178 @@
+---
+title: "2024 List of Topics"
+output: html_document
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+## session 1 ####
+lec_1 <- list(
+  title = "Introduction & background concepts",
+  topics = c("Introduction & background concepts"),
+  pdf = c(""),
+  rmd = "",
+  html = "lectures/day_01/lec_01_intro_concepts.html",
+  background = "",
+  zoom = ""
+)
+
+## session 2 ####
+lab_1 <- list(
+  title = "Basic functions",
+  topics = c("Basic functions"),
+  pdf = c(""),
+  rmd = "",
+  html = "",
+  background = "",
+  zoom = ""
+)
+
+## session 3 ####
+lec_2 <- list(
+  title = "Autoregressive & random-walk models",
+  topics = c("Autoregressive & random-walk models"),
+  pdf = c(""),
+  rmd = "",
+  html = "lectures/day_01/lec_02_autoregressive_models.html",
+  background = "",
+  zoom = ""
+)
+
+## session 4 ####
+lab_2 <- list(
+  title = "Simulating & fitting models",
+  topics = c("Simulating & fitting models"),
+  pdf = c(""),
+  rmd = "",
+  html = "",
+  background = "",
+  zoom = ""
+)
+
+## session 5 ####
+lab_3 <- list(
+  title = "Installing software & packages",
+  topics = c("Installing software & packages"),
+  pdf = c(""),
+  rmd = "",
+  html = "",
+  background = "",
+  zoom = ""
+)
+
+## session 6 ####
+lec_3 <- list(
+  title = "Univariate state-space models",
+  topics = c("Univariate state-space models"),
+  pdf = c(""),
+  rmd = "",
+  html = "lectures/day_02/lec_03_univariate_SSM.html",
+  background = "",
+  zoom = ""
+)
+
+## session 7 ####
+lab_4 <- list(
+  title = "Count-based PVA",
+  topics = c("Count-based PVA"),
+  pdf = c(""),
+  rmd = "",
+  html = "",
+  background = "",
+  zoom = ""
+)
+
+## session 8 ####
+lec_4 <- list(
+  title = "Multivariate state-space models",
+  topics = c("Multivariate state-space models"),
+  pdf = c(""),
+  rmd = "",
+  html = "lectures/day_02/lec_04_multivariate_SSM.html",
+  background = "",
+  zoom = ""
+)
+
+## session 9 ####
+lab_5 <- list(
+  title = "Analyzing animal movement",
+  topics = c("Analyzing animal movement"),
+  pdf = c(""),
+  rmd = "",
+  html = "",
+  background = "",
+  zoom = ""
+)
+
+## session 10 ####
+lab_6 <- list(
+  title = "Estimating species interactions",
+  topics = c("Estimating species interactions"),
+  pdf = c(""),
+  rmd = "",
+  html = "",
+  background = "",
+  zoom = ""
+)
+
+## session 11 ####
+lec_5 <- list(
+  title = "Dynamic Factor Analysis",
+  topics = c("Dynamic Factor Analysis"),
+  pdf = c(""),
+  rmd = "",
+  html = "lectures/day_03/lec_05_intro_to_DFA.html",
+  background = "",
+  zoom = ""
+)
+
+## session 12 ####
+lab_7 <- list(
+  title = "Identifying common trends",
+  topics = c("Identifying common trends"),
+  pdf = c(""),
+  rmd = "",
+  html = "",
+  background = "",
+  zoom = ""
+)
+
+## session 13 ####
+lec_6 <- list(
+  title = "Dynamic Linear Models",
+  topics = c("Dynamic Linear Models"),
+  pdf = c(""),
+  rmd = "",
+  html = "lectures/day_03/lec_06_intro_to_DLMs.html",
+  background = "",
+  zoom = ""
+)
+
+## session 14 ####
+lab_8 <- list(
+  title = "Forecasting",
+  topics = c("Forecasting"),
+  pdf = c(""),
+  rmd = "",
+  html = "",
+  background = "",
+  zoom = ""
+)
+
+## session 15 ####
+lab_9 <- list(
+  title = "Review",
+  topics = c("Review"),
+  pdf = c(""),
+  rmd = "",
+  html = "",
+  background = "",
+  zoom = ""
+)
+```
+
+
+
