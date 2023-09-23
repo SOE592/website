@@ -1,0 +1,21 @@
+---
+title: "Simulating and fitting time series"
+subtitle: "SOE 592 – Intro to Time Series Analysis"
+author: "Mark Scheuerell"
+date: "3 Jan 2024"
+output:
+  html_document:
+    theme: sandstone
+    highlight: textmate
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r dfa-setup, include=FALSE, purl=FALSE}
+## in case you forget to add a chunk label
+knitr::opts_knit$set(unnamed.chunk.label = "dfa-")
+```
+
+# Introduction
+

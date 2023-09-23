@@ -1,0 +1,210 @@
+---
+title: "Backshift & difference operators"
+subtitle: "SOE 592 – Applied Time Series Analysis"
+author: "Mark Scheuerell"
+date: "3 Jan 2024"
+output:
+  ioslides_presentation:
+    css: lecture_slides.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+set.seed(123)
+```
+
+## Backshift & difference operators
+
+
+
+## The backshift shift operator
+
+The _backshift shift operator_ ($\mathbf{B}$) is an important function in time series analysis, which we define as
+
+$$
+\mathbf{B} x_t = x_{t-1}
+$$
+
+or more generally as
+
+$$
+\mathbf{B}^k x_t = x_{t-k}
+$$
+
+## The backshift shift operator
+
+For example, a random walk with
+
+$$
+x_t = x_{t-1} + w_t
+$$
+
+can be written as
+
+$$
+\begin{align}
+  x_t &= \mathbf{B} x_t + w_t \\
+  x_t - \mathbf{B} x_t &= w_t \\
+  (1 - \mathbf{B}) x_t &= w_t \\
+  x_t &= (1 - \mathbf{B})^{-1} w_t
+\end{align}
+$$
+
+
+## The difference operator
+
+The _difference operator_ ($\nabla$) is another important function in time series analysis, which we define as
+
+$$
+\nabla x_t = x_t - x_{t-1}
+$$
+
+
+## The difference operator
+
+The _difference operator_ ($\nabla$) is another important function in time series analysis, which we define as
+
+$$
+\nabla x_t = x_t - x_{t-1}
+$$
+
+For example, first-differencing a random walk yields white noise
+
+$$
+\begin{align}
+  \nabla x_t &= x_{t-1} + w_t \\
+  x_t - x_{t-1} &= x_{t-1} + w_t - x_{t-1}\\
+  x_t - x_{t-1} &= w_t\\
+\end{align}
+$$
+
+
+## The difference operator
+
+The difference operator and the backshift operator are related
+
+$$
+\nabla^k = (1 - \mathbf{B})^k
+$$
+
+
+## The difference operator
+
+The difference operator and the backshift operator are related
+
+$$
+\nabla^k = (1 - \mathbf{B})^k
+$$
+
+For example
+
+$$
+\begin{align}
+  \nabla x_t &= (1 - \mathbf{B})x_t \\
+  x_t - x_{t-1} &= x_t - \mathbf{B} x_t \\
+  x_t - x_{t-1} &= x_t - x_{t-1}
+\end{align}
+$$
+
+
+## Differencing to remove a trend
+
+Differencing is a simple means for removing a trend
+
+The 1st-difference removes a linear trend
+
+A 2nd-difference will remove a quadratic trend
+
+
+## Differencing to remove a trend
+
+```{r diff_linear, fig.align="center"}
+## create biased RW
+rr <- ww <- rnorm(50)
+for(t in 2:50) {
+  rr[t] <- 0.3 + rr[t-1] + ww[t]
+}
+
+par(mfrow = c(2,1), mai = c(0.5,0.8,0.1,0), omi=c(0,0,0,0))
+
+## raw data
+plot.ts(rr, las = 1,
+        ylab = expression(italic(x[t])))
+## first difference
+plot.ts(diff(rr), las = 1,
+        ylab = expression(nabla~italic(x[t])))
+```
+
+
+## Differencing to remove seasonality
+
+Differencing is a simple means for removing a seasonal effect
+
+Using a 1st-difference with $k = period$ removes both trend & seasonal effects
+
+
+## Differencing to remove seasonality
+
+```{r diff_season, fig.align="center"}
+par(mfrow = c(2,1), mai = c(0.5,0.8,0.1,0), omi=c(0,0,0,0))
+
+## raw data
+plot.ts(lwa[,"Temp"], las = 1,
+        ylab = "Temperature")
+## first difference
+plot.ts(diff(lwa[,"Temp"], 12), las = 1,
+        ylab = expression(nabla~Temperature))
+```
+
+
+## Differencing to remove a trend in R
+
+We can use `diff()` to easily compute differences
+
+```{r diff_example, echo = TRUE, eval = FALSE}
+diff(x,
+     lag,
+     differences
+     )
+```
+
+
+## Differencing to remove a trend in R
+
+```{r diff_example_2, echo = TRUE, eval = FALSE}
+diff(x,
+     ### <b>
+     lag,
+     ### </b>
+     differences
+     )
+```
+
+`lag` $(h)$ specifies $t - h$
+
+`lag = 1` (default) is for non-seasonal data
+
+`lag = 4` would work for quarterly data or
+
+`lag = 12` for monthly data
+
+
+## Differencing to remove a trend in R
+
+```{r diff_example_3, echo = TRUE, eval = FALSE}
+diff(x,
+     lag,
+     ### <b>
+     differences
+     ### </b>
+     )
+```
+
+`differences` is the number of differencing operations
+
+`differences = 1` (default) is for a linear trend
+
+`differences = 2` is for a quadratic trend
+
+
+
