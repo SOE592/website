@@ -1,11 +1,11 @@
 ---
-title: "Schedule & course materials"
+title: "Topics & course materials"
 output: html_document
 ---
 
 <br>
 
-#### Navigating through a slide deck
+#### Navigating through lecture slides
 
 * Use the arrow keys (&#8592;/&#8594;) on your keyboard to go forward or backward
 
@@ -13,38 +13,38 @@ output: html_document
 
 * In overview mode, click on a slide or press "esc" to zoom in on it
 
-* You can also print the slides to a pdf by selecting the "print" option from your browser's File menu.
+* You can print the slides to a pdf by selecting the "print" option from your browser's File menu.
 
 
 ```{r child = "_timeline.Rmd", include=FALSE}
 ```
 
-```{r child = "_list_of_lectures.Rmd", include=FALSE}
+```{r child = "_list_of_topics.Rmd", include=FALSE}
 ```
 
 ```{r session, include = FALSE}
 ## empty list for lecs
 session <- vector("list", 15)
 names(session) <- paste0("L", seq(15))
-## lecture topics
+## topics
 ## day 1
-session$L1 <- session_1
-session$L2 <- session_2
-session$L3 <- session_3
-session$L4 <- session_4
-session$L5 <- session_5
+session$L1 <- lec_1
+session$L2 <- lab_1
+session$L3 <- lec_2
+session$L4 <- lab_2
+session$L5 <- lab_3
 ## day 2
-session$L6 <- session_6
-session$L7 <- session_7
-session$L8 <- session_8
-session$L9 <- session_9
-session$L10 <- session_10
+session$L6 <- lec_3
+session$L7 <- lab_4
+session$L8 <- lec_4
+session$L9 <- lab_5
+session$L10 <- lab_6
 ## day 3
-session$L11 <- session_11
-session$L12 <- session_12
-session$L13 <- session_13
-session$L14 <- session_14
-session$L15 <- session_15
+session$L11 <- lec_5
+session$L12 <- lab_7
+session$L13 <- lec_6
+session$L14 <- lab_8
+session$L15 <- lab_9
 ```
 
 ```{r topics, include = FALSE, eval = FALSE}
@@ -55,10 +55,10 @@ names(lec_titles_html) <- NULL
 ```
 
 ```{r lecture_topics, include = FALSE}
-lec_topics <- lapply(session, function(x) { if(is.list(x)) {x$topics} else {""} })
+topics <- lapply(session, function(x) { if(is.list(x)) {x$topics} else {""} })
 ## topics formatted for html
-lec_topics_html <- sapply(lapply(lec_topics, paste, "<br>", collapse = ""), c)
-names(lec_topics_html) <- NULL
+topics_html <- sapply(lapply(topics, paste, "<br>", collapse = ""), c)
+names(topics_html) <- NULL
 ```
 
 ```{r lec_links, include = FALSE}
@@ -161,7 +161,7 @@ names(background_links_html) <- NULL
 syl_txt <- data.frame(
   date = week,
   session = periods,
-  lec_topics = lec_topics_html,
+  topics = topics_html,
   lec_links = slide_links_html,
   # rmd_links = source_links_html,
   # pdf_links = pdf_links_html,
@@ -181,8 +181,9 @@ kableExtra::kable(syl_txt, format = "html", caption = " ",
   kable_styling(bootstrap_options = "striped",
                 full_width = FALSE,
                 position = "left") %>%
-  column_spec(c(1, 2, 4), width = "6em") %>%
-  column_spec(3, width = "15em") %>%
-  column_spec(5, width = "15em") 
+  column_spec(c(1, 4), width = "6em") %>%
+  column_spec(c(2), width = "8em") %>%
+  column_spec(3, width = "18em") %>%
+  column_spec(5, width = "18em") 
 ```
 
