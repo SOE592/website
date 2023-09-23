@@ -4,7 +4,7 @@ navbar:
   right:
     - text: "Syllabus"
       href: syllabus.html
-    - text: "Schedule & materials"
+    - text: "Topics & materials"
       href: lectures.html
     - text: "Assignments"
       href: homework.html
