@@ -1,0 +1,1099 @@
+---
+title: "Univariate state-space models"
+subtitle: "SOE 592 – Applied Time Series Analysis"
+author: "Mark Scheuerell"
+date: "4 Jan 2024"
+output:
+  ioslides_presentation:
+    css: lecture_slides.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+set.seed(206)
+```
+
+## Topics
+
+Univariate state-space models
+
+1. state (process) model
+
+2. observation model
+
+Simple models of population dynamics
+
+
+## State-space models
+
+Consist of 2 parts
+
+
+## Part 1: State model
+
+Describes the __true state of nature__ over time
+
+```{r state_model, fig.height=4, fig.width=8, out.height="100%", out.width="100%", fig.align='center'}
+par(mai=c(0.8,0.8,0,0), omi=rep(0,4))
+## boundaries
+ss <- 5
+nn <- 7
+rr <- ss*3
+cc <- ss*nn
+## mid-points
+xm <- ss/2 + seq(0,cc-ss,ss)
+ymt <- rr - ss/2
+ymb <- ss/2
+## arrow locs
+x0t <- seq(ss, by=2*ss, len=3)
+x1t <- x0t + ss
+## empty plot space
+plot(c(0,cc), c(0,rr), type="n", xlab="", ylab="",
+     xaxt="n", yaxt="n", bty="n")
+## top row: state
+symbols(x=xm[c(1,3,5,7)], y=rep(ymt,4), circles=rep(ss/2,4),
+        lty="solid",  fg=NA, bg="#488fdf",
+        inches=FALSE, add=TRUE, lwd=3)
+text("Truth", x=-ss, y=ymt, adj=c(0,0.5), xpd=NA,
+     cex=2, col="#488fdf")
+arrows(x0=x0t,x1=x1t,y0=ymt, col="#488fdf", lwd=3, length=0.12)
+## Time or space
+arrows(x0=ss/2, x1=cc-ss/2, y0=-ss/3+ss*2,
+       length=0.12, lwd=3, xpd=NA)
+text("Time", x=cc/2, y=-ss/2+ss*2, xpd=NA, pos=1, cex=2)
+```
+
+
+## Part 1: State model
+
+States of nature might be:
+
+ * animal's location
+ 
+ * density of organisms
+ 
+ * reproductive state
+ 
+
+## Changes in the state of nature
+
+We can think of changes in the state of nature being driven by a combination of
+
+ * intrinsic (eg, fecundity), and
+
+ * extrinsic factors (eg, temperature)
+
+
+## Process errors
+
+Some of the extrinsic drivers may be unknown
+
+In time series modeling, we often call these unknown extrinsic factors _process errors_
+
+
+## Observation (sampling) errors
+
+Consider for a moment the very act of collecting data
+
+Information gathered depends on many factors
+
+* Environmental conditions (eg, turbidity, currents)
+
+* Behavior (eg, vertical migration, threat avoidance)
+
+* Demographics (age, sex, maturity)
+
+* Sampling design/coverage
+
+
+## Part 2: Observation model
+
+__Data = Truth + Error__
+ 
+```{r obs_diag, fig.height=4, fig.width=8, out.height="100%", out.width="100%", fig.align='center'}
+par(mai=c(0.8,0.8,0,0), omi=rep(0,4))
+## arrow locs
+x0t <- seq(ss, by=2*ss, len=3)
+x1t <- x0t + ss
+y0b <- rr - ss
+y1b <- ss
+## empty plot space
+plot(c(0,cc), c(0,rr), type="n", xlab="", ylab="",
+     xaxt="n", yaxt="n", bty="n")
+## top row: state
+symbols(x=xm[c(1,3,5,7)], y=rep(ymt,4), circles=rep(ss/2,4),
+        lty="solid",  fg=NA, bg="#488fdf",
+        inches=FALSE, add=TRUE, lwd=3)
+text("Truth", x=-ss, y=ymt, adj=c(0,0.5), xpd=NA,
+     cex=2, col="#488fdf")
+## arrows
+arrows(x0=x0t,x1=x1t,y0=ymt, col="#488fdf", lwd=3, length=0.12)
+## bottom row: obs
+symbols(x=xm[c(1,3,5,7)], y=rep(ss/2,4), circles=rep(ss/2,4),
+        lty="solid",  fg=NA, bg="#844870",
+        inches=FALSE, add=TRUE, lwd=3)
+text("Data", x=-ss, y=ss/2, adj=c(0,0.5), xpd=NA,
+     cex=2, col="#844870")
+## arrows
+arrows(x0=xm[c(1,3,5,7)], y0=y0b, y1=y1b,
+       col="#c10101", lwd=3, length=0.12)
+## Time or space
+arrows(x0=ss/2, x1=cc-ss/2, y0=-ss/3,
+       length=0.12, lwd=3, xpd=NA)
+text("Time", x=cc/2, y=-ss/2, xpd=NA, pos=1, cex=2)
+```
+
+
+## Consider these data
+
+```{r ex_bias_rw}
+TT <- 30
+
+uu <- -0.2
+  
+ww <- xx <- rnorm(TT)
+for(t in 2:TT) {
+  xx[t] <- xx[t-1] + uu + ww[t]
+}
+
+ee <- rnorm(TT)
+yy <- xx + ee
+
+par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+plot.ts(yy, ylim = range(xx,yy),
+        lwd = 2, type = "o", pch = 16, cex = 1.5, col = "#844870",
+        las = 1, ylab = expression(italic(y[t])))
+```
+
+
+## Model options | Linear regression
+
+State model
+
+$x_t = \alpha - \beta t$
+
+Observation model
+
+$y_t = x_t + v_t ~ \text{with} ~ v_t \sim \text{N}(0,r)$
+
+## Linear regression fitted values
+
+```{r linear_regr}
+theta <- coef(lm(yy ~ seq(TT)))
+y_obs <- theta[1] + theta[2] * seq(TT)
+
+par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+plot.ts(yy, lwd = 2, type = "o", pch = 16, ylim = range(yy, y_obs),
+        cex = 1.5, col = "#844870",
+        las = 1, ylab = expression(italic(x[t])~~or~~italic(y[t])))
+lines(y_obs, lwd = 2, type = "o", pch = 16, col = "#488fdf")
+```
+
+<!-- All of the variance in $y_t$ is due to observation error -->
+
+
+## Observation errors
+
+```{r}
+theta <- coef(lm(yy ~ seq(TT)))
+y_obs <- theta[1] + theta[2] * seq(TT)
+
+par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+plot.ts(yy, lwd = 2, type = "o", pch = 16, ylim = range(yy, y_obs),  
+        cex = 1.5, col = "#844870",
+        las = 1, ylab = expression(italic(x[t])~~or~~italic(y[t])))
+lines(y_obs, lwd = 2, type = "o", pch = 16, col = "#488fdf")
+segments(seq(TT), y0 = y_obs, y1 = yy, col = "red")
+```
+
+<!-- Errors $v_t = y_t - x_t$ -->
+
+
+## Model options | Biased random walk
+
+State model
+
+$x_t = x_{t-1} + u + w_t ~ \text{with} ~ w_t \sim \text{N}(0,q)$
+
+Observation model
+
+$y_t = x_t$
+
+
+## Biased random walk
+
+```{r brw_states_obs_0}
+xw <- rbind(cbind(seq(TT), xx), cbind(seq(TT)+0.5, xx+uu))
+xw <- xw[order(xw[,1]),]
+xw[,1] <- c(1, rep(seq(2, TT), ea = 2), TT)
+  
+par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+## blank slate
+plot.ts(yy, ylim = range(xx,yy), type = "n",
+        las = 1, ylab = expression(italic(x[t])))
+lines(xw[,1], xw[,2], lwd = 2, col = "gray")
+lines(xx, lwd = 2, type = "o", pch = 16, col = "#488fdf")
+```
+
+
+## Examples of biased random walks
+
+```{r ex_biased_rw, fig.dim = c(8,4.5)}
+x1 <- cumsum(rnorm(30, 0.1, 0.3)) + 10
+
+x2 <- cumsum(rnorm(30, -0.1, 0.3)) + 10
+
+clr1 <- c("#f7fbff",
+          "#deebf7",
+          "#c6dbef",
+          "#9ecae1",
+          "#6baed6",
+          "#4292c6",
+          "#2171b5",
+          "#08519c",
+          "#08306b")
+
+clr2 <- c("#fff5f0",
+          "#fee0d2",
+          "#fcbba1",
+          "#fc9272",
+          "#fb6a4a",
+          "#ef3b2c",
+          "#cb181d",
+          "#a50f15",
+          "#67000d")
+
+par(mfrow = c(1,2), mai = c(1, 1, 0.75, 0))
+plot.ts(x1, las = 1, col = "dodgerblue", lwd = 2, ylim = c(8, 16),
+        ylab = expression(italic(x[t])), main = "")
+mtext("Positive bias", side = 3, line = 1, cex = 1.5)
+for(i in 9:3) {
+  lines(cumsum(rnorm(30, 0.1, 0.3)) + 10,
+        col = clr1[i], lwd = 2)
+}
+
+plot.ts(x2, las = 1, col = "indianred", lwd = 2,  ylim = c(4, 12),
+        ylab = expression(italic(x[t])), main = "")
+mtext("Negative bias", side = 3, line = 1, cex = 1.5)
+for(i in 9:3) {
+  lines(cumsum(rnorm(30, -0.1, 0.3)) + 10,
+        col = clr2[i], lwd = 2)
+}
+```
+
+
+## Biased random walk fit to earlier data
+
+```{r biased_rw_fit}
+par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+plot.ts(yy, lwd = 2, type = "o", pch = 16, cex = 1.5, col = "#844870",
+        las = 1, ylab = expression(italic(y[t])))
+lines(yy, lwd = 2, type = "o", pch = 16, col = "#488fdf")
+```
+
+<!-- All of the variance in $y_t$ is due to process error -->
+
+
+## Process errors
+
+```{r biased_rw_errors}
+par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+plot.ts(yy, lwd = 2, type = "o", pch = 16, cex = 1.5, col = "#844870",
+        las = 1, ylab = expression(italic(y[t])))
+lines(yy, lwd = 2, type = "o", pch = 16, col = "#488fdf")
+segments(seq(2,TT), y0 = yy[-TT], y1 = yy[-1], col = "red")
+```
+
+<!-- Errors: $w_t = y_t - y_{t-1}$ -->
+
+
+## Model options | Biased random walk with observation error
+
+State model
+
+$$
+x_t = x_{t-1} + u + w_t ~ \text{with} ~ w_t \sim \text{N}(0,q)
+$$
+
+Observation model
+
+$$
+y_t = x_t + v_t ~ \text{with} ~ v_t \sim \text{N}(0,r)
+$$
+
+
+## Biased random walk
+
+```{r brw_states_obs}
+xw <- rbind(cbind(seq(TT), xx), cbind(seq(TT)+0.5, xx+uu))
+xw <- xw[order(xw[,1]),]
+xw[,1] <- c(1, rep(seq(2, TT), ea = 2), TT)
+  
+par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+## blank slate
+plot.ts(yy, ylim = range(xx,yy), type = "n",
+        las = 1, ylab = expression(italic(x[t])))
+lines(xw[,1], xw[,2], lwd = 2, col = "gray")
+lines(xx, lwd = 2, type = "o", pch = 16, col = "#488fdf")
+```
+
+
+## Biased random walk
+
+```{r brw_states_obs_2}
+par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+## blank slate
+plot.ts(yy, ylim = range(xx,yy), type = "n",
+        las = 1, ylab = expression(italic(x[t])))
+## lines(xw[,1], xw[,2], type = "o", pch = 16, lwd = 2, col = "gray")
+lines(xx, lwd = 2, type = "o", pch = 16, col = "#488fdf")
+```
+
+
+## Biased random walk with obs error
+
+```{r brw_states_obs_errors}
+par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+plot.ts(yy, type = "n",
+        las = 1, ylab = expression(italic(x[t])~~or~~italic(y[t])))
+lines(xx, lwd = 2, type = "o", pch = 16, col = "#488fdf")
+lines(yy, lwd = 2, type = "o", pch = 16, cex = 1.5, col = "#844870")
+segments(seq(TT), y0 = xx, y1 = yy, col = "red")
+```
+
+
+## Biased random walk with obs error
+
+```{r brw_states_obs_errors_2}
+par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+## blank slate
+plot.ts(yy, ylim = range(xx,yy), type = "n",
+        las = 1, ylab = expression(italic(x[t])~~or~~italic(y[t])))
+lines(xw[,1], xw[,2], lwd = 2, col = "gray")
+lines(xx, lwd = 2, type = "o", pch = 16, col = "#488fdf")
+segments(seq(TT), y0 = xx, y1 = yy, col = "red")
+lines(yy, lwd = 2, type = "o", pch = 16, col = "#844870", cex = 1.5)
+```
+
+The variance in $y_t$ is due to both process & observation error
+
+
+## Separating process & obs errors
+
+How is it possible to separate out both the process and observation errors?
+
+They have different temporal patterns
+
+
+## Separating process & obs errors
+
+```{r ex_proc_obs_errors, fig.align="center"}
+xp <- matrix(NA, TT, 3)
+xp[1,] <- c(0,0,0)
+
+for(t in 2:TT) {
+  xp[t,] <- xp[t-1,] + uu + rnorm(3)
+}
+
+yp <- xp[,1] + matrix(rnorm(TT*3), TT, 3)
+
+par(mfcol = c(2,3), mai = c(0.6,0.6,0.1,0), omi = c(0,0,0.2,0))
+for(i in 1:3) {
+  plot.ts(xp[,i], xlab = "", ylab = expression(italic(x[t])))
+  if(i == 2) {
+    mtext(side = 3, " Different realizations of same process",
+          line = 0.5, xpd = NA)
+    }
+  plot.ts(yp[,i], ylab = expression(italic(y[t])))
+  if(i == 2) {
+    mtext(side = 3, " Different observations of same process",
+          line = 0.5, xpd = NA)
+    }
+}
+```
+
+
+# Population growth | Density independent
+
+
+## Density-independent popn growth | Exponential growth/decline in continuous time
+
+$$
+N(t) = N_0 ~ \underbrace{\exp(u)}_{\substack{\text{rate of} \\ \text{change}}} \underbrace{\exp(w t)}_{\substack{\text{stochastic} \\ \text{environment}}}
+$$
+
+
+## Density-independent popn growth | In discrete time, with a time step of 1 year
+
+$$
+N_t = N_{t-1} \exp(u + w_t)
+$$
+
+
+## Density-independent popn growth | In discrete time, with a time step of 1 year
+
+$$
+N_t = N_{t-1} \exp(u + w_t)
+$$
+
+<br>
+
+Taking the log of both sides and substituting $x_t$ for $\log(N_t)$
+
+$$
+\log (N_t) = \log (N_{t-1}) + u + w_t \\
+\Downarrow \\
+x_t = x_{t-1} + u + w_t
+$$
+
+
+## Density-independent popn growth | Biased random walk
+
+If we assume that the errors are white noise
+
+$$
+w_t \sim \text{N}(0, q)
+$$
+
+then our model of populations dynamics
+
+$$
+x_t = x_{t-1} + u + w_t
+$$
+
+is a biased random walk
+
+
+## Simulate a biased random walk
+
+```{r rw_sim, echo = TRUE, eval = TRUE}
+## number of time steps
+TT <- 40
+## bias term
+uu <- 0.2
+## time series of process errors with var = 1
+ww <- rnorm(TT, 0, sqrt(1))
+## initialize state & set x0 = w0
+xx <- ww
+## loop over time steps
+for(t in 2:TT) {
+  xx[t] <- uu + xx[t-1] + ww[t]
+}
+```
+
+
+## Simulate a biased random walk
+
+Add some observation error
+
+```{r rw_obs_error, echo=TRUE}
+## obs errors with var = 0.3
+vv <- rnorm(TT, 0, sqrt(0.3))
+## obs data
+yy <- xx + vv
+```
+
+
+<!-- ## Plot log-population size over time -->
+
+<!-- Plot the state and observation -->
+
+<!-- ```{r rw_plot_code, echo=TRUE, eval=FALSE} -->
+<!-- plot.ts(xx, lwd = 2, type = "o", pch = 16, col = "#488fdf", -->
+<!--         las = 1, ylim = c(min(xx,yy), max(xx,yy)), -->
+<!--         ylab = expression(italic(x[t])~~or~~italic(y[t]))) -->
+<!-- lines(yy, lwd = 2, type = "o", pch = 16, cex = 1.5, col = "#844870") -->
+<!-- ``` -->
+
+
+## Log-population size over time
+
+```{r rw_plot_out, align.fig="center"}
+par(mai = c(0.8,0.8,0,0), omi = c(0,0,0,0))
+plot.ts(xx, lwd = 2, type = "o", pch = 16, col = "#488fdf",
+        las = 1, ylim = c(min(xx,yy), max(xx,yy)),
+        ylab = expression(italic(x[t])~~or~~italic(y[t])))
+lines(yy, lwd = 2, type = "o", pch = 16, cex = 1.5, col = "#844870")
+```
+
+
+# Fitting models
+
+
+## Fitting models with `MARSS()`
+
+We can use the __{MARSS}__ pkg for R to fit state-space models
+
+To do so, we must write the model out just as we would on a white board
+
+
+## Fitting models with `MARSS()`
+
+Here are the main function arguments
+
+```{r, echo=TRUE, eval=FALSE}
+MARSS(y, model = NULL, inits = NULL, control = NULL, ...)
+```
+
+* `y` is an $n \times T$ `matrix` of data (observations)
+
+* `model` a `list` that defines the state-space model in terms of parameters to be estimated
+
+* `inits` [_optional_] a `list` of initial values for parameters to be estimated
+
+* `control` [_optional_] a `list` of options for controlling fitting algorithms, setting tolerance & convergence parameters, etc
+
+
+## Fitting models with `MARSS()`
+
+`MARSS()` uses an expanded form of state-space model, such that our biased random walk
+
+$$
+\begin{align}
+x_t &= x_{t-1} + u + w_t \\
+y_t &= x_t + v_t
+\end{align}
+$$
+instead becomes
+
+$$
+\begin{align}
+x_t &= b x_{t-1} + u + w_t \\
+y_t &= Z x_t + a + v_t
+\end{align}
+$$
+
+with $b = 1$, $Z = 1$, and $a = 0$
+
+
+## Fitting models with `MARSS()`
+
+State model  
+$x_t = b x_{t-1} + u + w_t ~~ \text{with} ~~ w_t \sim \text{N}(0,q)$
+
+Observation model  
+$y_t = Z x_t + a + v_t ~~ \text{with} ~~ v_t \sim \text{N}(0,r)$
+
+```{r, echo=TRUE}
+mod_list <- list(
+  ## state model
+  B = matrix(1), U = matrix("u"), Q = matrix("q"),
+  ## obs model
+  Z = matrix(1), A = matrix(0), R = matrix("r")
+  )
+```
+
+**Note**: `MARSS()` works with the `matrix` class in **R**, so we have to define any scalar as a $1 \times 1$ matrix
+
+
+## Fitting models with `MARSS()`
+
+What about the initial state $x_0$?
+
+$$
+x_0 \sim \text{N}(\pi,\lambda)
+$$
+
+Estimating both $\pi$ and $\lambda$ is nearly impossible, so the default is to treat $x_0$ as fixed, but unknown, effect rather than as a random effect, such that
+
+$$
+x_0 \sim \text{N}(\pi,0)
+$$
+
+`MARSS()` will do this for us
+
+
+## Fitting models with `MARSS()`
+
+We can ignore the `inits` and `control` arguments for now and fit the model
+
+```{r, echo=TRUE, eval=FALSE}
+## load MARSS package
+library(MARSS)
+## define the data as an N (rows) x T (cols) matrix
+dat <- matrix(yy, nrow = 1, ncol = TT)
+## fit the model
+mod_fit <- MARSS(y = dat, model = mod_list)
+```
+
+
+## Fitting models with `MARSS()` {.smaller}
+
+```{r brw_fit, echo=FALSE, eval=TRUE}
+## load MARSS package
+library(MARSS)
+## define the data as an N (rows) x T (cols) matrix
+dat <- matrix(yy, nrow = 1, ncol = TT)
+## fit the model
+mod_fit <- MARSS(y = dat, model = mod_list)
+```
+
+
+## A note on model fitting
+
+When we have 2+ observations of process, our estimates of model parameters are much more accurate and precise.
+
+$$
+\begin{align}
+x_t &= x_{t-1} + u + w_t ~~ \text{with} ~ w_t \sim \text{N}(0,q) \\
+~ \\
+\begin{bmatrix}
+y_1 \\
+y_2 \\
+\vdots \\
+y_n
+\end{bmatrix}_t
+&=
+\begin{bmatrix}
+1 \\
+1 \\
+\vdots \\
+1
+\end{bmatrix}
+x_t + 
+\begin{bmatrix}
+v_1 \\
+v_2 \\
+\vdots \\
+v_n
+\end{bmatrix}_t
+~~ \text{with} ~
+\mathbf{v_t} \sim \text{MVN}(\mathbf{0},\mathbf{R})
+\end{align}
+$$
+
+
+
+## Extracting fitted model objects
+
+Fitted values are stored in an $N \times T$ matrix (here $N = 1$) accessed with `$states`
+
+Standard errors of fitted values are stored in an $N \times T$ matrix (vector) accessed with `$states.se`
+
+```{r, echo = TRUE, eval = TRUE}
+## T x 1 (transposed) vector of states
+mod_fits <- t(mod_fit$states)
+
+## T x 1 (transposed) vector of SE's
+mod_fits_SE <- t(mod_fit$states.se)
+```
+
+
+## Approximate confidence intervals
+
+We can estimate a $[(1 - \alpha)  \times 100]\%$ confidence interval as
+
+$$
+\hat{x} ~ \pm ~ t_{1 - \alpha/2} \times \text{SE}(\hat{x})
+$$
+
+
+## Approximate confidence intervals
+
+```{r brw_CI, eval = TRUE, echo = TRUE}
+## upper 95% CI
+mod_fits_CI_hi <- mod_fits + qt(p = 0.975, df = TT - 1) * mod_fits_SE
+
+## lower 95% CI
+mod_fits_CI_lo <- mod_fits - qt(p = 0.975, df = TT - 1) * mod_fits_SE
+```
+
+
+<!-- ## Plot the model fit & uncertainty -->
+
+<!-- Plot the state and observation -->
+
+<!-- ```{r rw_plot_fit_code, echo=TRUE, eval=FALSE} -->
+<!-- plot.ts(xx, lwd = 2, type = "o", pch = 16, col = "#488fdf", -->
+<!--         las = 1, ylim = c(min(xx,yy), max(xx,yy)), -->
+<!--         ylab = expression(italic(x[t])~~or~~italic(y[t]))) -->
+<!-- lines(yy, lwd = 2, type = "o", pch = 16, cex = 1.5, col = "#844870") -->
+<!-- lines(mod_fits, lwd = 2, type = "l", cex = 1.5, col = "black") -->
+<!-- lines(mod_fits_CI_hi, lwd = 2, type = "l", cex = 1.5, col = "gray") -->
+<!-- lines(mod_fits_CI_lo, lwd = 2, type = "l", cex = 1.5, col = "gray") -->
+<!-- ``` -->
+
+
+## Model fit and true states 
+
+```{r rw_plot_fits_states, align.fig="center"}
+par(mai = c(0.8,0.8,0,0), omi = c(0,0,0,0))
+plot.ts(xx, lwd = 2, type = "o", pch = 16, col = "#488fdf",
+        las = 1, ylim = c(min(xx,yy), max(xx,yy)),
+        ylab = expression(italic(x[t])~~or~~italic(y[t])))
+# lines(yy, lwd = 2, type = "o", pch = 16, cex = 1.5, col = "#844870")
+lines(mod_fits, lwd = 2, type = "l", cex = 1.5, col = "black")
+lines(mod_fits_CI_hi, lwd = 2, type = "l", cex = 1.5, col = "gray")
+lines(mod_fits_CI_lo, lwd = 2, type = "l", cex = 1.5, col = "gray")
+```
+
+
+## Model fit with observations only
+
+```{r rw_plot_fit_nostate, align.fig="center"}
+par(mai = c(0.8,0.8,0,0), omi = c(0,0,0,0))
+plot.ts(yy, lwd = 2, type = "o", pch = 16, cex = 1.5, col = "#844870",
+        las = 1, ylim = c(min(xx,yy), max(xx,yy)),
+        ylab = expression(italic(x[t])~~or~~italic(y[t])))
+lines(mod_fits, lwd = 2, type = "l", cex = 1.5, col = "black")
+lines(mod_fits_CI_hi, lwd = 2, type = "l", cex = 1.5, col = "gray")
+lines(mod_fits_CI_lo, lwd = 2, type = "l", cex = 1.5, col = "gray")
+```
+
+
+## Model fit with observations & states 
+
+```{r rw_plot_fit, align.fig="center"}
+par(mai = c(0.8,0.8,0,0), omi = c(0,0,0,0))
+plot.ts(xx, lwd = 2, type = "o", pch = 16, col = "#488fdf",
+        las = 1, ylim = c(min(xx,yy), max(xx,yy)),
+        ylab = expression(italic(x[t])~~or~~italic(y[t])))
+lines(yy, lwd = 2, type = "o", pch = 16, cex = 1.5, col = "#844870")
+lines(mod_fits, lwd = 2, type = "l", cex = 1.5, col = "black")
+lines(mod_fits_CI_hi, lwd = 2, type = "l", cex = 1.5, col = "gray")
+lines(mod_fits_CI_lo, lwd = 2, type = "l", cex = 1.5, col = "gray")
+```
+
+
+## Evidence for bias
+
+Q: Is there data support for the bias term?
+
+To answer this, we can fit a model without the bias term and compare AICc
+
+
+## Evidence for bias
+
+We need to modify the model definition for `MARSS()` by setting `U = matrix(0)` 
+
+```{r rw_model, echo=TRUE}
+mod_list <- list(
+  ## state model
+  B = matrix(1), U = matrix(0), Q = matrix("q"),
+  ## obs model
+  Z = matrix(1), A = matrix(0), R = matrix("r")
+  )
+```
+
+
+## Re-fit the model with `MARSS()` {.smaller}
+
+```{r rw_fit, echo = TRUE, eval=TRUE}
+## fit the model
+mod_fit_2 <- MARSS(y = dat, model = mod_list)
+```
+
+
+## Compare AIC values
+
+```{r compare_AICc, echo = TRUE, eval = TRUE}
+## biased RW
+mod_fit$AICc
+
+## unbiased RW
+mod_fit_2$AICc
+```
+
+
+
+# Population growth | Density dependent
+
+
+## Density-dependent population growth | Discrete-time stochastic Gompertz model
+
+$$
+N_t = N_{t-1} ~ \underbrace{\exp(u ~ + ~ (b - 1) \log(N_{t-1}))}_{\substack{\text{rate of} \\ \text{change}}} \underbrace{\exp(w _t)}_{\substack{\text{stochastic} \\ \text{environment}}}
+$$
+
+
+## Density-dependent population growth | Discrete-time stochastic Gompertz model
+
+$$
+N_t = N_{t-1} ~ \exp(u ~ + ~ (b - 1) \log(N_{t-1})) \exp(w _t)
+$$
+
+<br>
+
+Taking the log of both sides and substituting $x_t$ for $\log(N_t)$
+
+$$
+\begin{align}
+\log(N_t) & = \log(N_{t-1}) + u + (b - 1) \log(N_{t-1}) + w_t \\
+& \Downarrow \\
+x_t &= x_{t-1} + u + (b - 1) x_{t-1} + w_t \\
+    &= x_{t-1} + u + b x_{t-1} - x_{t-1} + w_t \\
+    &= u + b x_{t-1} + w_t
+\end{align}
+$$
+
+
+## Density-dependent population growth | Discrete-time stochastic Gompertz model
+
+We generally assume the process errors are Gaussian
+
+$$
+x_t = u + b x_{t-1} + w_t \\
+~ \\
+w_t \sim \text{N}(0, q)
+$$
+
+
+## Stochastic Gompertz model | A note on the autoregressive parameter $b$
+
+$$
+x_t = u + b x_{t-1} + w_t
+$$
+
+<br>
+
+For populations under _negative_ effects of density dependence, we require 
+
+$$
+-1 < b < 1
+$$
+
+
+## Stochastic Gompertz model | What is the expectation of $x_t$?
+
+$$
+x_t = u + b x_{t-1} + w_t
+$$
+
+
+## Stochastic Gompertz model | What is the expectation of $x_t$?
+
+$$
+x_t = u + b x_{t-1} + w_t
+$$
+
+<br>
+
+$$
+\text{E}(x_t) = \frac{u}{1 - b}
+$$
+
+
+## Stochastic Gompertz model | Estimating parameters
+
+$$
+x_t = u + b x_{t-1} + w_t
+$$
+
+It turns out that $u$ and $b$ are confounded and create a likelihood surface with a strong ridge
+
+This means we need a _long_ time series or mulitple observations of the process 
+
+In practice, we will de-mean our data and instead use a familiar AR(1) model
+
+$$
+x_t = b x_{t-1} + w_t
+$$
+
+
+## Stochastic Gompertz model
+
+When our population censuses contain observation or sampling errors, we can use a state-space version
+
+$$
+x_t = b x_{t-1} + w_t \\
+y_t = x_t + v_t
+$$
+
+
+## Simulate a Gompertz model
+
+Simulate the AR(1) state model
+
+```{r gompertz_sim, echo = TRUE, eval= TRUE}
+## number of time steps
+TT <- 40
+## strength of density-dependence (0 < b < 1)
+bb <- 0.5
+## time series of process errors with SD = 1
+ww <- rnorm(TT, 0, 0.5)
+## initialize state & set x0 = w0
+xx <- ww
+## loop over time steps
+for(t in 2:TT) {
+  xx[t] <- bb * xx[t-1] + ww[t]
+}
+```
+
+
+## Simulate a Gompertz model
+
+Add some observation error
+
+```{r gomp_obs_error, echo = TRUE, eval= TRUE}
+## obs errors with SD = 0.5
+vv <- rnorm(TT, 0, 0.5)
+## obs data
+yy <- xx + vv
+```
+
+
+<!-- ## Plot log-population size over time -->
+
+<!-- Plot the state and observation -->
+
+<!-- ```{r, echo=TRUE, eval=FALSE} -->
+<!-- plot.ts(xx, lwd = 2, type = "o", pch = 16, col = "#488fdf", -->
+<!--         las = 1, ylim = c(min(xx,yy), max(xx,yy)), -->
+<!--         ylab = expression(italic(x[t])~~or~~italic(y[t]))) -->
+<!-- lines(yy, lwd = 2, type = "o", pch = 16, cex = 1.5, col = "#844870") -->
+<!-- ``` -->
+
+
+## Log-population size over time
+
+```{r gomp_plot, align.fig="center"}
+par(mai = c(0.8,0.8,0,0), omi = c(0,0,0,0))
+plot.ts(xx, lwd = 2, type = "o", pch = 16, col = "#488fdf",
+        las = 1, ylim = c(min(xx,yy), max(xx,yy)),
+        ylab = expression(italic(x[t])~~or~~italic(y[t])))
+lines(yy, lwd = 2, type = "o", pch = 16, cex = 1.5, col = "#844870")
+```
+
+
+# Fitting models
+
+
+## Fitting models with `MARSS()`
+
+Recall that `MARSS()` uses an expanded form of state-space model, such that
+
+$$
+\begin{align}
+x_t &= b x_{t-1} + w_t \\
+y_t &= x_t + v_t \\
+& \Downarrow \\
+x_t &= b x_{t-1} + u + w_t \\
+y_t &= Z x_t + a + v_t
+\end{align}
+$$
+
+with $u = 0$, $Z = 1$, and $a = 0$
+
+
+## Fitting models with `MARSS()`
+
+State model  
+$x_t = b x_{t-1} + u + w_t ~~ \text{with} ~~ w_t \sim \text{N}(0,q)$
+
+Observation model  
+$y_t = Z x_t + a + v_t ~~ \text{with} ~~ v_t \sim \text{N}(0,r)$
+
+```{r, echo=TRUE}
+mod_list <- list(
+  ## state model
+  B = matrix("b"), U = matrix(0), Q = matrix("q"),
+  ## obs model
+  Z = matrix(1), A = matrix(0), R = matrix("r")
+  )
+```
+
+**Note**: `MARSS()` works with the `matrix` class in **R**, so we have to define any scalar as a $1 \times 1$ matrix
+
+
+## Fitting models with `MARSS()`
+
+We can ignore the `inits` and `control` arguments for now and fit the model
+
+```{r, echo = TRUE, eval = FALSE}
+## define the data as an N (rows) x T (cols) matrix
+dat <- matrix(yy, nrow = 1, ncol = TT)
+## fit the model
+mod_fit <- MARSS(y = dat, model = mod_list)
+```
+
+
+## Fitting models with `MARSS()` {.smaller}
+
+```{r gomp_fit, echo = FALSE, eval = TRUE}
+## define the data as an N (rows) x T (cols) matrix
+dat <- matrix(yy, nrow = 1, ncol = TT)
+## fit the model 
+mod_fit <- MARSS(y = dat, model = mod_list)
+```
+
+
+# Covariates in state-space models
+
+
+## Covariates in state-space models
+
+We can include covariates (explanatory variables) as well
+
+<br>
+
+Covariates in the state model _affect the underlying process_
+
+$$
+x_t = b x_{t-1} + C c_t + w_t
+$$
+
+
+## Covariates in state-space models
+
+We can include covariates (explanatory variables) as well
+
+<br>
+
+Covariates in the state model _affect the underlying process_
+
+$$
+x_t = b x_{t-1} + C c_t + w_t
+$$
+
+<br>
+
+Covariates in the observation model are _offsets to the underlying process_
+
+$$
+y_t = Z x_t + D d_t + v_t
+$$
+
+
+## Covariates in state-space models
+
+```{r states_covars}
+ww <- xx <- xy <- rnorm(TT)
+
+bb <- 0.7
+
+CC <- DD <- 2
+cc <- dd <- sin(2*pi*seq(TT)/12)
+  
+for(t in 2:TT) {
+  xx[t] <- bb * xx[t-1] + CC * cc[t] + ww[t]
+  xy[t] <- bb * xy[t-1] + ww[t]
+}
+
+ee <- rnorm(TT)
+yy <- xy + DD * dd # + ee
+
+par(mai = c(0.9,0.9,0.5,0.1), omi = c(0,0,0,0))
+plot.ts(xx, ylim = range(xx,yy),
+        lwd = 2, type = "o", pch = 16, col = "#488fdf",
+        las = 1, ylab = expression(italic(x[t])))
+mtext(side = 3, expression(italic(x[t])==italic(b)~italic(x[t-1])~+~italic(C)~italic(c[t])~+~italic(w[t])),
+      line = 0.5, adj = 0)
+```
+
+
+<!-- ## Covariates in state-space models -->
+
+<!-- ```{r} -->
+<!-- par(mai = c(0.9,0.9,0.5,0.1), omi = c(0,0,0,0)) -->
+<!-- plot.ts(xx, ylim = range(xx,yy), -->
+<!--         lwd = 2, type = "o", pch = 16, col = "#488fdf", -->
+<!--         las = 1, ylab = expression(italic(x[t])~~or~~italic(y[t]))) -->
+<!-- lines(yy, lwd = 2, type = "o", pch = 16, cex = 1.5, col = "#844870") -->
+<!-- mtext(side = 3, expression(italic(y[t])==italic(x[t])~+~italic(D)~italic(d[t])), -->
+<!--       line = 1.5, adj = 0) -->
+<!-- mtext(side = 3, expression(italic(x[t])==italic(b)~italic(x[t-1])~+~italic(C)~italic(c[t])~+~italic(w[t])), -->
+<!--       line = 0.5, adj = 0) -->
+<!-- ``` -->
+
+
+
