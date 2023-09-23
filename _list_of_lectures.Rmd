@@ -10,165 +10,66 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 ## session 1 ####
 session_1 <- list(
-  title = "",
-  topics = c(""),
+  title = "Introduction & background concepts",
+  topics = c("Introduction & background concepts"),
   pdf = c(""),
   rmd = "",
-  html = "",
+  html = "lectures/day_01/lec_01_intro_concepts.html",
   background = "",
   zoom = ""
 )
 
 ## session 2 ####
 session_2 <- list(
-  title = "",
-  topics = c(""),
+  title = "Autoregressive & random-walk models",
+  topics = c("Autoregressive & random-walk models"),
   pdf = c(""),
   rmd = "",
-  html = "",
+  html = "lectures/day_01/lec_02_autoregressive_models.html",
   background = "",
   zoom = ""
 )
 
 ## session 3 ####
 session_3 <- list(
-  title = "",
-  topics = c(""),
+  title = "Univariate state-space models",
+  topics = c("Univariate state-space models"),
   pdf = c(""),
   rmd = "",
-  html = "",
+  html = "lectures/day_02/lec_03_univariate_SSM.html",
   background = "",
   zoom = ""
 )
 
 ## session 4 ####
 session_4 <- list(
-  title = "",
-  topics = c(""),
+  title = "Multivariate state-space models",
+  topics = c("Multivariate state-space models"),
   pdf = c(""),
   rmd = "",
-  html = "",
+  html = "lectures/day_02/lec_04_multivariate_SSM.html",
   background = "",
   zoom = ""
 )
 
 ## session 5 ####
 session_5 <- list(
-  title = "",
-  topics = c(""),
+  title = "Dynamic Factor Analysis",
+  topics = c("Dynamic Factor Analysis"),
   pdf = c(""),
   rmd = "",
-  html = "",
+  html = "lectures/day_03/lec_05_intro_to_DFA.html",
   background = "",
   zoom = ""
 )
 
 ## session 6 ####
 session_6 <- list(
-  title = "",
-  topics = c(""),
+  title = "Dynamic Linear Models",
+  topics = c("Dynamic Linear Models"),
   pdf = c(""),
   rmd = "",
-  html = "",
-  background = "",
-  zoom = ""
-)
-
-## session 7 ####
-session_7 <- list(
-  title = "",
-  topics = c(""),
-  pdf = c(""),
-  rmd = "",
-  html = "",
-  background = "",
-  zoom = ""
-)
-
-## session 8 ####
-session_8 <- list(
-  title = "",
-  topics = c(""),
-  pdf = c(""),
-  rmd = "",
-  html = "",
-  background = "",
-  zoom = ""
-)
-
-## session 9 ####
-session_9 <- list(
-  title = "",
-  topics = c(""),
-  pdf = c(""),
-  rmd = "",
-  html = "",
-  background = "",
-  zoom = ""
-)
-
-## session 10 ####
-session_10 <- list(
-  title = "",
-  topics = c(""),
-  pdf = c(""),
-  rmd = "",
-  html = "",
-  background = "",
-  zoom = ""
-)
-
-## session 11 ####
-session_11 <- list(
-  title = "",
-  topics = c(""),
-  pdf = c(""),
-  rmd = "",
-  html = "",
-  background = "",
-  zoom = ""
-)
-
-## session 12 ####
-session_12 <- list(
-  title = "",
-  topics = c(""),
-  pdf = c(""),
-  rmd = "",
-  html = "",
-  background = "",
-  zoom = ""
-)
-
-## session 13 ####
-session_13 <- list(
-  title = "",
-  topics = c(""),
-  pdf = c(""),
-  rmd = "",
-  html = "",
-  background = "",
-  zoom = ""
-)
-
-## session 14 ####
-session_14 <- list(
-  title = "",
-  topics = c(""),
-  pdf = c(""),
-  rmd = "",
-  html = "",
-  background = "",
-  zoom = ""
-)
-
-## session 15 ####
-session_15 <- list(
-  title = "",
-  topics = c(""),
-  pdf = c(""),
-  rmd = "",
-  html = "",
+  html = "lectures/day_03/lec_06_intro_to_DLMs.html",
   background = "",
   zoom = ""
 )
