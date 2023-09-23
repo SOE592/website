@@ -181,9 +181,10 @@ kableExtra::kable(syl_txt, format = "html", caption = " ",
   kable_styling(bootstrap_options = "striped",
                 full_width = FALSE,
                 position = "left") %>%
-  column_spec(c(1, 4), width = "6em") %>%
-  column_spec(c(2), width = "8em") %>%
-  column_spec(3, width = "18em") %>%
-  column_spec(5, width = "18em") 
+  column_spec(1, width = "6em") %>%
+  column_spec(2, width = "8em") %>%
+  column_spec(3, width = "16em") %>%
+  column_spec(4, width = "6em") %>%
+  column_spec(5, width = "22em") 
 ```
 
