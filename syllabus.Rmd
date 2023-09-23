@@ -51,17 +51,21 @@ Associate Professor, School of Aquatic & Fishery Sciences
 
 # Schedule
 
-This is an intensive short course that will run from 8:30-5:00 on January 3-5. The daily schedule is as follows:
+This is an intensive short course that will run from 9:00-5:00 on January 3-5. The daily schedule is as follows:
 
 ```{r daily_schedule, echo=FALSE}
 ## data frame with dates & topics
 sch_txt <- data.frame(
-  Time = c("8:30&nbsp;-&nbsp;10:00", "10:00&nbsp;-&nbsp;10:15",
-           "10:15&nbsp;-&nbsp;11:45", "11:45&nbsp;-&nbsp;12:30",
-           "12:30&nbsp;-&nbsp;2:00", "2:00&nbsp;-&nbsp;3:30",
-           "3:30&nbsp;-&nbsp;3:45", "3:45&nbsp;-&nbsp;5:00"),
-  Activity = c("Session 1", "Break", "Session 2", "Lunch",
-               "Session 3", "Session 4", "Break", "Session 5")
+  Time = c("9:00&nbsp;-&nbsp;9:15", "9:15&nbsp;-&nbsp;10:30",
+           "10:30&nbsp;-&nbsp;10:45", "10:45&nbsp;-&nbsp;12:00",
+           "12:00&nbsp;-&nbsp;1:00", "1:00&nbsp;-&nbsp;2:15",
+           "2:15&nbsp;-&nbsp;2:30", "2:30&nbsp;-&nbsp;3:45",
+           "3:45&nbsp;-&nbsp;4:00", "4:00&nbsp;-&nbsp;5:00"),
+  Activity = c("Overview", "Lecture 1",
+               "Break", "Lab 1",
+               "Lunch", "Lecture 2",
+               "Break", "Lab 2",
+               "Break", "Lab 3")
 )
 # colnames(sch_txt) <- c("Date", "Session", "Topics",
 #                        "Notes", # "Source (Rmd)", "Slides (pdf)",
