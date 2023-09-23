@@ -33,7 +33,10 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## {.flexbox .vcenter}
 
-![](https://www.esrl.noaa.gov/gmd/webdata/ccgg/trends/co2_data_mlo.png)
+<div class="centered">
+![](https://www.esrl.noaa.gov/gmd/webdata/ccgg/trends/co2_data_mlo.png){width=90%}
+</div>
+
 
 
 ## Classification of time series | By some _index set_
@@ -74,149 +77,6 @@ Univariate $(x_t)$
 
 Multivariate $\begin{bmatrix} x_1 \\ x_2 \\ \vdots \\ x_n \end{bmatrix}_t$
 
-
-## Time series objects in R
-
-Time series objects have a special designation in R: `ts`
-
-```{r ts_example, eval = FALSE, echo = TRUE}
-ts(data,
-   start, end,
-   frequency
-   )
-```
-
-
-## Time series objects in R
-
-Time series objects have a special designation in R: `ts`
-
-```{r ts_example_2, eval = FALSE, echo = TRUE}
-### <b>
-ts(data,
-   ### </b>
-   start, end,
-   frequency
-   )
-```
-
-`data` should be a vector (univariate)
-
-or a data frame or matrix (multivariate)
-
-
-## Time series objects in R
-
-Time series objects have a special designation in R: `ts`
-
-```{r ts_example_3, eval = FALSE, echo = TRUE}
-ts(data,
-   ### <b>
-   start, end,
-   ### </b>
-   frequency
-   )
-```
-
-`start` and `end` give the first and last time indices
-
-For monthly series, specify them as `c(year, month)`
-
-
-## Time series objects in R
-
-Time series objects have a special designation in R: `ts`
-
-```{r ts_example_4, eval = FALSE, echo = TRUE}
-ts(data,
-   start, end,
-   ### <b>
-   frequency
-   ### </b>
-   )
-```
-
-`frequency` is the number of observations per unit time
-
-For annual series, `frequency = 1`
-
-For monthly series, `frequency = 12`
-
-
-## Time series objects in R
-
-Time series objects have a special designation in R: `ts`
-
-```{r ts_example_5, eval = FALSE, echo = TRUE}
-ts(data,
-   start, end,
-   ### <b>
-   deltat
-   ### </b>
-   )
-```
-
-`deltat` is the fraction of the sampling period
-
-For annual series, `deltat = 1`
-
-For monthly series, `deltat = 1/12`
-
-
-## Time series objects in R
-
-```{r ts_example_6, eval = TRUE, echo = TRUE}
-set.seed(507)
-
-## annual data
-dat_1 <- rnorm(30)
-dat_yr <- ts(dat_1,
-             start = 1991, end = 2020,
-             frequency = 1)
-
-## monthly data
-dat_2 <- rnorm(30*12)
-dat_mo <- ts(dat_2,
-             start = c(1991, 1), end = c(2020, 12),
-             frequency = 12)
-```
-
-
-## Plotting time series objects in R
-
-There is a designated function for plotting `ts` objects: `plot.ts()`
-
-```{r plotts_example, eval = FALSE, echo = TRUE}
-plot.ts(ts_object)
-```
-
-
-## Plotting time series objects in R
-
-```{r plotts_example_2}
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
-plot.ts(dat_yr)
-```
-
-
-## Plotting time series objects in R
-
-We can specify some additional arguments to `plot.ts`
-
-```{r plotts_example_3, eval = FALSE, echo = TRUE}
-plot.ts(dat_yr,
-        ylab = expression(italic(x[t])),
-        las = 1, col = "blue", lwd = 2)
-```
-
-
-## Plotting time series objects in R
-
-```{r plotts_example_4}
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
-plot.ts(dat_yr,
-        ylab = expression(italic(x[t])), las = 1, col = "blue", lwd = 2)
-```
 
 # Analysis of time series
 
@@ -262,60 +122,6 @@ data(lynx)
 par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
 plot.ts(lynx, ylab = "", las = 1, col = "blue", lwd = 2)
 ```
-
-
-## What is a time series model?
-
-A _time series model_ for $\{x_t\}$ is a specification of the _joint distributions_ of a sequence of _random variables_ $\{X_t\}$, of which $\{x_t\}$ is thought to be a realization
-
-
-## Joint distributions of random variables
-
-```{r ex_ts_plot_joint_dist}
-set.seed(123)
-nn <- 50
-tt <- 40
-ww <- matrix(rnorm(nn*tt), tt, nn)
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
-matplot(ww, type="l", lty="solid",  las = 1,
-        ylab = expression(italic(X[t])), xlab = "Time",
-        col = gray(0.5, 0.4))
-```
-
-
-## We have one realization
-
-```{r ex_ts_plot_joint_dist_2}
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
-matplot(ww, type="l", lty="solid",  las = 1,
-        ylab = expression(italic(X[t])), xlab = "Time",
-        col = gray(0.5, 0.4))
-lines(ww[,1], col = "blue", lwd = 2)
-```
-
-
-## Some simple time series models
-
-```{r ex_WN}
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
-matplot(ww, type="l", lty="solid",  las = 1,
-        ylab = expression(italic(x[t])), xlab = "Time",
-        col = gray(0.5, 0.4))
-```
-
-White noise: $x_t \sim N(0,1)$
-
-
-## Some simple time series models
-
-```{r ex_RW}
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
-matplot(apply(ww, 2, cumsum), type="l", lty="solid",  las = 1,
-        ylab = expression(italic(x[t])), xlab = "Time",
-        col = gray(0.5, 0.4))
-```
-
-Random walk: $x_t = x_{t-1} + w_t,~\text{with}~w_t \sim N(0,1)$
 
 
 ## Classical decomposition
@@ -795,7 +601,7 @@ points(rep(0,tt), pch = "-", col = "blue", cex=1.5)
 
 ## Stationarity & the mean
 
-```{r ex_ts_plot_joint_dist, fig.cap="Our single realization is our estimate!"}
+```{r ex_ts_plot_joint_dist_3, fig.cap="Our single realization is our estimate!"}
 
 par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
 
