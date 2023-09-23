@@ -1,5 +1,6 @@
 ---
 title: "Introduction to Dynamic Factor Analysis"
+subtitle: "SOE 592 – Intro to Time Series Analysis"
 author: "Mark Scheuerell"
 date: "5 Jan 2024"
 output:

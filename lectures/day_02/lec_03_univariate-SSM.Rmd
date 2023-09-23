@@ -1,6 +1,6 @@
 ---
-title: "Univariate state-space models"
-subtitle: "SOE 592 – Applied Time Series Analysis"
+title: "Univariate<br>state-space models"
+subtitle: "SOE 592 – Intro to Time Series Analysis"
 author: "Mark Scheuerell"
 date: "4 Jan 2024"
 output:

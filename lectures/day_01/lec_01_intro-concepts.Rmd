@@ -1,6 +1,6 @@
 ---
 title: "Intro to time series analysis"
-subtitle: "SOE 592 – Applied Time Series Analysis"
+subtitle: "SOE 592 – Intro to Time Series Analysis"
 author: "Mark Scheuerell"
 date: "3 Jan 2024"
 output:
