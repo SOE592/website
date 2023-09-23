@@ -14,8 +14,10 @@ lec_1 <- list(
   topics = c("Introduction & background concepts"),
   pdf = c(""),
   rmd = "",
-  html = "lectures/day_01/lec_01_intro_concepts.html",
-  background = "",
+  html = "lectures/day_01/lec_01_intro-concepts.html",
+  background = c("[Cowperwait & Metcalf (2009); Chap 1 & 2](references/Introductory_Time_Series_With_R.pdf)",
+                 "[Hyndman & Athanasopoulos (2018); Chap 6](https://otexts.org/fpp2/decomposition.html)",
+                 "[Holmes et al (2021); Chap 3](https://atsa-es.github.io/atsa-labs/chap-ts.html)"),
   zoom = ""
 )
 
@@ -25,8 +27,8 @@ lab_1 <- list(
   topics = c("Basic functions"),
   pdf = c(""),
   rmd = "",
-  html = "",
-  background = "",
+  html = "https://atsa-es.github.io/atsa-labs/chap-tslab.html",
+  background = c("<br><br>"),
   zoom = ""
 )
 
@@ -36,8 +38,9 @@ lec_2 <- list(
   topics = c("Autoregressive & random-walk models"),
   pdf = c(""),
   rmd = "",
-  html = "lectures/day_01/lec_02_autoregressive_models.html",
-  background = "",
+  html = "lectures/day_01/lec_02_autoregressive-models.html",
+  background = c("[Cowperwait & Metcalf (2009); Chap 4](references/Introductory_Time_Series_With_R.pdf)",
+                 "[Holmes et al (2021); Chap 3](https://atsa-es.github.io/atsa-labs/chap-ts.html)<br>"),
   zoom = ""
 )
 
@@ -47,8 +50,8 @@ lab_2 <- list(
   topics = c("Simulating & fitting models"),
   pdf = c(""),
   rmd = "",
-  html = "",
-  background = "",
+  html = "lectures/day_01/lab_02_sim-fit.html",
+  background = c("<br><br>"),
   zoom = ""
 )
 
@@ -58,8 +61,8 @@ lab_3 <- list(
   topics = c("Installing software & packages"),
   pdf = c(""),
   rmd = "",
-  html = "",
-  background = "",
+  html = "lectures/day_01/lab_03_install-software.html",
+  background = c("<br><br>"),
   zoom = ""
 )
 
@@ -69,8 +72,8 @@ lec_3 <- list(
   topics = c("Univariate state-space models"),
   pdf = c(""),
   rmd = "",
-  html = "lectures/day_02/lec_03_univariate_SSM.html",
-  background = "",
+  html = "lectures/day_02/lec_03_univariate-SSM.html",
+  background = c("<br><br>"),
   zoom = ""
 )
 
@@ -80,8 +83,8 @@ lab_4 <- list(
   topics = c("Count-based PVA"),
   pdf = c(""),
   rmd = "",
-  html = "",
-  background = "",
+  html = "lectures/day_02/lab_04_PVA.html",
+  background = c("<br><br>"),
   zoom = ""
 )
 
@@ -91,8 +94,8 @@ lec_4 <- list(
   topics = c("Multivariate state-space models"),
   pdf = c(""),
   rmd = "",
-  html = "lectures/day_02/lec_04_multivariate_SSM.html",
-  background = "",
+  html = "lectures/day_02/lec_04_multivariate-SSM.html",
+  background = c("<br><br>"),
   zoom = ""
 )
 
@@ -102,8 +105,8 @@ lab_5 <- list(
   topics = c("Analyzing animal movement"),
   pdf = c(""),
   rmd = "",
-  html = "",
-  background = "",
+  html = "lectures/day_02/lab_05_animal-movement.html",
+  background = c("<br><br>"),
   zoom = ""
 )
 
@@ -113,8 +116,8 @@ lab_6 <- list(
   topics = c("Estimating species interactions"),
   pdf = c(""),
   rmd = "",
-  html = "",
-  background = "",
+  html = "lectures/day_02/lab_06_species-interactions.html",
+  background = c("<br><br>"),
   zoom = ""
 )
 
@@ -124,8 +127,8 @@ lec_5 <- list(
   topics = c("Dynamic Factor Analysis"),
   pdf = c(""),
   rmd = "",
-  html = "lectures/day_03/lec_05_intro_to_DFA.html",
-  background = "",
+  html = "lectures/day_03/lec_05_intro-to-DFA.html",
+  background = c("<br><br>"),
   zoom = ""
 )
 
@@ -135,8 +138,8 @@ lab_7 <- list(
   topics = c("Identifying common trends"),
   pdf = c(""),
   rmd = "",
-  html = "",
-  background = "",
+  html = "lectures/day_03/lab_07_intro-to-DFA.html",
+  background = c("<br><br>"),
   zoom = ""
 )
 
@@ -146,8 +149,8 @@ lec_6 <- list(
   topics = c("Dynamic Linear Models"),
   pdf = c(""),
   rmd = "",
-  html = "lectures/day_03/lec_06_intro_to_DLMs.html",
-  background = "",
+  html = "lectures/day_03/lec_06_intro-to-DLMs.html",
+  background = c("<br><br>"),
   zoom = ""
 )
 
@@ -157,8 +160,8 @@ lab_8 <- list(
   topics = c("Forecasting"),
   pdf = c(""),
   rmd = "",
-  html = "",
-  background = "",
+  html = "lectures/day_03/lab_08_forecasting.html",
+  background = c("<br><br>"),
   zoom = ""
 )
 
@@ -169,7 +172,7 @@ lab_9 <- list(
   pdf = c(""),
   rmd = "",
   html = "",
-  background = "",
+  background = c("<br><br>"),
   zoom = ""
 )
 ```
