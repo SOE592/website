@@ -186,6 +186,6 @@ kableExtra::kable(syl_txt, format = "html", caption = " ",
   column_spec(3, width = "16em") %>%
   column_spec(4, width = "6em") %>%
   column_spec(5, width = "22em") %>%
-  scroll_box(height = "700px", extra_css = "border-style: none;")
+  scroll_box(height = "500px", extra_css = "border-style: none;")
 ```
 
