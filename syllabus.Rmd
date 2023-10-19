@@ -44,7 +44,7 @@ By the end of the course, students should be able to:
 
 [**Dr. Mark Scheuerell**](https://fish.uw.edu/faculty/mark-scheuerell/)  
 Assistant Unit Leader, Washington Cooperative Fish and Wildlife Research Unit  
-Associate Professor, School of Aquatic & Fishery Sciences  
+Associate Professor, UW School of Aquatic & Fishery Sciences  
 [scheuerl@uw.edu](mailto:scheuerl@uw.edu)
 
 <br>
@@ -82,6 +82,7 @@ kableExtra::kable(sch_txt, format = "html", caption = " ",
   column_spec(c(1, 2), width = "10em")
 ```
 
+Additional meetings over Zoom will be scheduled during the in-person part of the course.
 
 <br>
 
