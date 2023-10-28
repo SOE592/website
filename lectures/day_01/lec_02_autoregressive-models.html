@@ -3383,7 +3383,7 @@ x_t = x_{t-1} + u + w_t
 
 </article></slide><slide class=""><hgroup><h2>Linear stationary models</h2></hgroup><article  id="linear-stationary-models-1">
 
-<p>We saw last week that linear filters are a useful way of modeling time series</p>
+<p>We saw previously that linear filters are a useful way of modeling time series</p>
 
 <p>Here we extend those ideas to a general class of models call <em>autoregressive moving average</em> (ARMA) models</p>
 
@@ -3398,6 +3398,8 @@ x_t = x_{t-1} + u + w_t
 <p>\[
 x_t = \phi_1 x_{t-1} + \phi_2 x_{t-2} + \dots + \phi_p x_{t-p} + w_t
 \]</p>
+
+<p><br></p>
 
 <p>where we assume</p>
 
@@ -3434,9 +3436,21 @@ x_t = \phi_1 x_{t-1} + \phi_2 x_{t-2} + \dots + \phi_p x_{t-p} + w_t
 <li>no periodic variations or seasonality</li>
 </ol>
 
+</article></slide><slide class=""><hgroup><h2>Stationary AR(<em>p</em>) models</h2></hgroup><article  id="stationary-arp-models-1">
+
+<p>Recall that <em>stationary</em> processes have the following properties</p>
+
+<ol>
+<li>no systematic change in the mean or variance<br/></li>
+<li>no systematic trend<br/></li>
+<li>no periodic variations or seasonality</li>
+</ol>
+
+<p><br></p>
+
 <p>We seek a means for identifying whether our AR(<em>p</em>) models are also stationary</p>
 
-</article></slide><slide class=""><hgroup><h2>Stationary AR(<em>p</em>) models</h2></hgroup><article  id="stationary-arp-models-1">
+</article></slide><slide class=""><hgroup><h2>Stationary AR(<em>p</em>) models</h2></hgroup><article  id="stationary-arp-models-2">
 
 <p>We can write out an AR(<em>p</em>) model using the backshift operator</p>
 
@@ -3450,7 +3464,7 @@ x_t = \phi_1 x_{t-1} + \phi_2 x_{t-2} + \dots + \phi_p x_{t-p} + w_t
 \end{align}
 \]</p>
 
-</article></slide><slide class=""><hgroup><h2>Stationary AR(<em>p</em>) models</h2></hgroup><article  id="stationary-arp-models-2">
+</article></slide><slide class=""><hgroup><h2>Stationary AR(<em>p</em>) models</h2></hgroup><article  id="stationary-arp-models-3">
 
 <p>If we treat \(\mathbf{B}\) as a number (or numbers), we can out write the <em>characteristic equation</em> as</p>
 
@@ -3462,7 +3476,7 @@ x_t = \phi_1 x_{t-1} + \phi_2 x_{t-2} + \dots + \phi_p x_{t-p} + w_t
 
 <p>To be stationary, <strong>all roots</strong> of the characteristic equation <strong>must exceed 1 in absolute value</strong></p>
 
-</article></slide><slide class=""><hgroup><h2>Stationary AR(<em>p</em>) models</h2></hgroup><article  id="stationary-arp-models-3">
+</article></slide><slide class=""><hgroup><h2>Stationary AR(<em>p</em>) models</h2></hgroup><article  id="stationary-arp-models-4">
 
 <p>For example, consider this AR(1) model from earlier</p>
 
@@ -3470,7 +3484,7 @@ x_t = \phi_1 x_{t-1} + \phi_2 x_{t-2} + \dots + \phi_p x_{t-p} + w_t
 x_t = 0.5 x_{t-1} + w_t
 \]</p>
 
-</article></slide><slide class=""><hgroup><h2>Stationary AR(<em>p</em>) models</h2></hgroup><article  id="stationary-arp-models-4">
+</article></slide><slide class=""><hgroup><h2>Stationary AR(<em>p</em>) models</h2></hgroup><article  id="stationary-arp-models-5">
 
 <p>For example, consider this AR(1) model from earlier</p>
 
@@ -3484,7 +3498,7 @@ x_t = 0.5 x_{t-1} + w_t \\
 \end{align}
 \]</p>
 
-</article></slide><slide class=""><hgroup><h2>Stationary AR(<em>p</em>) models</h2></hgroup><article  id="stationary-arp-models-5">
+</article></slide><slide class=""><hgroup><h2>Stationary AR(<em>p</em>) models</h2></hgroup><article  id="stationary-arp-models-6">
 
 <p>For example, consider this AR(1) model from earlier</p>
 
@@ -3500,7 +3514,7 @@ x_t = 0.5 x_{t-1} + w_t \\
 
 <p>This model is indeed stationary because \(\mathbf{B} &gt; 1\)</p>
 
-</article></slide><slide class=""><hgroup><h2>Stationary AR(<em>p</em>) models</h2></hgroup><article  id="stationary-arp-models-6">
+</article></slide><slide class=""><hgroup><h2>Stationary AR(<em>p</em>) models</h2></hgroup><article  id="stationary-arp-models-7">
 
 <p>What about this AR(2) model from earlier?</p>
 
@@ -3508,7 +3522,7 @@ x_t = 0.5 x_{t-1} + w_t \\
 x_t = -0.2 x_{t-1} + 0.4 x_{t-2} + w_t \\
 \]</p>
 
-</article></slide><slide class=""><hgroup><h2>Stationary AR(<em>p</em>) models</h2></hgroup><article  id="stationary-arp-models-7">
+</article></slide><slide class=""><hgroup><h2>Stationary AR(<em>p</em>) models</h2></hgroup><article  id="stationary-arp-models-8">
 
 <p>What about this AR(2) model from earlier?</p>
 
@@ -3522,7 +3536,7 @@ x_t = -0.2 x_{t-1} + 0.4 x_{t-2} + w_t \\
 \end{align}
 \]</p>
 
-</article></slide><slide class=""><hgroup><h2>Stationary AR(<em>p</em>) models</h2></hgroup><article  id="stationary-arp-models-8">
+</article></slide><slide class=""><hgroup><h2>Stationary AR(<em>p</em>) models</h2></hgroup><article  id="stationary-arp-models-9">
 
 <p>What about this AR(2) model from earlier?</p>
 
