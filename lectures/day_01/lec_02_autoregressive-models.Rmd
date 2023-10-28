@@ -50,7 +50,9 @@ A time series $\{w_t\}$ is discrete white noise if its values are
 
 2. identically distributed with a mean of zero
 
-Note that distributional form for $\{w_t\}$ is flexible
+<br>
+
+**Note**: the distributional form for $\{w_t\}$ is flexible
 
 
 ## White noise (WN)
@@ -80,7 +82,9 @@ $$
 w_t \sim \text{N}(0,\sigma^2)
 $$
 
-and the following apply as well
+<br>
+
+where the following apply as well
 
 &nbsp; &nbsp; autocovariance:&nbsp; $\gamma_k =
     \begin{cases}
@@ -135,12 +139,14 @@ The following apply to random walks
 
 &nbsp; &nbsp; autocorrelation: &nbsp; $\rho_k(t) = \frac{t \sigma^2}{\sqrt{t \sigma^2(t + k) \sigma^2}}$
 
-_Note_: Random walks are not stationary
+<br>
+
+**Note**: Random walks are not stationary
 
 
 ## Random walk (RW)
 
-```{r ex_rw, fig.cap="$x_t = x_{t-1} + w_t; w_t \\sim \\text{N}(0,1)$"}
+```{r ex_rw, fig.cap="$x_t = x_{t-1} + w_t~$ with $~w_t \\sim \\text{N}(0,1)$"}
 par(mfrow = c(1,2), mai = c(1.5,0.9,0.1,0.1), omi = c(0,0,0,0))
 tt <- cumsum(rnorm(100))
 plot.ts(tt, ylab = expression(italic(x[t])))
@@ -166,7 +172,7 @@ where $u$ is the bias (drift) per time step and $w_t$ is white noise
 
 ## Biased random walk
 
-```{r ex_biased_rw, fig.cap="$x_t = x_{t-1} + 1 + w_t; w_t \\sim \\text{N}(0,4)$"}
+```{r ex_biased_rw, fig.cap="$x_t = x_{t-1} + 1 + w_t~$ with $~w_t \\sim \\text{N}(0,4)$"}
 par(mfrow = c(1,2), mai = c(1.5,0.9,0.1,0.1), omi = c(0,0,0,0))
 xx <- ww <- rnorm(100, 0, 4)
 uu <- 1
@@ -176,6 +182,18 @@ for(t in 2:100) {
 plot.ts(xx, ylab = expression(italic(x[t])))
 acf(xx)
 ```
+
+
+## Aside: Differencing a time series
+
+Differencing can be thought of like a derivative for discrete time series
+
+Differencing is simply subtracting a time-shifted version of a time series from itself
+
+
+## Notation: Differencing a time series
+
+We use the _difference operator_ $\nabla$ to indicate a differencing operation
 
 
 ## Differencing a biased random walk
@@ -195,7 +213,7 @@ $$
 
 ## Differencing a biased random walk
 
-```{r ex_diff_biased_rw, fig.cap="$x_t - x_{t-1} = 1 + w_t; w_t \\sim \\text{N}(0,1)$"}
+```{r ex_diff_biased_rw, fig.cap="$x_t - x_{t-1} = 1 + w_t~$ with $~w_t \\sim \\text{N}(0,1)$"}
 par(mfrow = c(1,2), mai = c(1.5,0.9,0.1,0.1), omi = c(0,0,0,0))
 plot.ts(diff(xx), ylab = expression(nabla~italic(x[t])))
 abline(h = 1, lty = "dashed", col = "blue", lwd = 2)
