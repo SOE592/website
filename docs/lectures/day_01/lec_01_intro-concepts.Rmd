@@ -10,6 +10,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+set.seed(592)
 ```
 
 ## Topics
@@ -48,11 +49,11 @@ Discrete time; $x_t$
 * Unequally spaced: $t = \{2,3,4,6,9\}$  
 
 
-## Classification of time series | By the _underlying process_    
+## Classification of time series | By the _type of values recorded_    
 
-Discrete (eg, total # of fish caught per trawl)
+Integer (eg, # of birds observed in a 5-min point count)
 
-Continuous (eg, salinity, temperature)
+Real (eg, wind speed, temperature)
 
 
 ## Classification of time series | By the _number of values recorded_    
@@ -62,20 +63,75 @@ Univariate/scalar (eg, total # of fish caught)
 Multivariate/vector (eg, # of each spp of fish caught)
 
 
-## Classification of time series | By the _type of values recorded_    
-
-Integer (eg, # of fish in 5 min trawl = 2413)
-
-Real (eg, fish mass = 10.2 g)
-
-
-## Classification of time series | We will focus on integers & real-values in discrete time
+## Classification of time series | We will focus on real-values in discrete time
 
 Univariate $(x_t)$
 
 <br>
 
 Multivariate $\begin{bmatrix} x_1 \\ x_2 \\ \vdots \\ x_n \end{bmatrix}_t$
+
+
+## Aside: Time series objects in R
+
+R has a special class for time series objects: `ts`
+
+```{r ts_object, echo = TRUE , eval = FALSE}
+ts(data, start, end, frequency)
+
+ts(data, start, end, deltat)
+```
+
+
+## Aside: Time series objects in R {.smaller}
+
+Annual data
+
+```{r ts_object_ex1, echo = TRUE , eval = TRUE}
+## annual data
+xt <- round(rnorm(20), 2)
+ts(xt, start = 2001, end = 2020, frequency = 1)
+```
+
+
+## Aside: Time series objects in R {.smaller}
+
+Monthly data
+
+```{r ts_object_ex2, echo = TRUE , eval = TRUE}
+## monthly data
+xt <- round(rnorm(36), 2)
+
+## ts object
+ts(xt, start = c(2001, 1), end = c(2003, 12), frequency = 12)
+ts(xt, start = c(2001, 1), end = c(2003, 12), deltat = 1/12)
+```
+
+
+## Plotting time series objects
+
+R has a dedicated function for plotting `ts` objects
+
+```{r plot-ts, echo = TRUE , eval = FALSE}
+plot.ts(xt)
+```
+
+
+## Plotting time series objects
+
+```{r plot-ts-ex, echo = FALSE , eval = TRUE}
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = c(0, 0, 0, 0))
+plot.ts(xt)
+```
+
+
+## Plotting time series objects
+
+```{r plot-ts-ex2, echo = FALSE , eval = TRUE}
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = c(0, 0, 0, 0))
+plot.ts(xt, ylab = expression(italic(x[t])),
+        las = 1, col = "blue", lwd = 2)
+```
 
 
 # Analysis of time series
@@ -92,25 +148,27 @@ For example, we use fish caught in a seine to infer the mean size of fish in a l
 
 Time series analysis, however, presents a different situation:
 
-* Although we could vary the _length_ of an observed time series, it is often impossible to make multiple observations at a _given_ point in time
+> Although we could vary the _length_ of an observed time series, it is often impossible to make multiple observations at a _given point_ in time
 
 
 ## Statistical analyses of time series
 
 Time series analysis, however, presents a different situation:
 
-* Although we could vary the _length_ of an observed time series, it is often impossible to make multiple observations at a _given_ point in time
+> Although we could vary the _length_ of an observed time series, it is often impossible to make multiple observations at a _given point_ in time
+
+<br>
 
 For example, one can’t observe today’s closing price of Microsoft stock more than once  
 
-Thus, conventional statistical procedures, based on large sample estimates, are inappropriate
+Thus, conventional statistical procedures based on large sample estimates, are inappropriate
 
 
 ## Descriptions of time series
 
 ```{r ex_ts_plot_www, fig.cap = "Number of users connected to the internet"}
 data(WWWusage)
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = c(0, 0, 0, 0))
 plot.ts(WWWusage, ylab = "", las = 1, col = "blue", lwd = 2)
 ```
 
@@ -119,7 +177,7 @@ plot.ts(WWWusage, ylab = "", las = 1, col = "blue", lwd = 2)
 
 ```{r ex_ts_plot_lynx, fig.cap = "Number of lynx trapped in Canada from 1821-1934"}
 data(lynx)
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = c(0, 0, 0, 0))
 plot.ts(lynx, ylab = "", las = 1, col = "blue", lwd = 2)
 ```
 
@@ -192,7 +250,7 @@ As $a$ increases, the estimated trend becomes more smooth
 
 ```{r plot_airpass, fig.cap = "Monthly airline passengers from 1949-1960"}
 xx <- AirPassengers
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = c(0, 0, 0, 0))
 plot.ts(xx, las = 1, ylab = "")
 ```
 
@@ -200,7 +258,7 @@ plot.ts(xx, las = 1, ylab = "")
 ## Example of linear filtering
 
 ```{r plot_airpass_fltr1, fig.cap = "Monthly airline passengers from 1949-1960"}
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = c(0, 0, 0, 0))
 plot.ts(xx, las = 1, ylab = "")
 ## weights for moving avg
 fltr <- c(1,1,1)/3
@@ -215,7 +273,7 @@ text(x = 1949, y = max(trend, na.rm = TRUE),
 ## Example of linear filtering
 
 ```{r plot_airpass_fltr2, fig.cap = "Monthly airline passengers from 1949-1960"}
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = c(0, 0, 0, 0))
 plot.ts(xx, las = 1, ylab = "")
 ## weights for moving avg
 fltr2 <- rep(1,9)/9
@@ -234,7 +292,7 @@ text(x = 1949, y = max(trend, na.rm = TRUE)*0.9,
 ## Example of linear filtering
 
 ```{r plot_airpass_fltr3, fig.cap = "Monthly airline passengers from 1949-1960"}
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = c(0, 0, 0, 0))
 plot.ts(xx, las = 1, ylab = "")
 ## weights for moving avg
 fltr3 <- rep(1,27)/27
@@ -268,7 +326,7 @@ $$
 ```{r plot_airpass_decomp_seas, fig.cap = ""}
 seas <- trend2 - xx
   
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = c(0, 0, 0, 0))
 plot.ts(seas, las = 1, ylab = "")
 # text(x = 1949, y = max(trend, na.rm = TRUE)*0.9,
 #      labels = expression(paste(lambda, " = 1/9")),
@@ -305,7 +363,7 @@ $$
 
 ```{r mean_seasonal_effects}
 seas_2 <- decompose(xx)$seasonal
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = c(0, 0, 0, 0))
 plot.ts(seas_2, las = 1, ylab = "")
 ```
 
@@ -323,7 +381,7 @@ $$
 
 ```{r errors}
 ee <- decompose(xx)$random
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = c(0, 0, 0, 0))
 plot.ts(ee, las = 1, ylab = "")
 ```
 
@@ -339,7 +397,7 @@ plot.ts(ee, las = 1, ylab = "")
 
 ```{r plot_ln_airpass, fig.cap = "Monthly airline passengers from 1949-1960"}
 lx <- log(AirPassengers)
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = c(0, 0, 0, 0))
 plot.ts(lx, las = 1, ylab = "")
 ```
 
@@ -351,7 +409,7 @@ tt <- as.vector(time(xx))
 cc <- coef(lm(lx ~ tt))
 pp <- cc[1] + cc[2] * tt
   
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = c(0, 0, 0, 0))
 plot(tt, lx, type="l", las = 1,
      xlab = "Time", ylab = "")
 lines(tt, pp, col = "blue", lwd = 2)
@@ -361,7 +419,7 @@ lines(tt, pp, col = "blue", lwd = 2)
 ## Seasonal effect ($s_t$) with error ($e_t$)
 
 ```{r seas_ln_dat}
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = c(0, 0, 0, 0))
 plot.ts(lx-pp)
 ```
 
@@ -387,7 +445,7 @@ mm <- mm - mean(mm)
 seas_2 <- ts(rep(mm, periods+1)[seq(ll)],
                start=start(lx), 
                frequency=ff)
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = c(0, 0, 0, 0))
 plot.ts(seas_2, las = 1, ylab = "")
 ```
 
@@ -396,9 +454,19 @@ plot.ts(seas_2, las = 1, ylab = "")
 
 ```{r ln_errors}
 le <- lx - pp - seas_2
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = c(0, 0, 0, 0))
 plot.ts(le, las = 1, ylab = "")
 ```
+
+
+# Time series characteristics
+
+
+## Expectation & the mean
+
+The expectation ($E$) of a variable is its mean value in the population
+
+$\text{E}(x) \equiv$ mean of $x = \mu$
 
 
 ## Expectation & the mean
@@ -412,6 +480,13 @@ We can estimate $\mu$ from a sample as
 $$
 m = \frac{1}{N} \sum_{i=1}^N{x_i}
 $$
+
+
+## Variance
+
+$\text{E}([x - \mu]^2) \equiv$ expected deviations of $x$ about $\mu$
+
+$\text{E}([x - \mu]^2) \equiv$ variance of $x = \sigma^2$
 
 
 ## Variance
@@ -466,15 +541,15 @@ $$
 ## Graphical example of covariance
 
 ```{r, fig.align="center"}
-# create dummy x set
+## create dummy x set
 xx <- runif(25, 0, 10)
-yy <- 1 + 0.3*xx + rnorm(25,0,1.5)
+yy <- 1 + 0.3 * xx + rnorm(25, 0, 1)
 
-par(mai=c(1,1,0,0), omi=c(0,0,0.5,1))
+par(mai = c(1, 1, 0, 0), omi = c(0, 0, 0.5, 1))
 plot(xx, yy, pch=16, asp=1, las = 1,
-     cex=1.2, cex.lab=1.2, col="black",
+     cex = 1.2, cex.lab=1.2, col="black",
      xlab=expression(italic(x)),
-     ylab=expression(italic(y)),
+     ylab = expression(italic(y)),
      main="")
 
 ```
@@ -483,11 +558,11 @@ plot(xx, yy, pch=16, asp=1, las = 1,
 ## Graphical example of covariance
 
 ```{r, fig.align="center"}
-par(mai=c(1,1,0,0), omi=c(0,0,0.5,1))
+par(mai = c(1, 1, 0, 0), omi = c(0, 0, 0.5, 1))
 plot(xx, yy, pch=16, asp=1, las = 1,
-     cex=1.2, cex.lab=1.2, col="black",
+     cex = 1.2, cex.lab=1.2, col="black",
      xlab=expression(italic(x)),
-     ylab=expression(italic(y)),
+     ylab = expression(italic(y)),
      main="")
 
 # add mean lines	
@@ -508,11 +583,11 @@ mtext(side=4, line=0.5, at=(mean(yy)+par()$usr[4])/2, expression((italic(y[i])-i
 ## Graphical example of covariance
 
 ```{r, fig.align="center"}
-par(mai=c(1,1,0,0), omi=c(0,0,0.5,1))
+par(mai = c(1, 1, 0, 0), omi = c(0, 0, 0.5, 1))
 plot(xx, yy, pch=16, asp=1, las = 1,
-     cex=1.2, cex.lab=1.2, col="gray",
+     cex = 1.2, cex.lab=1.2, col="white",
      xlab=expression(italic(x)),
-     ylab=expression(italic(y)),
+     ylab = expression(italic(y)),
      main="")
 
 # add mean lines	
@@ -532,8 +607,8 @@ mtext(side=4, line=0.5, at=(mean(yy)+par()$usr[4])/2, expression((italic(y[i])-i
 negC <- (xx<mean(xx) & yy>mean(yy)) | (xx>mean(xx) & yy<mean(yy))
 
 # overlay pos & neg cov values
-points(xx[negC], yy[negC], pch="-", cex=2, col="darkred")
-points(xx[!negC], yy[!negC], pch="+", cex=1.5, col="blue")
+points(xx[negC], yy[negC], pch="-", cex = 2, col="darkred")
+points(xx[!negC], yy[!negC], pch="+", cex = 1.5, col="blue")
 ```
 
 
@@ -590,12 +665,12 @@ ww <- matrix(rnorm(nn*tt), tt, nn)
 
 mm <- apply(ww, 1, mean)
 
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = c(0, 0, 0, 0))
 
 matplot(ww, type="l", lty="solid",  las = 1,
         ylab = expression(italic(x[t])), xlab = "Time",
         col = gray(0.5, 0.2))
-points(rep(0,tt), pch = "-", col = "blue", cex=1.5)
+points(rep(0,tt), pch = "-", col = "blue", cex = 1.5)
 ```
 
 
@@ -603,7 +678,7 @@ points(rep(0,tt), pch = "-", col = "blue", cex=1.5)
 
 ```{r ex_ts_plot_joint_dist_3, fig.cap="Our single realization is our estimate!"}
 
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+par(mai = c(0.9, 0.9, 0.1, 0.1), omi = c(0, 0, 0, 0))
 
 matplot(ww, type="l", lty="solid",  las = 1,
         ylab = expression(italic(x[t])), xlab = "Time",
@@ -614,12 +689,12 @@ lines(ww[,1], col = "blue", lwd = 2)
 
 ## Stationarity & the mean
 
-If $\text{E}(x_t)$ is constant across time, we say the time series is _stationary_ in the mean
+If $\text{E}(x_t)$ is constant across time, we say the time series is _stationary in the mean_
 
 
 ## Stationarity of time series
 
-_Stationarity_ is a convenient assumption that allows us to describe the statistical properties of a time series.
+_Stationarity_ is a convenient assumption that allows us to describe the statistical properties of a time series
 
 In general, a time series is said to be stationary if there is
 
@@ -628,23 +703,23 @@ In general, a time series is said to be stationary if there is
 3. no periodic variations or seasonality
 
 
-## Identifying stationarity
+## Which of these is stationary?
 
 ```{r, fig.align="center"}
 par(mfrow = c(2,2), mai = c(0.7,0.4,0.2,0.1))
 
 plot.ts(arima.sim(model = list(ar = 0.3, sd = 0.1), n = 100),
         las = 1, ylab = "")
-mtext("A", 3, line = 0, adj = 0, xpd = NA)
+mtext("A", 3, line = 0.1, adj = 0, xpd = NA)
 plot.ts(arima.sim(model = list(ar = 0.9, sd = 0.1), n = 100),
         las = 1, ylab = "")
-mtext("B", 3, line = 0, adj = 0, xpd = NA)
+mtext("B", 3, line = 0.1, adj = 0, xpd = NA)
 plot.ts(arima.sim(model = list(ar = -0.9, sd = 0.1), n = 100),
         las = 1, ylab = "")
-mtext("C", 3, line = 0, adj = 0, xpd = NA)
+mtext("C", 3, line = 0.1, adj = 0, xpd = NA)
 plot.ts(arima.sim(model = list(ma = 0.1, sd = 0.1), n = 100),
         las = 1, ylab = "")
-mtext("D", 3, line = 0, adj = 0, xpd = NA)
+mtext("D", 3, line = 0.1, adj = 0, xpd = NA)
 ```
 
 
@@ -676,9 +751,11 @@ $$
 \gamma_k = \text{E}([x_t - \mu][x_{t+k} - \mu])
 $$
 
-"Smooth" time series have large ACVF for large $k$
+<br>
 
-"Choppy" time series have ACVF near 0 for small $k$
+"Smooth" time series have large ACVF for long lags (large $k$)
+
+"Choppy" time series have ACVF near 0 for short lags (small $k$)
 
 
 ## Autocovariance function (ACVF)
@@ -688,6 +765,8 @@ For stationary ts, we define the _autocovariance function_ ($\gamma_k$) as
 $$
 \gamma_k = \text{E}([x_t - \mu][x_{t+k} - \mu])
 $$
+
+<br>
 
 We can estimate $\gamma_k$ from a sample as
 
@@ -704,7 +783,9 @@ $$
 \rho_k = \frac{\gamma_k}{\sigma^2} = \frac{\gamma_k}{\gamma_0}
 $$
 
-The ACF measures the correlation of a time series against a time-shifted version of itself
+<br>
+
+The ACF measures the correlation of a time series with a time-shifted version of itself
 
 
 ## Autocorrelation function (ACF)
@@ -715,7 +796,7 @@ $$
 \rho_k = \frac{\gamma_k}{\sigma^2} = \frac{\gamma_k}{\gamma_0}
 $$
 
-The ACF measures the correlation of a time series against a time-shifted version of itself
+<br>
 
 We can estimate ACF from a sample as
 
@@ -726,7 +807,7 @@ $$
 
 ## Properties of the ACF
 
-The ACF has several important properties:
+The ACF $r_k$ has several important properties:
 
 - $-1 \leq r_k \leq 1$  
 
@@ -734,34 +815,32 @@ The ACF has several important properties:
 
 > - $r_k$ of a periodic function is itself periodic  
 
-> - $r_k$ for the sum of 2 independent variables is the sum of $r_k$ for each of them 
-
 
 ## The correlogram 
 
 ```{r, fig.cap="Graphical output for the ACF"}
-par(mai=c(1,1,0,0), omi=c(0.1,0.1,0.1,0.1))
+par(mai = c(1, 1, 0, 0), omi = c(0.1, 0.1, 0.1, 0.1))
 plot(NA, NA, type="n", xlim=c(0,15), ylim=c(-1,1),
-     xlab="", xaxt="n", ylab="", las = 1)
+     xlab="", xaxt="n", ylab = "", las = 1)
 abline(h=0)
 axis(side=1, at=seq(15), labels=FALSE)
 axis(side=1, at=seq(0,15,5))
-mtext(expression(paste("Lag ", (italic(k)))), side=1, line=3, cex=1.2)
-mtext(expression(paste("ACF ", (italic(r[k])))), side=2, line=3, cex=1.2)
+mtext(expression(paste("Lag ", (italic(k)))), side=1, line=3, cex = 1.2)
+mtext(expression(paste("ACF ", (italic(r[k])))), side=2, line=3, cex = 1.2)
 ```
 
 
 ## The correlogram 
 
 ```{r, fig.cap="The ACF at lag = 0 is always 1"}
-par(mai=c(1,1,0,0), omi=c(0.1,0.1,0.1,0.1))
+par(mai = c(1, 1, 0, 0), omi = c(0.1, 0.1, 0.1, 0.1))
 plot(NA, NA, type="n", xlim=c(0,15), ylim=c(-1,1),
-     xlab="", xaxt="n", ylab="", las = 1)
+     xlab="", xaxt="n", ylab = "", las = 1)
 abline(h=0)
 axis(side=1, at=seq(15), labels=FALSE)
 axis(side=1, at=seq(0,15,5))
-mtext(expression(paste("Lag ", (italic(k)))), side=1, line=3, cex=1.2)
-mtext(expression(paste("ACF ", (italic(r[k])))), side=2, line=3, cex=1.2)
+mtext(expression(paste("Lag ", (italic(k)))), side=1, line=3, cex = 1.2)
+mtext(expression(paste("ACF ", (italic(r[k])))), side=2, line=3, cex = 1.2)
 
 lines(c(0,0), c(0,1), lwd=2, col="darkred")
 text(x=1, y =1, expression(italic(r)[0] == 1), col="darkred")
@@ -771,14 +850,14 @@ text(x=1, y =1, expression(italic(r)[0] == 1), col="darkred")
 ## The correlogram 
 
 ```{r, fig.cap="Approximate confidence intervals"}
-par(mai=c(1,1,0,0), omi=c(0.1,0.1,0.1,0.1))
+par(mai = c(1, 1, 0, 0), omi = c(0.1, 0.1, 0.1, 0.1))
 plot(NA, NA, type="n", xlim=c(0,15), ylim=c(-1,1),
-     xlab="", xaxt="n", ylab="", las = 1)
+     xlab="", xaxt="n", ylab = "", las = 1)
 abline(h=0)
 axis(side=1, at=seq(15), labels=FALSE)
 axis(side=1, at=seq(0,15,5))
-mtext(expression(paste("Lag ", (italic(k)))), side=1, line=3, cex=1.2)
-mtext(expression(paste("ACF ", (italic(r[k])))), side=2, line=3, cex=1.2)
+mtext(expression(paste("Lag ", (italic(k)))), side=1, line=3, cex = 1.2)
+mtext(expression(paste("ACF ", (italic(r[k])))), side=2, line=3, cex = 1.2)
 
 lines(c(0,0), c(0,1), lwd=2, col="darkred")
 text(x=1, y =1, expression(italic(r)[0] == 1), col="darkred")
@@ -805,50 +884,56 @@ acf(ts_object)
 
 ```{r}
 ## length of ts
-nn <- 100
+nn <- 96
 
 ## trend only
-par(mfrow=c(1,2), mai=c(1,1,0,0), omi=c(0.1,0.1,0.6,0.1))
+par(mfrow = c(1, 2), mai = c(1, 1, 0, 0), omi = c(0.1,0.1,0.6,0.1))
 tt <- seq(nn)
-plot.ts(tt, ylab=expression(italic(x[t])))
+plot.ts(tt, ylab = expression(italic(x[t])))
 acf(tt)
-mtext("Linear trend {1,2,3,...,100}", outer=TRUE, line=1, cex=1.5)
+mtext("Linear trend {1,2,3,...,100}",
+      outer = TRUE, line = 1, cex = 1.5)
 ```
 
 
 ## ACF for deterministic forms
 
 ```{r}
-par(mfrow=c(1,2), mai=c(1,1,0,0), omi=c(0.1,0.1,0.6,0.1))
+par(mfrow = c(1, 2),
+    mai = c(1, 1, 0, 0), omi = c(0.1, 0.1, 0.6, 0.1))
 ## compute the 2 predictor variables
-tt <- sin(2*pi*seq(nn)/12)
-plot.ts(tt, ylab=expression(italic(x[t])))
+tt <- sin(2 * pi * seq(nn) / 12)
+plot.ts(tt, ylab = expression(italic(x[t])))
 acf(tt)
-mtext("Discrete (monthly) sine wave", outer=TRUE, line=1, cex=1.5)
+mtext("Discrete (monthly) sine wave",
+      outer = TRUE, line = 1, cex = 1.5)
 ```
 
 
 ## ACF for deterministic forms
 
 ```{r}
-par(mfrow=c(1,2), mai=c(1,1,0,0), omi=c(0.1,0.1,0.6,0.1))
+par(mfrow = c(1, 2),
+    mai = c(1, 1, 0, 0), omi = c(0.1, 0.1, 0.6, 0.1))
 ## compute the 2 predictor variables
-tt <- sin(2*pi*seq(nn)/12) - seq(nn)/50
-plot.ts(tt, ylab=expression(italic(x[t])))
-acf(tt, lag.max=30)
-mtext("Linear trend + seasonal effect", outer=TRUE, line=1, cex=1.5)
+tt <- sin(2 * pi * seq(nn) / 12) - seq(nn)/50
+plot.ts(tt, ylab = expression(italic(x[t])))
+acf(tt, lag.max = 30)
+mtext("Linear trend + seasonal effect",
+      outer = TRUE, line = 1, cex = 1.5)
 ```
 
 
 ## ACF for deterministic forms
 
 ```{r}
-par(mfrow=c(1,2), mai=c(1,1,0,0), omi=c(0.1,0.1,0.6,0.1))
+par(mfrow = c(1, 2), mai = c(1, 1, 0, 0), omi = c(0.1,0.1,0.6,0.1))
 # compute the 2 predictor variables
-tt <- rep(floor(runif(nn/10,1,101)), times=10)
-plot.ts(tt, ylab=expression(italic(x[t])))
+tt <- rep(floor(runif(nn/10,1,101)), times = 10)
+plot.ts(tt, ylab = expression(italic(x[t])))
 acf(tt)
-mtext("Sequence of 10 random numbers repeated 10 times", outer=TRUE, line=1, cex=1.5)
+mtext("Sequence of 10 random numbers repeated 10 times",
+      outer = TRUE, line = 1, cex = 1.5)
 ```
 
 
@@ -922,16 +1007,17 @@ library(MARSS)
 data(lakeWAplankton)
 lwa <- lakeWAplanktonTrans
 lwa <- lwa[lwa[,"Year"] >= 1975,]
-lwa <- ts(lwa, start = c(1975,1), freq = 12)
-par(mai=c(1,1,0,0), omi=c(0.1,0.1,0.1,0.1))
-plot.ts(lwa[,"Cryptomonas"], ylab=expression(log(italic(Cryptomonus))), las = 1)
+lwa <- ts(lwa, start = c(1975, 1), freq = 12)
+par(mai = c(1, 1, 0, 0), omi = c(0.1, 0.1, 0.1, 0.1))
+plot.ts(lwa[,"Cryptomonas"], las = 1,
+        ylab = expression(log(italic(Cryptomonus))))
 ```
 
 
 ## Lake Washington phytoplankton
 
 ```{r lwa_phyto_acf, fig.cap = "Autocorrelation"}
-par(mai=c(1,1,0,0), omi=c(0.1,0.1,0.1,0.1))
+par(mai = c(1, 1, 0, 0), omi = c(0.1, 0.1, 0.1, 0.1))
 acf(lwa[,"Cryptomonas"], na.action = na.pass, las = 1)
 ```
 
@@ -939,7 +1025,7 @@ acf(lwa[,"Cryptomonas"], na.action = na.pass, las = 1)
 ## Lake Washington phytoplankton
 
 ```{r lwa_phyto_pacf, fig.cap = "Partial autocorrelation"}
-par(mai=c(1,1,0,0), omi=c(0.1,0.1,0.1,0.1))
+par(mai = c(1, 1, 0, 0), omi = c(0.1, 0.1, 0.1, 0.1))
 pacf(lwa[,"Cryptomonas"], na.action = na.pass, las = 1)
 ```
 
@@ -963,6 +1049,8 @@ Often we want to look for relationships between 2 different time series
 
 We can extend the notion of covariance to _cross-covariance_
 
+<br>
+
 We can estimate the CCVF $(g^{x,y}_k)$ from a sample as
 
 $$
@@ -972,7 +1060,7 @@ $$
 
 ## Cross-correlation function (CCF)
 
-The cross-correlation function is the CCVF normalized by the standard deviations of x & y
+The cross-correlation function is the CCVF normalized by the standard deviations of $x$ & $y$
 
 $$
 r^{x,y}_k = \frac{g^{x,y}_k}{s_x s_y}
@@ -991,6 +1079,8 @@ $$
 ccf(x, y)
 ```
 
+<br>
+
 **Note**: the lag `k` value returned by `ccf(x, y)` is the correlation between `x[t+k]` and `y[t]`
 
 In an explanatory context, we often think of $y = f(x)$, so it's helpful to use `ccf(y, x)` and only consider positive lags
@@ -1006,15 +1096,15 @@ lynx <- ts.intersect(lynx,sunspot.year)[,"lynx"]
 
 layout(mat = matrix(c(1,1,2,2,0,3,3,0), 4, 2))
 
-par(mai=c(0.1,0.6,0.1,0.3), omi=c(0.5,0,0,0))
-plot.ts(suns, main="", ylab="Sunspot activity",
+par(mai=c(0.1,0.6,0.1,0.3), omi = c(0.5,0,0,0))
+plot.ts(suns, main="", ylab = "Sunspot activity",
         xaxt="n", xlab="", cex.lab = 2)
 
-# par(mai=c(0.6,0.5,0.1,0.1), omi=c(0,0,0,0))
-plot.ts(lynx, ylab="Number of trapped lynx")
+# par(mai=c(0.6,0.5,0.1,0.1), omi = c(0, 0, 0, 0))
+plot.ts(lynx, ylab = "Number of trapped lynx")
 
 # par(mai=c(0.6,0.5,0,0.1))
-ccf(log(lynx), log(suns), ylab="Cross-correlation", main="")
+ccf(log(lynx), log(suns), ylab = "Cross-correlation", main="")
 ```
 
 
