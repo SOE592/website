@@ -19,3 +19,28 @@ knitr::opts_knit$set(unnamed.chunk.label = "dfa-")
 
 # Introduction
 
+
+
+# White noise
+
+
+
+# Random walks
+
+
+
+# Biased random walks
+
+
+
+# Autoregressive models
+
+
+
+# Autocorrelation function
+
+
+
+# Partial autocorrelation
+
+
