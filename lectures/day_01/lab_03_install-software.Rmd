@@ -30,9 +30,7 @@ We've already seen several functions in the base installation of R that allow us
 
 Our workhorse package for fitting univariate and multivariate time series models is {MARSS}, which stands for "Multivariate AutoRegressive State Space". You will see as the course progresses that many different kinds of models can be set up using the exact same mathematical framework, which will allow us to use the same software to fit them and estimate parameters of interest.
 
-<br>
-
-**Option 1**
+### Option 1
 
 <div class="boxy boxy-blue boxy-clipboard-list">
 **Task:** Install the {MARSS} package using the R command line.
@@ -42,9 +40,7 @@ Our workhorse package for fitting univariate and multivariate time series models
 install.packages("MARSS", dependencies = TRUE)
 ```
 
-<br>
-
-**Option 2**
+### Option 2
 
 <div class="boxy boxy-blue boxy-clipboard-list">
 **Task:** Install the {MARSS} package using the dropdown menu in RStudio.
