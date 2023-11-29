@@ -1,8 +1,7 @@
 ---
 title: "Population viability analysis (PVA)"
 subtitle: "SOE 592 – Intro to Time Series Analysis"
-author: "Mark Scheuerell"
-date: "4 Jan 2024"
+date: "<br>4 Jan 2024"
 output:
   html_document:
     theme: sandstone

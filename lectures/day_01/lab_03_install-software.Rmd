@@ -1,8 +1,7 @@
 ---
 title: "Installing software and packages"
 subtitle: "SOE 592 – Intro to Time Series Analysis"
-author: "Mark Scheuerell"
-date: "3 Jan 2024"
+date: "<br>3 Jan 2024"
 output:
   html_document:
     theme: sandstone
@@ -59,5 +58,4 @@ knitr::include_graphics("images/install_MARSS_RStudio.png")
 ***
 
 # TMB
-
 
