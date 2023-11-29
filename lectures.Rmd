@@ -5,7 +5,7 @@ output: html_document
 
 <br>
 
-#### Navigating through lecture slides
+#### Navigating through the course notes
 
 * Use the arrow keys (&#8592;/&#8594;) on your keyboard to go forward or backward
 
@@ -13,7 +13,7 @@ output: html_document
 
 * In overview mode, click on a slide or press "esc" to zoom in on it
 
-* You can print the slides to a pdf by selecting the "print" option from your browser's File menu.
+* You can print the notes to a pdf by selecting the "print" option from your browser's File menu.
 
 
 ```{r child = "_timeline.Rmd", include=FALSE}
