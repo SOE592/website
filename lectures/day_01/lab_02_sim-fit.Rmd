@@ -58,7 +58,7 @@ nn <- 100
 sigma <- sqrt(2)
 
 ## draw random values
-wt <- rnorm(n = nn, mean = 0, sd = sigma)
+ww <- rnorm(n = nn, mean = 0, sd = sigma)
 ```
 
 ## Plotting a time series
@@ -67,7 +67,7 @@ We can use the base function `plot.ts()` to plot a time series by passing only t
 
 ```{r plot_white_noise}
 ## plot the time series of white noise
-plot.ts(x = wt, ylab = expression(italic(w[t])))
+plot.ts(x = ww, ylab = expression(italic(w[t])))
 ```
 
 <div class="boxy boxy-orange boxy-lightbulb">
@@ -76,10 +76,10 @@ plot.ts(x = wt, ylab = expression(italic(w[t])))
 
 ```{r plot_white_noise_pipe, eval = FALSE}
 ## plot.ts via the native pipe operator |>
-wt |> plot.ts(ylab = expression(italic(w[t])))
+ww |> plot.ts(ylab = expression(italic(w[t])))
 
 ## plot.ts via the {tidyverse} pipe operator %>%
-wt %>% plot.ts(ylab = expression(italic(w[t])))
+ww %>% plot.ts(ylab = expression(italic(w[t])))
 ```
 
 ***
@@ -96,7 +96,7 @@ We can estimate the ACF with the base function `acf()`, which will consider lags
 
 ```{r acf_white_noise}
 ## estimate and plot the ACF
-acf(x = wt)
+acf(x = ww)
 ```
 
 <div class="boxy boxy-red boxy-exclamation">
@@ -119,6 +119,52 @@ acf(x = wt)
 ***
 
 # Random walks
+
+Random walks are one of the most common and most simple time series models. They are amazingly flexible in their realizations and can be fit to many different "shapes" of data. Recall that a time series $\{x_t\}$ is a random walk if
+
+1. $x_t = x_{t-1} + w_t$  
+
+2. $w_t$ is white noise
+
+In this course we'll focus exclusively on Gaussian white noise, which means our random walk model is given by
+
+$$
+x_t = x_{t-1} + w_t \\
+\\
+w_t \sim \text{N}(0,\sigma^2)
+$$
+
+## Simulating random walks
+
+Simulating random walks is rather straightforward. To begin, we'll use the same white noise sequence we simulated above as our process errors. We just need to specify a starting value for $x_1$ and then iteratively add one error term each time step. This is easy to do with a `for()` loop in R.
+
+Let's begin by implicitly setting $x_0 = 0$, which means that $x_1 = w_1$.
+
+```{r sim_RW}
+## initialize a vector for storing x_t by setting it equal to w_t
+xx <- ww
+
+## specify the initial value at t = 1
+xx[1] <- ww[1]
+
+## loop over time steps 2 through 100
+for(t in 2:nn) {
+  xx[t] <- xx[t-1] + ww[t]
+}
+```
+
+## Plotting our random walk
+
+Let's again use the base function `plot.ts()` to plot the data from the random walk model we just created
+
+```{r plot_RW}
+## plot the realization of our random walk model
+plot.ts(x = xx, ylab = expression(italic(x[t])))
+```
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Compare this plot to the one above with the white noise sequence. What are some of the differences you see?
+</div>
 
 
 
