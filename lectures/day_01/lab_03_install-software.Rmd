@@ -12,11 +12,6 @@ output:
     toc_depth: 3
 ---
 
-```{r dfa-setup, include=FALSE, purl=FALSE}
-## in case you forget to add a chunk label
-knitr::opts_knit$set(unnamed.chunk.label = "dfa-")
-```
-
 <br>
 
 # Introduction
@@ -51,7 +46,7 @@ From the menu bar, navigate to **Tools > Install Packages...** and enter "MARSS"
 **Note:** You should check the box next to **Install dependencies**.
 </div>
 
-```{r, echo = FALSE, out.width = "50%", fig.align = "left"}
+```{r, echo = FALSE, out.width = "60%", fig.align = "center"}
 knitr::include_graphics("images/install_MARSS_RStudio.png")
 ```
 
@@ -81,7 +76,7 @@ From the menu bar, navigate to **Tools > Install Packages...** and enter "TMB" i
 **Note:** You should check the box next to **Install dependencies**.
 </div>
 
-```{r, echo = FALSE, out.width = "50%", fig.align = "left"}
+```{r, echo = FALSE, out.width = "60%", fig.align = "center"}
 knitr::include_graphics("images/install_TMB_RStudio.png")
 ```
 
@@ -95,7 +90,8 @@ knitr::include_graphics("images/install_TMB_RStudio.png")
 </div>
 
 ```{r install_marssTMB, eval = FALSE}
-install.packages('marssTMB', repos = c('https://atsa-es.r-universe.dev', 'https://cloud.r-project.org'))
+install.packages('marssTMB',
+                 repos = c('https://atsa-es.r-universe.dev','https://cloud.r-project.org'))
 ```
 
 
