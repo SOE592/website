@@ -6,23 +6,89 @@ output:
   html_document:
     theme: sandstone
     highlight: textmate
+    css: ["lecture_inst.css", "fontawesome.css", "solid.css"]
     toc: true
     toc_float: true
     toc_depth: 3
 ---
 
-```{r dfa-setup, include=FALSE, purl=FALSE}
-## in case you forget to add a chunk label
-knitr::opts_knit$set(unnamed.chunk.label = "dfa-")
+```{r setup, echo = FALSE}
+knitr::opts_chunk$set(
+  fig.dim = c(7, 5)
+  )
+set.seed(592)
 ```
 
 # Introduction
 
+One of the best ways to learn about how models work is to simulate data and then try to recover the parameters of interest. In this lab we'll simulate data from some of the simple time series models we discuss earlier.
 
 ***
 
 # White noise
 
+Recall that a time series $\{w_t\}$ is discrete white noise if its values are
+
+1. independent  
+
+2. identically distributed with a mean of zero
+
+In this course we will focus exclusively on _Gaussian white noise_, whereby
+
+$$
+w_t \sim \text{N}(0,\sigma^2)
+$$
+
+## Simulating white noise
+
+Drawing random numbers from a statistical distribution in R is straightforward. For the normal (Gaussian) distribution, the function is `rnorm()`. Note that we will typically refer to the variance of a distribution rather than the standard deviation (SD), so be careful to use the correct value when specifying the form of the distribution.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** Type `?rnorm` at the command prompt to see all of the options for `rnorm()`.
+</div>
+
+
+```{r sim_white_noise}
+## length of the time series
+nn <- 100
+
+## set the variance = 2 --> SD = sqrt(2)
+sigma <- sqrt(2)
+
+## draw random values
+wt <- rnorm(n = nn, mean = 0, sd = sigma)
+```
+
+## Plotting a time series
+
+We can use the base function `plot.ts()` to plot a time series by passing only the vector of values without the need to specify both the `x` and `y` arguments for a typical x-y plot. The actual syntax is a bit odd because you specify `x = values` when actually $x$ is the time index (i.e., length of the time series) and $y$ are the values to plot.
+
+```{r plot_white_noise}
+## plot the time series of white noise
+plot.ts(x = wt, ylab = expression(italic(w[t])))
+```
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** You can use pipe operators with `plot.ts()` just as you would for any other function, independent of whether it comes from the {tidyverse} package.
+</div>
+
+```{r plot_white_noise_pipe, eval = FALSE}
+## plot.ts via the native pipe operator |>
+wt |> plot.ts(ylab = expression(italic(w[t])))
+
+## plot.ts via the {tidyverse} pipe operator %>%
+wt %>% plot.ts(ylab = expression(italic(w[t])))
+```
+
+***
+
+# Autocorrelation function
+
+
+
+```{r acf_white_noise}
+acf(wt)
+```
 
 
 ***
@@ -40,12 +106,6 @@ knitr::opts_knit$set(unnamed.chunk.label = "dfa-")
 ***
 
 # Autoregressive models
-
-
-
-***
-
-# Autocorrelation function
 
 
 
