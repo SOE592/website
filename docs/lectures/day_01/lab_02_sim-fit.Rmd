@@ -4,48 +4,249 @@ subtitle: "SOE 592 – Intro to Time Series Analysis"
 date: "<br>3 Jan 2024"
 output:
   html_document:
-    theme: sandstone
+    theme: simplex
     highlight: textmate
+    css: ["lecture_inst.css", "fontawesome.css", "solid.css"]
     toc: true
     toc_float: true
     toc_depth: 3
 ---
 
-```{r dfa-setup, include=FALSE, purl=FALSE}
-## in case you forget to add a chunk label
-knitr::opts_knit$set(unnamed.chunk.label = "dfa-")
+```{r setup, echo = FALSE}
+knitr::opts_chunk$set(
+  fig.dim = c(7, 5)
+  )
 ```
+
+***
 
 # Introduction
 
+One of the best ways to learn about how models work is to simulate data and then try to recover the parameters of interest. In this lab we'll simulate data from some of the simple time series models we discuss earlier, and then use some other functions to plot them and investigate their properties.
 
 ***
 
 # White noise
 
+Recall that a time series $\{w_t\}$ is discrete white noise if its values are
+
+1. independent  
+
+2. identically distributed with a mean of zero
+
+In this course we will focus exclusively on _Gaussian white noise_, whereby
+
+$$
+w_t \sim \text{N}(0,\sigma^2)
+$$
+
+## Simulating white noise
+
+Drawing random numbers from a statistical distribution in R is straightforward. For the normal (Gaussian) distribution, the function is `rnorm()`. Note that we will typically refer to the variance of a distribution rather than the standard deviation (SD), so be careful to use the correct value when specifying the form of the distribution.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** Type `?rnorm` at the command prompt to see all of the options for `rnorm()`.
+</div>
+
+
+```{r sim_white_noise}
+## set the seed for the random number generator so we all get the same results
+set.seed(592)
+
+## length of the time series
+nn <- 100
+
+## set the variance = 2 --> SD = sqrt(2)
+sigma <- sqrt(2)
+
+## draw random values
+ww <- rnorm(n = nn, mean = 0, sd = sigma)
+```
+
+## Plotting a time series
+
+We can use the base function `plot.ts()` to plot a time series by passing only the vector of values without the need to specify both the `x` and `y` arguments for a typical x-y plot. The actual syntax is a bit odd because you specify `x = values` when actually $x$ is the time index (i.e., length of the time series) and $y$ are the values to plot.
+
+```{r plot_white_noise}
+## plot the time series of white noise
+plot.ts(x = ww, ylab = expression(italic(w[t])))
+```
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** You can use pipe operators with `plot.ts()` just as you would for any other function, independent of whether it comes from the {tidyverse} package.
+</div>
+
+```{r plot_white_noise_pipe, eval = FALSE}
+## plot.ts via the native pipe operator |>
+ww |> plot.ts(ylab = expression(italic(w[t])))
+
+## plot.ts via the {tidyverse} pipe operator %>%
+ww %>% plot.ts(ylab = expression(italic(w[t])))
+```
+
+***
+
+# Autocorrelation function
+
+Recall from lecture that we can estimate the correlation of a time series with a lagged (shifted) version of itself via the _autocorrelation function_ (ACF). If a time series is white noise, the ACF should equal zero for all non-zero lags.
+
+We can estimate the ACF with the base function `acf()`, which will consider lags up to 20 by default.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** Type `?acf` at the command prompt to see all of the options for `acf()`, including how to set the maximum number of lags via the `lag.max` argument.
+</div>
+
+```{r acf_white_noise}
+## estimate and plot the ACF
+acf(x = ww)
+```
+
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** The autocorrelation at a lag of 0 equals 1 because it's the correlation of a time series with itself.
+</div>
+
+<br>
+
+**Q**: What's going on at lag = 5 where it looks like the correlation is below the dashed blue line indicating it's significantly negative?
+
+**A**: Here we're basing the statistical significance on a Type-I error of 5% (i.e., $\alpha$ = 0.05), which means we should expect a spurious significant correlation about 1 in 20 times. In this case, we were simply (un)lucky.
+
+<br>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Increase the length of the simulated time series with `n = 1000` and estimate the ACF. Do you see significant autocorrelation at any lags?
+</div>
 
 
 ***
 
 # Random walks
 
+Random walks are one of the most common and most simple time series models. They are amazingly flexible in their realizations and can be fit to many different "shapes" of data. Recall that a time series $\{x_t\}$ is a random walk if
+
+1. $x_t = x_{t-1} + w_t$  
+
+2. $w_t$ is white noise
+
+In this course we'll focus exclusively on Gaussian white noise, which means our random walk model is given by
+
+$$
+x_t = x_{t-1} + w_t \\
+\\
+w_t \sim \text{N}(0,\sigma^2)
+$$
+
+## Simulating random walks
+
+Simulating random walks is rather straightforward. To begin, we'll use the same white noise sequence we simulated above as our process errors. We just need to specify a starting value for $x_1$ and then iteratively add one error term each time step. This is easy to do with a `for()` loop in R.
+
+Let's begin by implicitly setting $x_0 = 0$, which means that $x_1 = w_1$.
+
+```{r sim_RW}
+## initialize a vector for storing x_t by setting it equal to w_t
+xx <- ww
+
+## specify the initial value at t = 1
+xx[1] <- ww[1]
+
+## loop over time steps 2 through 100
+for(t in 2:nn) {
+  xx[t] <- xx[t-1] + ww[t]
+}
+```
+
+## Plotting our random walk
+
+Let's again use the base function `plot.ts()` to plot the data from the random walk model we just created
+
+```{r plot_RW}
+## plot the realization of our random walk model
+plot.ts(x = xx, ylab = expression(italic(x[t])))
+```
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Compare this plot to the one above with the white noise sequence. What are some of the differences you see?
+</div>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Create a new time series of white noise and use it to create a new realization of a random walk by modifying the code above. Compare it to the plot above. What do you notice?
+</div>
+
+<br>
+
+## ACF for a random walk
+
+Let's examine the ACF for the vector of values from the first random walk we [simulated above](#simulating-random-walks).
+
+```{r acf_RW}
+## estimate and plot the ACF
+acf(x = xx)
+```
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Compare the ACF for the random walk to that for white noise. What do you notice?
+</div>
+
+<br>
+
+## Alternate method for RW's
+
+Let's look at another method for simulating random walks. We'll begin by assuming that the first value $x_0$ is equal to 0 as we did above. At $t = 1$ we have
+
+$$
+x_1 = x_0 + w_1 \\
+\Downarrow \\
+x_1 = w_1
+$$
+
+At the next time step when $t = 2$, we then have
+
+$$
+x_2 = x_1 + w_2 \\
+\Downarrow \\
+x_2 = w_1 + w_2
+$$
+
+At time step $t = 3$ we have
+
+$$
+x_3 = x_2 + w_3 \\
+\Downarrow \\
+x_3 = (w_1 + w_2) + w_3
+$$
+
+When $t = 4$ we next have
+
+$$
+x_4 = x_3 + w_4 \\
+\Downarrow \\
+x_4 = (w_1 + w_2 + w_3) + w_4
+$$
+
+and so on. This implies that a random walk is simply the cumulative sum of a white noise sequence, which we can accomplish with the `cumsum()` function. We can then compare that version to our original calculation with the correlation function `cor()` (i.e., the correlation of a vector with itself is 1).
+
+```{r cumsum_RW}
+## cumulative sum of our white noise sequence
+x2 <- cumsum(ww)
+
+## correlation between xx & x2
+cor(xx, x2)
+```
+
+<div class="boxy boxy-success boxy-check">
+**Success:** Wow--it worked!
+</div>
 
 
 ***
 
 # Biased random walks
 
-
+Biased random walks are also common models in ecology. For example, as we will see later in the course, you can write a simple model for exponential population growth in discrete time as a biased random walk.
 
 ***
 
 # Autoregressive models
-
-
-
-***
-
-# Autocorrelation function
 
 
 

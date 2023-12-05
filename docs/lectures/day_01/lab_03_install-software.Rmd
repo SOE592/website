@@ -4,18 +4,13 @@ subtitle: "SOE 592 – Intro to Time Series Analysis"
 date: "<br>3 Jan 2024"
 output:
   html_document:
-    theme: sandstone
+    theme: simplex
     highlight: textmate
     css: ["lecture_inst.css", "fontawesome.css", "solid.css"]
     toc: true
     toc_float: true
     toc_depth: 3
 ---
-
-```{r dfa-setup, include=FALSE, purl=FALSE}
-## in case you forget to add a chunk label
-knitr::opts_knit$set(unnamed.chunk.label = "dfa-")
-```
 
 <br>
 
@@ -51,11 +46,55 @@ From the menu bar, navigate to **Tools > Install Packages...** and enter "MARSS"
 **Note:** You should check the box next to **Install dependencies**.
 </div>
 
-```{r, echo = FALSE, out.width = "50%", fig.align = "left"}
+```{r, echo = FALSE, out.width = "60%", fig.align = "center"}
 knitr::include_graphics("images/install_MARSS_RStudio.png")
 ```
 
 ***
 
-# TMB
+# {TMB}
+
+### Option 1
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Install the {TMB} package using the R command line.
+</div>
+
+```{r install_TMB, eval = FALSE}
+install.packages("TMB", dependencies = TRUE)
+```
+
+### Option 2
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Install the {TMB} package using the dropdown menu in RStudio.
+</div>
+
+From the menu bar, navigate to **Tools > Install Packages...** and enter "TMB" in the box for package name.
+
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** You should check the box next to **Install dependencies**.
+</div>
+
+```{r, echo = FALSE, out.width = "60%", fig.align = "center"}
+knitr::include_graphics("images/install_TMB_RStudio.png")
+```
+
+
+***
+
+# {marssTMB}
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Install the {marssTMB} package using the R command line.
+</div>
+
+```{r install_marssTMB, eval = FALSE}
+install.packages('marssTMB',
+                 repos = c('https://atsa-es.r-universe.dev','https://cloud.r-project.org'))
+```
+
+
+
+
 
