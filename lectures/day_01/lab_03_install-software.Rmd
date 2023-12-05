@@ -4,7 +4,7 @@ subtitle: "SOE 592 – Intro to Time Series Analysis"
 date: "<br>3 Jan 2024"
 output:
   html_document:
-    theme: sandstone
+    theme: simplex
     highlight: textmate
     css: ["lecture_inst.css", "fontawesome.css", "solid.css"]
     toc: true
