@@ -242,7 +242,7 @@ cor(xx, x2)
 
 # Biased random walks
 
-
+Biased random walks are also common models in ecology. For example, as we will see later in the course, you can write a simple model for exponential population growth in discrete time as a biased random walk.
 
 ***
 
