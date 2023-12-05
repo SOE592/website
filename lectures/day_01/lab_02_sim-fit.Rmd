@@ -16,12 +16,11 @@ output:
 knitr::opts_chunk$set(
   fig.dim = c(7, 5)
   )
-set.seed(592)
 ```
 
 # Introduction
 
-One of the best ways to learn about how models work is to simulate data and then try to recover the parameters of interest. In this lab we'll simulate data from some of the simple time series models we discuss earlier.
+One of the best ways to learn about how models work is to simulate data and then try to recover the parameters of interest. In this lab we'll simulate data from some of the simple time series models we discuss earlier, and then use some other functions to plot them and investigate their properties.
 
 ***
 
@@ -49,6 +48,9 @@ Drawing random numbers from a statistical distribution in R is straightforward. 
 
 
 ```{r sim_white_noise}
+## set the seed for the random number generator so we all get the same results
+set.seed(592)
+
 ## length of the time series
 nn <- 100
 
@@ -84,11 +86,34 @@ wt %>% plot.ts(ylab = expression(italic(w[t])))
 
 # Autocorrelation function
 
+Recall from lecture that we can estimate the correlation of a time series with a lagged (shifted) version of itself via the _autocorrelation function_ (ACF). If a time series is white noise, the ACF should equal zero for all non-zero lags.
 
+We can estimate the ACF with the base function `acf()`, which will consider lags up to 20 by default.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** Type `?acf` at the command prompt to see all of the options for `acf()`, including how to set the maximum number of lags via the `lag.max` argument.
+</div>
 
 ```{r acf_white_noise}
-acf(wt)
+## estimate and plot the ACF
+acf(x = wt)
 ```
+
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** The autocorrelation at a lag of 0 equals 1 because it's the correlation of a time series with itself.
+</div>
+
+<br>
+
+**Q**: What's going on at lag = 5 where it looks like the correlation is below the dashed blue line indicating it's significantly negative?
+
+**A**: Here we're basing the statistical significance on a Type-I error of 5% (i.e., $\alpha$ = 0.05), which means we should expect a spurious significant correlation about 1 in 20 times. In this case, we were simply (un)lucky.
+
+<br>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Increase the length of the simulated time series with `n = 1000` and estimate the ACF. Do you see significant autocorrelation at any lags?
+</div>
 
 
 ***
