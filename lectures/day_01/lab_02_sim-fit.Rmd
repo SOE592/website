@@ -14,7 +14,8 @@ output:
 
 ```{r setup, echo = FALSE}
 knitr::opts_chunk$set(
-  fig.dim = c(7, 5)
+  fig.dim = c(7, 5),
+  fig.align = "center"
   )
 ```
 
@@ -157,7 +158,7 @@ for(t in 2:nn) {
 
 ## Plotting our random walk
 
-Let's again use the base function `plot.ts()` to plot the data from the random walk model we just created
+Let's again use the base function `plot.ts()` to plot the data from the random walk model we just created.
 
 ```{r plot_RW}
 ## plot the realization of our random walk model
@@ -242,7 +243,48 @@ cor(xx, x2)
 
 # Biased random walks
 
-Biased random walks are also common models in ecology. For example, as we will see later in the course, you can write a simple model for exponential population growth in discrete time as a biased random walk.
+Biased random walks are also common models in ecology. For example, as we will see later in the course, you can write a simple model for exponential population growth in discrete time as a biased random walk. Recall that a _biased random walk_ (or _random walk with drift_) is written as
+
+$$
+x_t = x_{t-1} + u + w_t \\
+\\
+w_t \sim \text{N}(0,\sigma^2)
+$$  
+
+where $u$ is the bias (drift) per time step and $w_t$ is white noise.
+
+
+## Simulating a biased random walk
+
+Simulating a biased random walk is just as easy as a regular random walk. Here we'll use the same white noise sequence we simulated above as our process errors. We just need to specify a starting value for $x_1$ and then iteratively add the bias and one error term each time step. This is easy to do with a `for()` loop in R.
+
+Let's begin by implicitly setting $x_0 = 0$, which means that $x_1 = u + w_1$.
+
+```{r ex_biased_RW}
+## initialize a vector to store the values
+xb <- ww
+
+## set the bias equal to 1
+uu <- 1
+
+## set the initial value
+xb[1] <- uu + ww[1]
+
+for(t in 2:nn) {
+  xb[t] <- xb[t-1] + uu + ww[t]
+}
+```
+
+## Plotting a biased random walk
+
+We'll again use the base function `plot.ts()` to plot the data from the biased random walk model we just created.
+
+```{r plot_biased_RW}
+## plot the realization of our random walk model
+plot.ts(x = xb, ylab = expression(italic(x[t])))
+```
+
+
 
 ***
 
