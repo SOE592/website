@@ -23,11 +23,11 @@ lec_1 <- list(
 
 ## session 2 ####
 lab_1 <- list(
-  title = "Basic functions",
-  topics = c("Basic functions"),
+  title = "Basic ts functions",
+  topics = c("Basic ts functions"),
   pdf = c(""),
   rmd = "",
-  html = "https://atsa-es.github.io/atsa-labs/chap-tslab.html",
+  html = "lectures/day_01/lab_01_basic_ts_funcs.html",
   background = c("<br><br>"),
   zoom = ""
 )
