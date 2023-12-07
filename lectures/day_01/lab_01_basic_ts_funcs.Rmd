@@ -1,0 +1,25 @@
+---
+title: "Intro to basic time series functions"
+subtitle: "SOE 592 – Intro to Time Series Analysis"
+date: "<br>3 Jan 2024"
+output:
+  html_document:
+    theme: simplex
+    highlight: textmate
+    css: ["lecture_inst.css", "fontawesome.css", "solid.css"]
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r setup, echo = FALSE}
+knitr::opts_chunk$set(
+  fig.dim = c(7, 5),
+  fig.align = "center"
+  )
+```
+
+***
+
+# Introduction
+
