@@ -228,10 +228,10 @@ and so on. This implies that a random walk is simply the cumulative sum of a whi
 
 ```{r cumsum_RW}
 ## cumulative sum of our white noise sequence
-x2 <- cumsum(ww)
+xx2 <- cumsum(ww)
 
-## correlation between xx & x2
-cor(xx, x2)
+## correlation between xx & xx2
+cor(xx, xx2)
 ```
 
 <div class="boxy boxy-success boxy-check">
@@ -309,6 +309,29 @@ acf(x = xb)
 
 # Autoregressive models
 
+Recall that an autoregressive model of order _p_, or AR(_p_), is defined as
+
+$$
+x_t = \phi_1 x_{t-1} + \phi_2 x_{t-2} + \dots + \phi_p x_{t-p} + w_t
+$$
+
+where we assume
+
+1. $w_t$ is white noise
+
+2. $\phi_p \neq 0$ for an order-_p_ process
+
+The random walk and biased random walk models we saw above are two of the most common autoregressive models, both of which are AR(1) with $\phi$ = 1.
+
+Here we will look at some other forms of AR(_p_) models where $|\phi_i| < 1$, which are _stationary_ in the mean and variance.
+
+## Simulating an AR(_p_) model
+
+Simulating an AR(_p_) model is also straightforward. One option is to use a `for()` loop like we did above for the [random walk](#simulating-random-walks) and [biased random walk](#simulating-a-biased-random-walk) models. Here we'll explore how to use the `arima.sim()` function in base R.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** Type `?arima.sim` at the command prompt to see all of the options for `arima.sim()`.
+</div>
 
 
 ***
