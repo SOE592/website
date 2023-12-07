@@ -284,7 +284,26 @@ We'll again use the base function `plot.ts()` to plot the data from the biased r
 plot.ts(x = xb, ylab = expression(italic(x[t])))
 ```
 
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Change the bias term to be something much smaller (e.g., 0.1), re-run the code above and then plot the new series. How does it compare to the first example?
+</div>
 
+<br>
+
+## ACF for a biased random walk
+
+Let's examine the ACF for the vector of values from the biased random walk we just simulated. As before, we can use the `acf()` function.
+
+```{r acf_biased_RW}
+## estimate and plot the ACF
+acf(x = xb)
+```
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Compare the ACF for this biased random walk to that for the simple random walk above. What do you notice?
+</div>
+
+<br>
 
 ***
 
