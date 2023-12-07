@@ -5458,11 +5458,16 @@ software. This tutorial will help you do so.</p>
 <div id="marss" class="section level1">
 <h1>{MARSS}</h1>
 <p>Our workhorse package for fitting univariate and multivariate time
-series models is {MARSS}, which stands for “Multivariate AutoRegressive
-State Space”. You will see as the course progresses that many different
-kinds of models can be set up using the exact same mathematical
-framework, which will allow us to use the same software to fit them and
-estimate parameters of interest.</p>
+series models is {MARSS}, which stands for
+“<strong>M</strong>ultivariate
+<strong>A</strong>uto<strong>R</strong>egressive <strong>S</strong>tate
+<strong>S</strong>pace”. You will see as the course progresses that many
+different kinds of models can be set up using the exact same
+mathematical framework, which will allow us to use the same software to
+fit them and estimate parameters of interest.</p>
+<p>If you’d like to learn more about the {MARSS} package and the types
+of models you can fit with it, check out the <a href="https://cran.r-project.org/web/packages/MARSS/vignettes/UserGuide.pdf">User
+Guide</a>.</p>
 <div id="option-1" class="section level3">
 <h3>Option 1</h3>
 <div class="boxy boxy-blue boxy-clipboard-list">
@@ -5489,6 +5494,11 @@ Packages…</strong> and enter “MARSS” in the box for package name.</p>
 </div>
 <div id="tmb" class="section level1">
 <h1>{TMB}</h1>
+<p>Template Model Builder (TMB) is a package that allows one to quickly
+implement complex random effect models through simple C++ templates. You
+won’t have to use the package directly or write TMB code, but it’s
+required to use the {marssTMB} package, which we’ll use for fitting
+large models that are hard to fit.</p>
 <div id="option-1-1" class="section level3">
 <h3>Option 1</h3>
 <div class="boxy boxy-blue boxy-clipboard-list">
@@ -5515,6 +5525,11 @@ Packages…</strong> and enter “TMB” in the box for package name.</p>
 </div>
 <div id="marsstmb" class="section level1">
 <h1>{marssTMB}</h1>
+<p>The {MARSS} package mentioned above uses an expectation-maximization
+algorithm to fit models in a maximum likelihood framework. Although it’s
+very robust, it can be rather slow for some large problems and data
+sets. The {marssTMB} package takes advantage of the C++ libraries and
+sparse matrix routines in TMB to fit models much faster.</p>
 <div class="boxy boxy-blue boxy-clipboard-list">
 <p><strong>Task:</strong> Install the {marssTMB} package using the R
 command line.</p>
