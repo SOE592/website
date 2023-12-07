@@ -5657,10 +5657,10 @@ sum of a white noise sequence, which we can accomplish with the
 original calculation with the correlation function <code>cor()</code>
 (i.e., the correlation of a vector with itself is 1).</p>
 <pre class="r"><code>## cumulative sum of our white noise sequence
-x2 &lt;- cumsum(ww)
+xx2 &lt;- cumsum(ww)
 
-## correlation between xx &amp; x2
-cor(xx, x2)</code></pre>
+## correlation between xx &amp; xx2
+cor(xx, xx2)</code></pre>
 <pre><code>## [1] 1</code></pre>
 <div class="boxy boxy-success boxy-check">
 <p><strong>Success:</strong> Wow–it worked!</p>
@@ -5738,7 +5738,35 @@ that for the simple random walk above. What do you notice?</p>
 </div>
 <div id="autoregressive-models" class="section level1">
 <h1>Autoregressive models</h1>
+<p>Recall that an autoregressive model of order <em>p</em>, or
+AR(<em>p</em>), is defined as</p>
+<p><span class="math display">\[
+x_t = \phi_1 x_{t-1} + \phi_2 x_{t-2} + \dots + \phi_p x_{t-p} + w_t
+\]</span></p>
+<p>where we assume</p>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\(w_t\)</span> is white noise</p></li>
+<li><p><span class="math inline">\(\phi_p \neq 0\)</span> for an
+order-<em>p</em> process</p></li>
+</ol>
+<p>The random walk and biased random walk models we saw above are two of
+the most common autoregressive models, both of which are AR(1) with
+<span class="math inline">\(\phi\)</span> = 1.</p>
+<p>Here we will look at some other forms of AR(<em>p</em>) models where
+<span class="math inline">\(|\phi_i| &lt; 1\)</span>, which are
+<em>stationary</em> in the mean and variance.</p>
+<div id="simulating-an-arp-model" class="section level2">
+<h2>Simulating an AR(<em>p</em>) model</h2>
+<p>Simulating an AR(<em>p</em>) model is also straightforward. One
+option is to use a <code>for()</code> loop like we did above for the <a href="#simulating-random-walks">random walk</a> and <a href="#simulating-a-biased-random-walk">biased random walk</a> models.
+Here we’ll explore how to use the <code>arima.sim()</code> function in
+base R.</p>
+<div class="boxy boxy-orange boxy-lightbulb">
+<p><strong>Tip:</strong> Type <code>?arima.sim</code> at the command
+prompt to see all of the options for <code>arima.sim()</code>.</p>
+</div>
 <hr />
+</div>
 </div>
 <div id="partial-autocorrelation" class="section level1">
 <h1>Partial autocorrelation</h1>
