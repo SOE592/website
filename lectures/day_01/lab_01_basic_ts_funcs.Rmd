@@ -26,7 +26,9 @@ knitr::opts_chunk$set(
 
 This lab introduces you to some of the basic functions in R for plotting and analyzing univariate time series data. Many of the things you learn here will be relevant when we start examining multivariate time series as well.  We will begin with the creation and plotting of time series objects in R, and then moves on to decomposition, differencing, and correlation (*e.g.*, ACF, PACF) before ending with fitting and simulation of ARMA models.
 
-## Datasets
+***
+
+# Datasets
 
 We'll use two publicly available environmental datasets in this lab. The main one is a time series of the atmospheric concentration of CO<sub>2</sub> collected at the Mauna Loa Observatory in Hawai'i (`ML_CO2.csv`). The second is Northern Hemisphere land and ocean temperature anomalies from NOAA. (`NH_temp`). You can download both of them from GitHub via the following code.
 
@@ -39,14 +41,11 @@ NH_temp <- read.csv("https://raw.githubusercontent.com/SOE592/website/main/lectu
 ```
 
 
-## Time series plots
+***
 
-Time series plots are an excellent way to begin the process of understanding what sort of process might have generated the data of interest.  Traditionally, time series have been plotted with the observed data on the $y$-axis and time on the $x$-axis.  Sequential time points are usually connected with some form of line, but sometimes other plot forms can be a useful way of conveying important information in the time series (*e.g.*, barplots of sea-surface temperature anomolies show nicely the contrasting El Niño and La Niña phenomena).
+# Time series objects
 
-
-### `ts` objects and `plot.ts()`
-
-The CO<sub>2</sub> data are stored in R as a `data.frame` object, but we would like to transform the class to a more user-friendly format for dealing with time series.  Fortunately, the `ts()` function will do just that, and return an object of class **ts** as well.
+The CO<sub>2</sub> data are stored in R as a `data.frame` object, but we would like to transform the class to a more user-friendly format for dealing with time series.  Fortunately, the `ts()` function will do just that, and return an object of class `ts` as well.
 
 <div class="boxy boxy-orange boxy-lightbulb">
 **Tip:** Type `?ts` at the command prompt to see all of function arguments.
@@ -69,36 +68,9 @@ co2 <- ts(data = CO2$ppm, frequency = 12,
 ```
 
 
-Now let's plot the data using `plot.ts()`, which is designed specifically for **ts** objects like the one we just created above.  It's nice because we don't need to specify any $x$-values as they are taken directly from the **ts** object.
+## Combining multiple `ts` objects 
 
-```{r plot_co2_show, eval = FALSE, echo = TRUE}
-## plot the ts
-plot.ts(co2, ylab = expression(paste("CO"[2], " (ppm)")))
-```
-
-
-Time series of the atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i measured monthly from March 1958 to present.
-
-```{r plot_co2, eval = TRUE, echo = FALSE}
-## set the margins & text size
-par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0), cex = 1)
-## plot the ts
-plot.ts(co2, ylab = expression(paste("CO"[2], " (ppm)")))
-```
- 
-
-Examination of the plotted time series shows two obvious features that would violate any assumption of stationarity:
-
-1) an increasing (and perhaps non-linear) trend over time, and
-
-2) strong seasonal patterns.
-
-(*Aside*: Do you know the causes of these 2 phenomena?)
-
-
-### Combining and plotting multiple **ts** objects 
-
-Before we examine the CO<sub>2</sub> data further, however, let's see a quick example of how you can combine and plot multiple time series together. We'll use the data on monthly mean temperature anomolies for the Northern Hemisphere (`NH_temp`).  
+Before we examine the CO<sub>2</sub> data further, let's see a quick example of how you can combine multiple time series together. We'll use the data on monthly mean temperature anomolies for the Northern Hemisphere (`NH_temp`).  
 
 <div class="boxy boxy-blue boxy-clipboard-list">
 **Task:** Begin by converting `NH_temp` to a `ts` object.
@@ -110,7 +82,7 @@ temp_ts <- ts(data = NH_temp$Value, frequency = 12,
               start = c(1880, 1))
 ```
 
-Before we can plot the two time series together, however, we need to line up their time indices because the temperature data start in January of 1880, but the CO<sub>2</sub> data start in March of 1958.  Fortunately, the `ts.intersect()` function makes this really easy once the data have been transformed to **ts** objects by trimming the data to a common time frame.  Also, `ts.union()` works in a similar fashion, but it pads one or both series with the appropriate number of `NA`.
+We need a way to line up the time indices because the temperature data start in January of 1880, but the CO<sub>2</sub> data start in March of 1958.  Fortunately, the `ts.intersect()` function makes this really easy once the data have been transformed to `ts` objects by trimming the data to a common time frame.  Also, `ts.union()` works in a similar fashion, but it pads one or both series with the appropriate number of `NA`.
 
 <div class="boxy boxy-blue boxy-clipboard-list">
 **Task:** Compare the results of `ts.intersect()` and `ts.union()`.
@@ -132,26 +104,103 @@ dim(dat_unn)
 
 As you can see, the intersection of the two data sets is much smaller than the union.  If you compare them, you will see that the first `r nrow(dat_unn) - nrow(dat_int)` rows of `dat_unn` contains `NA` in the `co2` column.
 
-It turns out that the regular `plot()` function in R is smart enough to recognize a **ts** object and use the information contained therein appropriately.  Here's how to plot the intersection of the two time series together with the y-axes on alternate sides.
 
-```{r tslab-plotdataPar2, eval = FALSE, echo = TRUE, fig.show = 'hide'}
+***
+
+# Time series plots
+
+Time series plots are an excellent way to begin the process of understanding what sort of process might have generated the data of interest.  Traditionally, time series have been plotted with the observed data on the $y$-axis and time on the $x$-axis.  Sequential time points are usually connected with some form of line, but sometimes other plot forms can be a useful way of conveying important information in the time series (*e.g.*, barplots of sea-surface temperature anomolies show nicely the contrasting El Niño and La Niña phenomena).
+
+We can use the base function `plot.ts()` to plot a time series, which is designed specifically for `ts` objects like the one we just created above. It's nice because we don't need to specify any x-values as they are taken directly from the `ts` object. The actual syntax is a bit odd because you specify `x = values` when actually `x` is the time index (i.e., length of the time series) and `y` are the values to plot.
+
+```{r plot_co2_show_simple, eval = FALSE, echo = TRUE}
 ## plot the ts
-# plot(dat_int, main = "", yax.flip = TRUE)
-plot.ts(dat_int, main = "", yax.flip = TRUE)
+plot.ts(co2)
+```
+
+```{r plot_co2_simple, eval = TRUE, echo = FALSE, fig.cap = "Time series of the atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i measured monthly from March 1958 to present."}
+## set the margins & text size
+par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
+## plot the ts
+plot.ts(co2)
+```
+
+<br>
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** You can use the `expression()` function to create nicer plot labels.
+</div>
+
+```{r plot_co2_show_expr, eval = FALSE, echo = TRUE}
+## plot the ts
+plot.ts(co2, ylab = expression(paste("CO"[2], " (ppm)")))
 ```
 
 
-
-```{r tslab-plotdata2, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 5, fig.cap = "Time series of the atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i (top) and the mean temperature index for the Northern Hemisphere (bottom) measured monthly from March 1958 to present."}
+```{r plot_co2, eval = TRUE, echo = FALSE, fig.cap = "Time series of the atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i measured monthly from March 1958 to present."}
 ## set the margins & text size
-par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0), cex = 1)
+par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
+## plot the ts
+plot.ts(co2, ylab = expression(paste("CO"[2], " (ppm)")))
+```
+ 
+### Aside
+
+Examination of the plotted time series shows two obvious features that would violate any assumption of stationarity:
+
+1) an increasing (and perhaps non-linear) trend over time, and
+
+2) strong seasonal patterns.
+
+Do you know the causes of these phenomena?
+
+
+## Plotting multiple `ts` objects 
+
+You can plot multiple time series with `plot.ts()` by passing a `ts` object with multiple time series joined via `ts.intersect()` or `ts.union()`. You can also use `cbind()` to join them.
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Plot the intersection of the CO<sub>2</sub> and temperature data.
+</div>
+
+```{r plot_both_simple_show, eval = FALSE, echo = TRUE}
+## plot the ts
+plot(dat_int)
+```
+
+```{r plot_both_simple, eval = TRUE, echo = FALSE, fig.cap = "Time series of the atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i (top) and the mean temperature index for the Northern Hemisphere (bottom) measured monthly from March 1958 to present."}
+## set the margins & text size
+par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
+## plot the ts
+plot(dat_int)
+```
+
+<br>
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** The regular `plot()` function in R is smart enough to recognize a `ts` object and use the information contained therein appropriately.
+</div>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Plot the intersection of the two time series together with no title and the y-axes on alternate sides.
+</div>
+
+```{r plot_both_nice_show, eval = FALSE, echo = TRUE}
+## plot the ts
+plot(dat_int, main = "", yax.flip = TRUE)
+```
+
+```{r plot_both_nice, eval = TRUE, echo = FALSE, fig.cap = "Time series of the atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i (top) and the mean temperature index for the Northern Hemisphere (bottom) measured monthly from March 1958 to present."}
+## set the margins & text size
+par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 ## plot the ts
 plot(dat_int, main = "", yax.flip = TRUE)
 ```
  
 
+***
 
-## Decomposition of time series
+# Decomposition of time series
 
 Plotting time series data is an important first step in analyzing their various components.  Beyond that, however, we need a more formal means for identifying and removing characteristics such as a trend or seasonal variation.  As discussed in lecture, the decomposition model reduces a time series into 3 components: trend, seasonal effects, and random errors.  In turn, we aim to model the random errors as some form of stationary process.
 
@@ -205,12 +254,12 @@ The trend is a more-or-less smoothly increasing function over time, the average 
 
 (ref:tslab-plotTrendTSb) Time series of the estimated trend $\{\hat{m}_t\}$ for the atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i.
 
-```{r tslab-plotTrendTSb, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 3, fig.cap = '(ref:tslab-plotTrendTSb)'}
+```{r tslab-plotTrendTSb, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotTrendTSb)'}
 ## estimate of trend
 co2_trend <- stats::filter(co2, filter = fltr, method = "convo", sides = 2)
 
 ## set the margins & text size
-par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0), cex = 1)
+par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
 ## plot the ts
 plot.ts(co2_trend, ylab = "Trend", cex = 1)
@@ -236,7 +285,7 @@ co2_seas <- co2 - co2_trend
 
 This estimate of the seasonal effect for each time $t$ also contains the random error $e_t$, however, which can be seen by plotting the time series and careful comparison of Equations \@ref(eq:classDecomp) and \@ref(eq:seasEst).
 
-```{r tslab-plotSeasTSa, eval = FALSE, echo = TRUE, fig.show = 'hide'}
+```{r tslab-plotSeasTSa, eval = FALSE, echo = TRUE}
 ## plot the monthly seasonal effects
 plot.ts(co2_seas, ylab = "Seasonal effect", xlab = "Month", cex = 1)
 ```
@@ -244,9 +293,9 @@ plot.ts(co2_seas, ylab = "Seasonal effect", xlab = "Month", cex = 1)
 
 (ref:tslab-plotSeasTSb) Time series of seasonal effects plus random errors for the atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i, measured monthly from March 1958 to present.
 
-```{r tslab-plotSeasTSb, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 3, fig.cap = '(ref:tslab-plotSeasTSb)'}
+```{r tslab-plotSeasTSb, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotSeasTSb)'}
 ## set the margins & text size
-par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0), cex = 1)
+par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
 ## plot the ts
 plot.ts(co2_seas, ylab = "Seasonal effect plus errors", xlab = "Month", cex = 1)
@@ -280,7 +329,7 @@ mm <- mm - mean(mm)
 
 Before we create the entire time series of seasonal effects, let's plot them for each month to see what is happening within a year:
 
-```{r tslab-plotdataPar3, eval = FALSE, echo = TRUE, fig.show = 'hide'}
+```{r tslab-plotdataPar3, eval = FALSE, echo = TRUE}
 ## plot the monthly seasonal effects
 plot.ts(mm, ylab = "Seasonal effect", xlab = "Month", cex = 1)
 ```
@@ -290,9 +339,9 @@ It looks like, on average, that the CO<sub>2</sub> concentration is highest in s
 
 (ref:tslab-plotSeasMean) Estimated monthly seasonal effects for the atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i.
 
-```{r tslab-plotSeasMean, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 3, fig.cap = '(ref:tslab-plotSeasMean)'}
+```{r tslab-plotSeasMean, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotSeasMean)'}
 ## set the margins & text size
-par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0), cex = 1)
+par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 ## plot the ts
 plot.ts(mm, ylab = "Seasonal effect", xlab = "Month", cex = 1)
 ```
@@ -327,7 +376,7 @@ co2_err <- co2 - co2_trend - co2_seas_ts
   
 Now that we have all 3 of our model components, let's plot them together with the observed data $\{x_t\}$.  The results are shown in Figure \@ref(fig:tslab-plotTrSeas).
 
-```{r tslab-plotdataPar4, eval = FALSE, echo = TRUE, fig.show = 'hide'}
+```{r tslab-plotdataPar4, eval = FALSE, echo = TRUE}
 ## plot the obs ts, trend & seasonal effect
 plot(cbind(co2, co2_trend, co2_seas_ts, co2_err), main = "", yax.flip = TRUE)
 ```
@@ -337,7 +386,7 @@ plot(cbind(co2, co2_trend, co2_seas_ts, co2_err), main = "", yax.flip = TRUE)
 
 ```{r tslab-plotTrSeas, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 6, fig.cap = '(ref:tslab-plotTrSeas)'}
 ## set the margins & text size
-par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0), cex = 1)
+par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 ## plot the ts
 plot(cbind(co2, co2_trend, co2_seas_ts, co2_err), main = "", yax.flip = TRUE)
 ```
@@ -346,7 +395,7 @@ plot(cbind(co2, co2_trend, co2_seas_ts, co2_err), main = "", yax.flip = TRUE)
 
 ### Using `decompose()` for decomposition
 
-Now that we have seen how to estimate and plot the various components of a classical decomposition model in a piecewise manner, let's see how to do this in one step in R with the function `decompose()`, which accepts a **ts** object as input and returns an object of class **decomposed.ts**.
+Now that we have seen how to estimate and plot the various components of a classical decomposition model in a piecewise manner, let's see how to do this in one step in R with the function `decompose()`, which accepts a `ts` object as input and returns an object of class **decomposed.ts**.
 
 ```{r tslab-decompCO2, eval = TRUE, echo = TRUE}
 ## decomposition of CO2 data
@@ -366,7 +415,7 @@ co2_decomp <- decompose(co2)
 
 We can easily make plots of the output and compare them to those in Figure \@ref(fig:tslab-plotTrSeas):
 
-```{r tslab-plotDecompA, eval = FALSE, echo = TRUE, fig.show = 'hide'}
+```{r tslab-plotDecompA, eval = FALSE, echo = TRUE}
 ## plot the obs ts, trend & seasonal effect
 plot(co2_decomp, yax.flip = TRUE)
 ```
@@ -376,7 +425,7 @@ plot(co2_decomp, yax.flip = TRUE)
 
 ```{r tslab-plotDecompB, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 6, fig.cap = '(ref:tslab-plotDecompB)'}
 ## set the margins & text size
-par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0), cex = 1)
+par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 ## plot the ts
 plot(co2_decomp, yax.flip = TRUE)
 ```
@@ -387,7 +436,9 @@ The results obtained with `decompose()` (Figure \@ref(fig:tslab-plotDecompB)) ar
 Another nice feature of the `decompose()` function is that it can be used for decomposition models with multiplicative (*i.e.*, non-additive) errors (*e.g.*, if the original time series had a seasonal amplitude that increased with time).  To do, so pass in the argument `type = "multiplicative"`, which is set to `type = "additive"` by default.
 
 
-## Differencing to remove a trend or seasonal effects
+***
+
+# Differencing to remove a trend or seasonal effects
 
 An alternative to decomposition for removing trends is differencing.  We saw in lecture how the difference operator works and how it can be used to remove linear and nonlinear trends as well as various seasonal features that might be evident in the data.  As a reminder, we define the difference operator as
 
@@ -429,7 +480,7 @@ In R we can use the `diff()` function for differencing a time series, which requ
 
 Let's use `diff()` to remove the trend and seasonal signal from the CO<sub>2</sub> time series, beginning with the trend.  Close inspection of Figure \@ref(fig:tslab-plotdata1) would suggest that there is a nonlinear increase in CO<sub>2</sub> concentration over time, so we'll set `differences = 2`):
   
-```{r tslab-plotCO2diff2Echo, eval = FALSE, echo = TRUE, fig.show = 'hide'}
+```{r tslab-plotCO2diff2Echo, eval = FALSE, echo = TRUE}
 ## twice-difference the CO2 data
 co2_d2 <- diff(co2, differences = 2)
 
@@ -445,7 +496,7 @@ co2_d2 <- diff(co2, differences = 2)
 
 (ref:tslab-plotCO2diff2) Time series of the twice-differenced atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i.
 
-```{r tslab-plotCO2diff2, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 3, fig.cap = '(ref:tslab-plotCO2diff2)'}
+```{r tslab-plotCO2diff2, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotCO2diff2)'}
 ## set the margins & text size
 par(mar = c(4, 4.5, 1, 1), oma = c(0, 0, 0, 0), cex = 1)
 
@@ -473,7 +524,7 @@ co2_d2d12 <- diff(co2_d2, lag = 12)
 
 (ref:tslab-plotCO2diff12) Time series of the lag-12 difference of the twice-differenced atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i.
 
-```{r tslab-plotCO2diff12, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 3, fig.cap = '(ref:tslab-plotCO2diff12)'}
+```{r tslab-plotCO2diff12, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotCO2diff12)'}
 ## set the margins & text size
 par(mar = c(4, 4.5, 1, 1), oma = c(0, 0, 0, 0), cex = 1)
 
@@ -485,12 +536,14 @@ plot(co2_d2d12, ylab = expression(paste(nabla, "(", nabla^2, "CO"[2], ")")))
 Now we have a time series that appears to be random errors without any obvious trend or seasonal components (Figure \@ref(fig:tslab-plotCO2diff12)).
 
 
-## Correlation within and among time series
+***
+
+# Correlation within and among time series
   
 The concepts of covariance and correlation are very important in time series analysis.  In particular, we can examine the correlation structure of the original data or random errors from a decomposition model to help us identify possible form(s) of (non)stationary model(s) for the stochastic process.
 
 
-### Autocorrelation function (ACF)
+## Autocorrelation function (ACF)
 
 Autocorrelation is the correlation of a variable with itself at differing time lags. Recall from lecture that we defined the sample autocovariance function (ACVF), $c_k$, for some lag $k$ as
 
@@ -527,9 +580,9 @@ acf(co2, lag.max = 36)
 
 (ref:tslab-plotACFb) Correlogram of the observed atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i obtained with the function `acf()`.
 
-```{r tslab-plotACFb, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 3, fig.cap = '(ref:tslab-plotACFb)'}
+```{r tslab-plotACFb, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotACFb)'}
 ## set the margins & text size
-par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0), cex = 1)
+par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 ## correlogram of the CO2 data
 acf(co2, lag.max = 36)
 ```
@@ -579,9 +632,9 @@ co2_acf <- acf(co2, lag.max = 36)
 
 (ref:tslab-plotbetterACF) Correlogram of the observed atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i obtained with the function `plot_acf()`.
 
-```{r tslab-plotbetterACF, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 3, fig.cap = '(ref:tslab-plotbetterACF)'}
+```{r tslab-plotbetterACF, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotbetterACF)'}
 ## set the margins & text size
-par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0), cex = 1)
+par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
 ## correlogram of the CO2 data
 plot_acf(co2_acf)
@@ -624,9 +677,9 @@ line.acf <- acf(tt)
 
 (ref:tslab-plotLinearACF) Time series plot of a straight line (left) and the correlogram of its ACF (right).
 
-```{r tslab-plotLinearACF, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 3, fig.cap = '(ref:tslab-plotLinearACF)'}
+```{r tslab-plotLinearACF, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotLinearACF)'}
 ## set the margins & text size
-par(mfrow = c(1, 2), mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0), cex = 1)
+par(mfrow = c(1, 2), mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
 ## plot line
 plot.ts(tt, ylab = expression(italic(x[t])))
@@ -667,9 +720,9 @@ sine_acf <- acf(tt, plot = FALSE)
 
 (ref:tslab-plotSineACF) Time series plot of a discrete sine wave (left) and the correlogram of its ACF (right).
 
-```{r tslab-plotSineACF, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 3, fig.cap = '(ref:tslab-plotSineACF)'}
+```{r tslab-plotSineACF, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotSineACF)'}
 ## set the margins & text size
-par(mfrow = c(1, 2), mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0), cex = 1)
+par(mfrow = c(1, 2), mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
 ## plot line
 plot.ts(tt, ylab = expression(italic(x[t])))
@@ -710,9 +763,9 @@ sili_acf <- acf(tt, plot = FALSE)
 
 (ref:tslab-plotSiLiACF) Time series plot of a discrete sine wave (left) and the correlogram of its ACF (right).
 
-```{r tslab-plotSiLiACF, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 3, fig.cap = '(ref:tslab-plotSiLiACF)'}
+```{r tslab-plotSiLiACF, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotSiLiACF)'}
 ## set the margins & text size
-par(mfrow = c(1, 2), mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0), cex = 1)
+par(mfrow = c(1, 2), mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
 ## plot line
 plot.ts(tt, ylab = expression(italic(x[t])))
@@ -725,7 +778,7 @@ The correlogram for a sine wave with a trend is itself a nonsymmetrical sine wav
 As we have seen, the ACF is a powerful tool in time series analysis for identifying important features in the data.  As we will see later, the ACF is also an important diagnostic tool for helping to select the proper order of $p$ and $q$ in ARMA($p$,$q$) models.
 
 
-### Partial autocorrelation function (PACF)
+## Partial autocorrelation function (PACF)
 
 The partial autocorrelation function (PACF) measures the linear correlation of a series $\{x_t\}$ and a lagged version of itself $\{x_{t+k}\}$ with the linear dependence of $\{x_{t-1},x_{t-2},\dots,x_{t-(k-1)}\}$ removed.  Recall from lecture that we define the PACF as
 
@@ -774,9 +827,9 @@ plot_pacf <- function(PACFobj) {
 
 (ref:tslab-plotPACFb) Correlogram of the PACF for the observed atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i obtained with the function `pacf()`.
 
-```{r tslab-plotPACFb, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 3, fig.cap = '(ref:tslab-plotPACFb)'}
+```{r tslab-plotPACFb, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotPACFb)'}
 ## set the margins & text size
-par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0), cex = 1)
+par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
 ## correlogram of the CO2 data
 pacf(co2, lag.max = 36)
@@ -796,7 +849,7 @@ plot_acf(co2_pacf)
 As with the ACF, we will see later on how the PACF can also be used to help identify the appropriate order of $p$ and $q$ in ARMA($p$,$q$) models.
 
 
-### Cross-correlation function (CCF) {#sec-tslab-cross-correlation-function-ccf}
+## Cross-correlation function (CCF)
 
 Often we are interested in looking for relationships between 2 different time series.  There are many ways to do this, but a simple method is via examination of their cross-covariance and cross-correlation.
 
@@ -849,7 +902,7 @@ plot(cbind(suns, lynx), yax.flip = TRUE)
 
 ```{r tslab-plotSunsLynx, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 6, fig.cap = '(ref:tslab-plotSunsLynx)'}
 ## set the margins & text size
-par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0), cex = 1)
+par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
 ## plot the ts
 plot(cbind(suns, lynx), main = "", yax.flip = TRUE)
@@ -867,9 +920,9 @@ ccf(suns, log(lynx), ylab = "Cross-correlation")
 
 (ref:tslab-plotCCFb) CCF for annual sunspot activity and the log of the number of lynx trappings in Canada from 1821-1934.
 
-```{r tslab-plotCCFb, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 3, fig.cap = '(ref:tslab-plotCCFb)'}
+```{r tslab-plotCCFb, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotCCFb)'}
 ## set the margins & text size
-par(mar = c(4, 4, 1, 1), oma = c(0, 0, 0, 0), cex = 1)
+par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
 ## CCF of sunspots and lynx
 ccf(suns, lynx, ylab = "Cross-correlation")
