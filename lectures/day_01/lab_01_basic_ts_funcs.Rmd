@@ -16,7 +16,7 @@ output:
 knitr::opts_chunk$set(
   fig.dim = c(7, 5),
   fig.align = "center",
-  unnamed.chunk.label = "tslab-"
+  unnamed.chunk.label = ""
   )
 ```
 
@@ -202,61 +202,68 @@ plot(dat_int, main = "", yax.flip = TRUE)
 
 # Decomposition of time series
 
-Plotting time series data is an important first step in analyzing their various components.  Beyond that, however, we need a more formal means for identifying and removing characteristics such as a trend or seasonal variation.  As discussed in lecture, the decomposition model reduces a time series into 3 components: trend, seasonal effects, and random errors.  In turn, we aim to model the random errors as some form of stationary process.
+We typically write a decomposition model as
 
-Let's begin with a simple, additive decomposition model for a time series $x_t$
-
-\begin{equation}
-(\#eq:classDecomp)
+$$
 x_t = m_t + s_t + e_t,
-\end{equation}
+$$
 
 where, at time $t$, $m_t$ is the trend, $s_t$ is the seasonal effect, and $e_t$ is a random error that we generally assume to have zero-mean and to be correlated over time.  Thus, by estimating and subtracting both $\{m_t\}$ and $\{s_t\}$ from $\{x_t\}$, we hope to have a time series of stationary residuals $\{e_t\}$.
 
 
-### Estimating trends
+## Estimating trends
 
 In lecture we discussed how linear filters are a common way to estimate trends in time series.  One of the most common linear filters is the moving average, which for time lags from $-a$ to $a$ is defined as
 
-\begin{equation}
-(\#eq:linearFilter)
+$$
 \hat{m}_t = \sum_{k=-a}^{a} \left(\frac{1}{1+2a}\right) x_{t+k}.
-\end{equation}
+$$
 
-This model works well for moving windows of odd-numbered lengths, but should be adjusted for even-numbered lengths by adding only $\frac{1}{2}$ of the 2 most extreme lags so that the filtered value at time $t$ lines up with the original observation at time $t$.  So, for example, in a case with monthly data such as the atmospheric CO<sub>2</sub> concentration where a 12-point moving average would be an obvious choice, the linear filter would be
+This model works well for moving windows of odd-numbered lengths, but should be adjusted for even-numbered lengths by adding $\frac{1}{2}$ of the 2 most extreme lags so that the filtered value at time $t$ lines up with the original observation at time $t$.  So, for example, in a case with monthly data such as the atmospheric CO<sub>2</sub> concentration where a 12-point moving average would be an obvious choice, the linear filter would be
 
-\begin{equation}
-(\#eq:linearFilterEx)
+$$
 \hat{m}_t = \frac{\frac{1}{2}x_{t-6} + x_{t-5} + \dots + x_{t-1} + x_t + x_{t+1} + \dots + x_{t+5} + \frac{1}{2}x_{t+6}}{12}
-\end{equation}
+$$
 
-It is important to note here that our time series of the estimated trend $\{\hat{m}_t\}$ is actually shorter than the observed time series by $2a$ units.
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** The time series of the estimated trend $\{\hat{m}_t\}$ will be shorter than the observed time series by 2$a$ units.
+</div>
 
-Conveniently, R has the built-in function `filter()` in the **stats** package for estimating moving-average (and other) linear filters.  In addition to specifying the time series to be filtered, we need to pass in the filter weights (and 2 other arguments we won't worry about here--type `?filter` to get more information).  The easiest way to create the filter is with the `rep()` function:
+We can make use of the `filter()` function in base R for estimating moving-average (and other) linear filters.  In addition to specifying the time series to be filtered, we need to pass in the filter weights (and 2 other arguments we won't worry about here).
 
-```{r tslab-makeFilter, eval = TRUE, echo = TRUE}
-## weights for moving average
-fltr <- c(1 / 2, rep(1, times = 11), 1 / 2) / 12
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** Type `?filter` at the command line to get more information.
+</div>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Use the `rep()` function to create a moving average filter for monthly data.
+</div>
+
+```{r make_filter, eval = TRUE, echo = TRUE}
+## weights for the monthly moving average filter
+fltr <- c(1 / 2,              # 1/2 of month 1
+          rep(1, times = 11), # months 2-12
+          1 / 2) / 12         # 1/2 of month 13
 ```
 
-Now let's get our estimate of the trend $\{\hat{m}\}$ with `filter()`} and plot it:
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Get the estimate of the trend $\{\hat{m}\}$ using `filter()`} and plot it.
+</div>
 
-```{r tslab-plotTrendTSa, eval = FALSE, echo = TRUE}
-## estimate of trend
-co2_trend <- stats::filter(co2, filter = fltr, method = "convo", sides = 2)
+```{r plot_trend, eval = FALSE, echo = TRUE}
+## estimate of trend using the filter defined above
+co2_trend <- filter(co2, filter = fltr, method = "convo", sides = 2)
 
 ## plot the trend
 plot.ts(co2_trend, ylab = "Trend", cex = 1)
 ```
 
-The trend is a more-or-less smoothly increasing function over time, the average slope of which does indeed appear to be increasing over time as well (Figure \@ref(fig:tslab-plotTrendTSb)).
+The trend is a more-or-less smoothly increasing function over time, the average slope of which does indeed appear to be increasing over time as well.
 
 
-(ref:tslab-plotTrendTSb) Time series of the estimated trend $\{\hat{m}_t\}$ for the atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i.
-
-```{r tslab-plotTrendTSb, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotTrendTSb)'}
+```{r plot_trend_co2, eval = TRUE, echo = FALSE, fig.cap = "Time series of the estimated trend for the atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i."}
 ## estimate of trend
-co2_trend <- stats::filter(co2, filter = fltr, method = "convo", sides = 2)
+co2_trend <- filter(co2, filter = fltr, method = "convo", sides = 2)
 
 ## set the margins & text size
 par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
@@ -265,46 +272,48 @@ par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 plot.ts(co2_trend, ylab = "Trend", cex = 1)
 ```
  
+<br>
 
+## Estimating seasonal effects
 
-### Estimating seasonal effects
+Once we have an estimate of the trend ($\hat{m}_t$) we can easily obtain an estimate of the seasonal effect ($\hat{s}_t$) by subtraction
 
-Once we have an estimate of the trend for time $t$ ($\hat{m}_t$) we can easily obtain an estimate of the seasonal effect at time $t$ ($\hat{s}_t$) by subtraction
-
-\begin{equation}
-(\#eq:seasEst)
+$$
 \hat{s}_t = x_t - \hat{m}_t,
-\end{equation}
+$$
 
-which is really easy to do in R:
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Calculate the time series of seasonal effects.
+</div>
 
-```{r tslab-getSeason, eval = TRUE, echo = TRUE}
+```{r get_seasonal_effect, eval = TRUE, echo = TRUE}
 ## seasonal effect over time
 co2_seas <- co2 - co2_trend
 ```
 
-This estimate of the seasonal effect for each time $t$ also contains the random error $e_t$, however, which can be seen by plotting the time series and careful comparison of Equations \@ref(eq:classDecomp) and \@ref(eq:seasEst).
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** You can see how the estimate of the seasonal effect contains the random error by plotting the time series.
+</div>
 
-```{r tslab-plotSeasTSa, eval = FALSE, echo = TRUE}
+```{r plot_seasona_effect, eval = FALSE, echo = TRUE}
 ## plot the monthly seasonal effects
-plot.ts(co2_seas, ylab = "Seasonal effect", xlab = "Month", cex = 1)
+plot.ts(co2_seas, ylab = "Seasonal effect plus error", cex = 1)
 ```
 
 
-(ref:tslab-plotSeasTSb) Time series of seasonal effects plus random errors for the atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i, measured monthly from March 1958 to present.
-
-```{r tslab-plotSeasTSb, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotSeasTSb)'}
+```{r plot_seasonal_effect, eval = TRUE, echo = FALSE, fig.cap = "Time series of seasonal effects plus random errors for the atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i, measured monthly from March 1958 to present."}
 ## set the margins & text size
 par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
 ## plot the ts
-plot.ts(co2_seas, ylab = "Seasonal effect plus errors", xlab = "Month", cex = 1)
+plot.ts(co2_seas, ylab = "Seasonal effect plus error", cex = 1)
 ```
  
+### Mean seasonal effects
 
-We can obtain the overall seasonal effect by averaging the estimates of $\{\hat{s}_t\}$ for each month and repeating this sequence over all years.
+We can obtain the mean seasonal effects by averaging the estimates of $\{\hat{s}_t\}$ for each month and repeating this sequence over all years.
 
-```{r tslab-getSeasonTS, eval = TRUE, echo = TRUE}
+```{r get_seasonal_ts, eval = TRUE, echo = TRUE}
 ## length of ts
 ll <- length(co2_seas)
 
@@ -327,83 +336,89 @@ for (i in 1:ff) {
 mm <- mm - mean(mm)
 ```
 
-Before we create the entire time series of seasonal effects, let's plot them for each month to see what is happening within a year:
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Plot the average monthly effects to see what is happening within a year.
+</div>
 
-```{r tslab-plotdataPar3, eval = FALSE, echo = TRUE}
+```{r plot_seasonal_show, eval = FALSE, echo = TRUE}
 ## plot the monthly seasonal effects
 plot.ts(mm, ylab = "Seasonal effect", xlab = "Month", cex = 1)
 ```
 
-It looks like, on average, that the CO<sub>2</sub> concentration is highest in spring (March) and lowest in summer (August) (Figure \@ref(fig:tslab-plotSeasMean)).  (*Aside*: Do you know why this is?)
+As expected, the CO<sub>2</sub> concentration is highest in spring (March) and lowest in summer (August).
 
-
-(ref:tslab-plotSeasMean) Estimated monthly seasonal effects for the atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i.
-
-```{r tslab-plotSeasMean, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotSeasMean)'}
+```{r plotSeasMean, eval = TRUE, echo = FALSE, fig.cap = "Estimated monthly seasonal effects for the atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i."}
 ## set the margins & text size
 par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 ## plot the ts
 plot.ts(mm, ylab = "Seasonal effect", xlab = "Month", cex = 1)
 ```
  
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Create the entire time series of seasonal effects $\{\hat{s}_t\}$.
+</div>
 
-Finally, let's create the entire time series of seasonal effects $\{\hat{s}_t\}$:
+```{r get_seasonal_mean, eval = TRUE, echo = TRUE}
+## replicate the monthly means over all years
+co2_seas_avg <- rep(mm, periods + 1)[seq(ll)]
 
-```{r tslab-getSeasonMean, eval = TRUE, echo = TRUE}
 ## create ts object for season
-co2_seas_ts <- ts(rep(mm, periods + 1)[seq(ll)],
-  start = start(co2_seas),
-  frequency = ff
-)
+co2_seas_ts <- ts(co2_seas_avg,
+                  start = start(co2_seas),
+                  frequency = ff)
 ```
 
 
-### Completing the model
+## Completing the model
 
-The last step in completing our full decomposition model is obtaining the random errors $\{\hat{e}_t\}$, which we can get via simple subtraction
+The last step in completing our full decomposition model is obtaining the random errors $\hat{e}_t$, which we can get via simple subtraction
 
-\begin{equation}
-(\#eq:errorEst)
+$$
 \hat{e}_t = x_t - \hat{m}_t - \hat{s}_t.
-\end{equation}
+$$
 
-Again, this is really easy in R:
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Calculate the time series of error terms.
+</div>
 
-```{r tslab-getError, eval = TRUE, echo = TRUE}
+```{r get_errors, eval = TRUE, echo = TRUE}
 ## random errors over time
 co2_err <- co2 - co2_trend - co2_seas_ts
 ```
   
-Now that we have all 3 of our model components, let's plot them together with the observed data $\{x_t\}$.  The results are shown in Figure \@ref(fig:tslab-plotTrSeas).
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Plot all 3 of the estimated model components along with the observed data $\{x_t\}$.
+</div>
 
-```{r tslab-plotdataPar4, eval = FALSE, echo = TRUE}
+```{r plot_errors_show, eval = FALSE, echo = TRUE}
 ## plot the obs ts, trend & seasonal effect
 plot(cbind(co2, co2_trend, co2_seas_ts, co2_err), main = "", yax.flip = TRUE)
 ```
 
 
-(ref:tslab-plotTrSeas) Time series of the observed atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i (top) along with the estimated trend, seasonal effects, and random errors.
-
-```{r tslab-plotTrSeas, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 6, fig.cap = '(ref:tslab-plotTrSeas)'}
+```{r plot_errors, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 6, fig.cap = "Time series of the observed atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i (top) along with the estimated trend, seasonal effects, and random errors."}
 ## set the margins & text size
 par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 ## plot the ts
 plot(cbind(co2, co2_trend, co2_seas_ts, co2_err), main = "", yax.flip = TRUE)
 ```
  
+<br>
 
+## Using `decompose()`
 
-### Using `decompose()` for decomposition
+Now that we have seen how to estimate and plot the various components of a classical decomposition model in a piece-wise manner, let's see how to do it all in one step using the function `decompose()`. `decompose()` accepts a `ts` object as input and returns an object of class `decomposed.ts`.
 
-Now that we have seen how to estimate and plot the various components of a classical decomposition model in a piecewise manner, let's see how to do this in one step in R with the function `decompose()`, which accepts a `ts` object as input and returns an object of class **decomposed.ts**.
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Use `decompose()` to decompose the CO<sub>2</sub> data.
+</div>
 
-```{r tslab-decompCO2, eval = TRUE, echo = TRUE}
+```{r decomp_CO2, eval = TRUE, echo = TRUE}
 ## decomposition of CO2 data
 co2_decomp <- decompose(co2)
 ```
 
-`co2_decomp` is a list with the following elements, which should be familiar by now:
-
+`co2_decomp` is a list with the following familiar elements:
 
 * `x`: the observed time series $\{x_t\}$
 * `seasonal`: time series of estimated seasonal component $\{\hat{s}_t\}$
@@ -413,27 +428,29 @@ co2_decomp <- decompose(co2)
 * `type`: type of error (`"additive"` or `"multiplicative"`)
 
 
-We can easily make plots of the output and compare them to those in Figure \@ref(fig:tslab-plotTrSeas):
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Plot the estimated components and compare them to the above results obtained the long way.
+</div>
 
-```{r tslab-plotDecompA, eval = FALSE, echo = TRUE}
+```{r plot_decomp_show, eval = FALSE, echo = TRUE}
 ## plot the obs ts, trend & seasonal effect
 plot(co2_decomp, yax.flip = TRUE)
 ```
 
-
-(ref:tslab-plotDecompB) Time series of the observed atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i (top) along with the estimated trend, seasonal effects, and random errors obtained with the function `decompose()`.
-
-```{r tslab-plotDecompB, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 6, fig.cap = '(ref:tslab-plotDecompB)'}
+```{r plot_decomp, eval = TRUE, echo = FALSE, fig = TRUE, fig.cap = "Time series of the observed atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i (top) along with the estimated trend, seasonal effects, and random errors obtained with the function `decompose()`."}
 ## set the margins & text size
 par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 ## plot the ts
 plot(co2_decomp, yax.flip = TRUE)
 ```
  
+<div class="boxy boxy-success boxy-check">
+**Success:** The results obtained with `decompose()` are identical to those we estimated previously!
+</div>
 
-The results obtained with `decompose()` (Figure \@ref(fig:tslab-plotDecompB)) are identical to those we estimated previously.
-
-Another nice feature of the `decompose()` function is that it can be used for decomposition models with multiplicative (*i.e.*, non-additive) errors (*e.g.*, if the original time series had a seasonal amplitude that increased with time).  To do, so pass in the argument `type = "multiplicative"`, which is set to `type = "additive"` by default.
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** Another nice feature of the `decompose()` function is that it can be used for decomposition models with multiplicative (*i.e.*, non-additive) errors (*e.g.*, if the original time series had a seasonal amplitude that increased with time). To do, so pass in the argument `type = "multiplicative"`, which is set to `type = "additive"` by default.
+</div>
 
 
 ***
@@ -442,45 +459,45 @@ Another nice feature of the `decompose()` function is that it can be used for de
 
 An alternative to decomposition for removing trends is differencing.  We saw in lecture how the difference operator works and how it can be used to remove linear and nonlinear trends as well as various seasonal features that might be evident in the data.  As a reminder, we define the difference operator as
 
-\begin{equation}
+$$
 (\#eq:diffDefnA)
 \nabla x_t = x_t - x_{t-1},
-\end{equation}
+$$
 
 and, more generally, for order $d$
 
-\begin{equation}
+$$
 (\#eq:diffDefnB)
 \nabla^d x_t = (1-\BB)^d x_t,
-\end{equation}
+$$
 where **B** is the backshift operator (*i.e.*, $\BB^k x_t = x_{t-k}$ for $k \geq 1$).
 
 So, for example, a random walk is one of the most simple and widely used time series models, but it is not stationary.  We can write a random walk model as
 
-\begin{equation}
+$$
 (\#eq:defnRW)
   x_t = x_{t-1} + w_t, \text{ with } w_t \sim \text{N}(0,q).
-\end{equation}
+$$
 
 Applying the difference operator to Equation \@ref(eq:defnRW) will yield a time series of Gaussian white noise errors $\{w_t\}$:
 
-\begin{equation}
+$$
 (\#eq:diffRW)
   \begin{aligned}
     \nabla (x_t &= x_{t-1} + w_t) \\
     x_t - x_{t-1} &= x_{t-1} - x_{t-1} + w_t \\
     x_t - x_{t-1} &= w_t
   \end{aligned}
-\end{equation}
+$$
 
 
 ### Using the `diff()` function
 
 In R we can use the `diff()` function for differencing a time series, which requires 3 arguments: `x` (the data),  `lag` (the lag at which to difference), and `differences` (the order of differencing; $d$ in Equation \@ref(eq:diffDefnB)).  For example, first-differencing a time series will remove a linear trend (*i.e.*, `differences = 1`); twice-differencing will remove a quadratic trend (*i.e.*, `differences = 2`).  In addition, first-differencing a time series at a lag equal to the period will remove a seasonal trend (*e.g.*, set `lag = 12` for monthly data).
 
-Let's use `diff()` to remove the trend and seasonal signal from the CO<sub>2</sub> time series, beginning with the trend.  Close inspection of Figure \@ref(fig:tslab-plotdata1) would suggest that there is a nonlinear increase in CO<sub>2</sub> concentration over time, so we'll set `differences = 2`):
+Let's use `diff()` to remove the trend and seasonal signal from the CO<sub>2</sub> time series, beginning with the trend.  Close inspection of Figure \@ref(fig:plotdata1) would suggest that there is a nonlinear increase in CO<sub>2</sub> concentration over time, so we'll set `differences = 2`):
   
-```{r tslab-plotCO2diff2Echo, eval = FALSE, echo = TRUE}
+```{r plotCO2diff2Echo, eval = FALSE, echo = TRUE}
 ## twice-difference the CO2 data
 co2_d2 <- diff(co2, differences = 2)
 
@@ -488,15 +505,15 @@ co2_d2 <- diff(co2, differences = 2)
 plot(co2_d2, ylab = expression(paste(nabla^2, "CO"[2])))
 ```
 
-```{r tslab-plotCO2diff2eval, eval = TRUE, echo = FALSE}
+```{r plotCO2diff2eval, eval = TRUE, echo = FALSE}
 ## twice-difference the CO2 data
 co2_d2 <- diff(co2, differences = 2)
 ```
   
 
-(ref:tslab-plotCO2diff2) Time series of the twice-differenced atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i.
+(ref:plotCO2diff2) Time series of the twice-differenced atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i.
 
-```{r tslab-plotCO2diff2, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotCO2diff2)'}
+```{r plotCO2diff2, eval = TRUE, echo = FALSE, fig.cap = '(ref:plotCO2diff2)'}
 ## set the margins & text size
 par(mar = c(4, 4.5, 1, 1), oma = c(0, 0, 0, 0), cex = 1)
 
@@ -505,9 +522,9 @@ plot(co2_d2, ylab = expression(paste(nabla^2, "CO"[2])))
 ```
  
 
-We were apparently successful in removing the trend, but the seasonal effect still appears obvious (Figure \@ref(fig:tslab-plotCO2diff2)).  Therefore, let's go ahead and difference that series at lag-12 because our data were collected monthly.
+We were apparently successful in removing the trend, but the seasonal effect still appears obvious (Figure \@ref(fig:plotCO2diff2)).  Therefore, let's go ahead and difference that series at lag-12 because our data were collected monthly.
 
-```{r tslab-plotCO2diff12Echo, eval = FALSE, echo = TRUE}
+```{r plotCO2diff12Echo, eval = FALSE, echo = TRUE}
 ## difference the differenced CO2 data
 co2_d2d12 <- diff(co2_d2, lag = 12)
 
@@ -516,15 +533,15 @@ plot(co2_d2d12,
      ylab = expression(paste(nabla, "(", nabla^2, "CO"[2], ")")))
 ```
 
-```{r tslab-plotCO2diff12eval, eval = TRUE, echo = FALSE}
+```{r plotCO2diff12eval, eval = TRUE, echo = FALSE}
 ## difference the differenced CO2 data
 co2_d2d12 <- diff(co2_d2, lag = 12)
 ```
   
 
-(ref:tslab-plotCO2diff12) Time series of the lag-12 difference of the twice-differenced atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i.
+(ref:plotCO2diff12) Time series of the lag-12 difference of the twice-differenced atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i.
 
-```{r tslab-plotCO2diff12, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotCO2diff12)'}
+```{r plotCO2diff12, eval = TRUE, echo = FALSE, fig.cap = '(ref:plotCO2diff12)'}
 ## set the margins & text size
 par(mar = c(4, 4.5, 1, 1), oma = c(0, 0, 0, 0), cex = 1)
 
@@ -533,7 +550,7 @@ plot(co2_d2d12, ylab = expression(paste(nabla, "(", nabla^2, "CO"[2], ")")))
 ```
  
 
-Now we have a time series that appears to be random errors without any obvious trend or seasonal components (Figure \@ref(fig:tslab-plotCO2diff12)).
+Now we have a time series that appears to be random errors without any obvious trend or seasonal components (Figure \@ref(fig:plotCO2diff12)).
 
 
 ***
@@ -547,24 +564,24 @@ The concepts of covariance and correlation are very important in time series ana
 
 Autocorrelation is the correlation of a variable with itself at differing time lags. Recall from lecture that we defined the sample autocovariance function (ACVF), $c_k$, for some lag $k$ as
 
-\begin{equation}
+$$
 (\#eq:ACVF)
 c_k = \frac{1}{n}\sum_{t=1}^{n-k} \left(x_t-\bar{x}\right) \left(x_{t+k}-\bar{x}\right)
-\end{equation}
+$$
 
 Note that the sample autocovariance of $\{x_t\}$ at lag 0, $c_0$, equals the sample variance of $\{x_t\}$ calculated with a denominator of $n$.  The sample autocorrelation function (ACF) is defined as
 
-\begin{equation}
+$$
 (\#eq:ACF)
 r_k = \frac{c_k}{c_0} = \text{Cor}(x_t,x_{t+k})
-\end{equation}
+$$
 
 Recall also that an approximate 95\% confidence interval on the ACF can be estimated by
 
-\begin{equation}
+$$
 (\#eq:ACF95CI)
 -\frac{1}{n} \pm \frac{2}{\sqrt{n}}
-\end{equation}
+$$
 
 where $n$ is the number of data points used in the calculation of the ACF.
 
@@ -572,15 +589,15 @@ It is important to remember two things here.  First, although the confidence int
 
 We can use the `acf()` function in R to compute the sample ACF (note that adding the option `type = "covariance"` will return the sample auto-covariance (ACVF) instead of the ACF--type `?acf` for details).  Calling the function by itself will will automatically produce a correlogram (*i.e.*, a plot of the autocorrelation versus time lag).  The argument `lag.max` allows you to set the number of positive and negative lags.  Let's try it for the CO<sub>2</sub> data.
 
-```{r tslab-plotACFa, eval = FALSE, echo = TRUE}
+```{r plotACFa, eval = FALSE, echo = TRUE}
 ## correlogram of the CO2 data
 acf(co2, lag.max = 36)
 ```
 
 
-(ref:tslab-plotACFb) Correlogram of the observed atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i obtained with the function `acf()`.
+(ref:plotACFb) Correlogram of the observed atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i obtained with the function `acf()`.
 
-```{r tslab-plotACFb, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotACFb)'}
+```{r plotACFb, eval = TRUE, echo = FALSE, fig.cap = '(ref:plotACFb)'}
 ## set the margins & text size
 par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 ## correlogram of the CO2 data
@@ -588,7 +605,7 @@ acf(co2, lag.max = 36)
 ```
  
 
-There are 4 things about Figure \@ref(fig:tslab-plotACFb) that are noteworthy:
+There are 4 things about Figure \@ref(fig:plotACFb) that are noteworthy:
 
 
 1.  the ACF at lag 0, $r_0$, equals 1 by default (*i.e.*, the correlation of a time series with itself)--it's plotted as a reference point;
@@ -598,7 +615,7 @@ There are 4 things about Figure \@ref(fig:tslab-plotACFb) that are noteworthy:
 
 As an alternative to the default plots for **acf** objects, let's define a new plot function for **acf** objects with some better features:
 
-```{r tslab-BetterPlotACF, eval = TRUE, echo = TRUE}
+```{r BetterPlotACF, eval = TRUE, echo = TRUE}
 ## better ACF plot
 plot_acf <- function(ACFobj) {
   rr <- ACFobj$acf[-1]
@@ -616,7 +633,7 @@ plot_acf <- function(ACFobj) {
 
 Now we can assign the result of `acf()` to a variable and then use the information contained therein to plot the correlogram with our new plot function.
 
-```{r tslab-betterACF, eval = FALSE, echo = TRUE}
+```{r betterACF, eval = FALSE, echo = TRUE}
 ## acf of the CO2 data
 co2_acf <- acf(co2, lag.max = 36)
 
@@ -624,26 +641,26 @@ co2_acf <- acf(co2, lag.max = 36)
 plot_acf(co2_acf)
 ```
 
-```{r tslab-DoOurACF, eval = TRUE, echo = FALSE}
+```{r DoOurACF, eval = TRUE, echo = FALSE}
 ## acf of the CO2 data
 co2_acf <- acf(co2, lag.max = 36)
 ```
 
 
-(ref:tslab-plotbetterACF) Correlogram of the observed atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i obtained with the function `plot_acf()`.
+(ref:plotbetterACF) Correlogram of the observed atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i obtained with the function `plot_acf()`.
 
-```{r tslab-plotbetterACF, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotbetterACF)'}
+```{r plotbetterACF, eval = TRUE, echo = FALSE, fig.cap = '(ref:plotbetterACF)'}
 ## set the margins & text size
 par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
 ## correlogram of the CO2 data
 plot_acf(co2_acf)
 ```
-Notice that all of the relevant information is still there (Figure \@ref(fig:tslab-plotbetterACF)), but now $r_0=1$ is not plotted at lag-0 and the lags on the $x$-axis are displayed correctly as integers.
+Notice that all of the relevant information is still there (Figure \@ref(fig:plotbetterACF)), but now $r_0=1$ is not plotted at lag-0 and the lags on the $x$-axis are displayed correctly as integers.
 
 Before we move on to the PACF, let's look at the ACF for some deterministic time series, which will help you identify interesting properties (*e.g.*, trends, seasonal effects) in a stochastic time series, and account for them in time series models--an important topic in this course.  First, let's look at a straight line.
 
-```{r tslab-LinearACFecho, eval = FALSE, echo = TRUE}
+```{r LinearACFecho, eval = FALSE, echo = TRUE}
 ## length of ts
 nn <- 100
 
@@ -663,7 +680,7 @@ line.acf <- acf(tt, plot = FALSE)
 plot_acf(line.acf)
 ```
 
-```{r tslab-LinearACF, eval = TRUE, echo = FALSE}
+```{r LinearACF, eval = TRUE, echo = FALSE}
 ## length of ts
 nn <- 100
 
@@ -675,9 +692,9 @@ line.acf <- acf(tt)
 ```
   
 
-(ref:tslab-plotLinearACF) Time series plot of a straight line (left) and the correlogram of its ACF (right).
+(ref:plotLinearACF) Time series plot of a straight line (left) and the correlogram of its ACF (right).
 
-```{r tslab-plotLinearACF, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotLinearACF)'}
+```{r plotLinearACF, eval = TRUE, echo = FALSE, fig.cap = '(ref:plotLinearACF)'}
 ## set the margins & text size
 par(mfrow = c(1, 2), mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
@@ -688,11 +705,11 @@ plot.ts(tt, ylab = expression(italic(x[t])))
 plot_acf(line.acf)
 ```
 
-The correlogram for a straight line is itself a linearly decreasing function over time (Figure \@ref(fig:tslab-plotLinearACF)).
+The correlogram for a straight line is itself a linearly decreasing function over time (Figure \@ref(fig:plotLinearACF)).
 
 Now let's examine the ACF for a sine wave and see what sort of pattern arises.
 
-```{r tslab-SineACFecho, eval = FALSE, echo = TRUE}
+```{r SineACFecho, eval = FALSE, echo = TRUE}
 ## create sine wave
 tt <- sin(2 * pi * seq(nn) / 12)
 
@@ -709,7 +726,7 @@ sine_acf <- acf(tt, plot = FALSE)
 plot_acf(sine_acf)
 ```
 
-```{r tslab-SineACF, eval = TRUE, echo = FALSE}
+```{r SineACF, eval = TRUE, echo = FALSE}
 ## create sine wave
 tt <- sin(2 * pi * seq(nn) / 12)
 
@@ -718,9 +735,9 @@ sine_acf <- acf(tt, plot = FALSE)
 ```
   
 
-(ref:tslab-plotSineACF) Time series plot of a discrete sine wave (left) and the correlogram of its ACF (right).
+(ref:plotSineACF) Time series plot of a discrete sine wave (left) and the correlogram of its ACF (right).
 
-```{r tslab-plotSineACF, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotSineACF)'}
+```{r plotSineACF, eval = TRUE, echo = FALSE, fig.cap = '(ref:plotSineACF)'}
 ## set the margins & text size
 par(mfrow = c(1, 2), mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
@@ -731,11 +748,11 @@ plot.ts(tt, ylab = expression(italic(x[t])))
 plot_acf(sine_acf)
 ```
 
-Perhaps not surprisingly, the correlogram for a sine wave is itself a sine wave whose amplitude decreases linearly over time (Figure \@ref(fig:tslab-plotSineACF)).
+Perhaps not surprisingly, the correlogram for a sine wave is itself a sine wave whose amplitude decreases linearly over time (Figure \@ref(fig:plotSineACF)).
 
 Now let's examine the ACF for a sine wave with a linear downward trend and see what sort of patterns arise.
 
-```{r tslab-SiLineACFecho, eval = FALSE, echo = TRUE}
+```{r SiLineACFecho, eval = FALSE, echo = TRUE}
 ## create sine wave with trend
 tt <- sin(2 * pi * seq(nn) / 12) - seq(nn) / 50
 
@@ -752,7 +769,7 @@ sili_acf <- acf(tt, plot = FALSE)
 plot_acf(sili_acf)
 ```
 
-```{r tslab-SiLiACF, eval = TRUE, echo = FALSE}
+```{r SiLiACF, eval = TRUE, echo = FALSE}
 ## create sine wave with trend
 tt <- sin(2 * pi * seq(nn) / 12) - seq(nn) / 50
 
@@ -761,9 +778,9 @@ sili_acf <- acf(tt, plot = FALSE)
 ```
   
 
-(ref:tslab-plotSiLiACF) Time series plot of a discrete sine wave (left) and the correlogram of its ACF (right).
+(ref:plotSiLiACF) Time series plot of a discrete sine wave (left) and the correlogram of its ACF (right).
 
-```{r tslab-plotSiLiACF, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotSiLiACF)'}
+```{r plotSiLiACF, eval = TRUE, echo = FALSE, fig.cap = '(ref:plotSiLiACF)'}
 ## set the margins & text size
 par(mfrow = c(1, 2), mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
@@ -773,7 +790,7 @@ plot.ts(tt, ylab = expression(italic(x[t])))
 plot_acf(sili_acf)
 ```
 
-The correlogram for a sine wave with a trend is itself a nonsymmetrical sine wave whose amplitude and center decrease over time (Figure \@ref(fig:tslab-plotSiLiACF)).
+The correlogram for a sine wave with a trend is itself a nonsymmetrical sine wave whose amplitude and center decrease over time (Figure \@ref(fig:plotSiLiACF)).
 
 As we have seen, the ACF is a powerful tool in time series analysis for identifying important features in the data.  As we will see later, the ACF is also an important diagnostic tool for helping to select the proper order of $p$ and $q$ in ARMA($p$,$q$) models.
 
@@ -782,13 +799,13 @@ As we have seen, the ACF is a powerful tool in time series analysis for identify
 
 The partial autocorrelation function (PACF) measures the linear correlation of a series $\{x_t\}$ and a lagged version of itself $\{x_{t+k}\}$ with the linear dependence of $\{x_{t-1},x_{t-2},\dots,x_{t-(k-1)}\}$ removed.  Recall from lecture that we define the PACF as
 
-\begin{equation}
+$$
 (\#eq:PACFdefn)
 f_k = \begin{cases}
         \text{Cor}(x_1,x_0)=r_1 & \text{if } k = 1;\\
         \text{Cor}(x_k-x_k^{k-1},x_0-x_0^{k-1}) & \text{if } k \geq 2;
       \end{cases}
-\end{equation}
+$$
 
 with
 
@@ -801,14 +818,14 @@ with
 
 It's easy to compute the PACF for a variable in R using the `pacf()` function, which will automatically plot a correlogram when called by itself (similar to `acf()`).  Let's look at the PACF for the CO<sub>2</sub> data.
 
-```{r tslab-plotPACFa, eval = FALSE, echo = TRUE}
+```{r plotPACFa, eval = FALSE, echo = TRUE}
 ## PACF of the CO2 data
 pacf(co2, lag.max = 36)
 ```
 
 The default plot for PACF is a bit better than for ACF, but here is another plotting function that might be useful.
 
-```{r tslab-BetterPlotPACF, eval = TRUE, echo = TRUE}
+```{r BetterPlotPACF, eval = TRUE, echo = TRUE}
 ## better PACF plot
 plot_pacf <- function(PACFobj) {
   rr <- PACFobj$acf
@@ -825,20 +842,20 @@ plot_pacf <- function(PACFobj) {
 ```
 
 
-(ref:tslab-plotPACFb) Correlogram of the PACF for the observed atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i obtained with the function `pacf()`.
+(ref:plotPACFb) Correlogram of the PACF for the observed atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i obtained with the function `pacf()`.
 
-```{r tslab-plotPACFb, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotPACFb)'}
+```{r plotPACFb, eval = TRUE, echo = FALSE, fig.cap = '(ref:plotPACFb)'}
 ## set the margins & text size
 par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
 ## correlogram of the CO2 data
 pacf(co2, lag.max = 36)
 ```
-Notice in Figure \@ref(fig:tslab-plotPACFb) that the partial autocorrelation at lag-1 is very high (it equals the ACF at lag-1), but the other values at lags > 1 are relatively small, unlike what we saw for the ACF.  We will discuss this in more detail later on in this lab.
+Notice in Figure \@ref(fig:plotPACFb) that the partial autocorrelation at lag-1 is very high (it equals the ACF at lag-1), but the other values at lags > 1 are relatively small, unlike what we saw for the ACF.  We will discuss this in more detail later on in this lab.
 
 Notice also that the PACF plot again has real-valued indices for the time lag, but it does not include any value for lag-0 because it is impossible to remove any intermediate autocorrelation between $t$ and $t-k$ when $k=0$, and therefore the PACF does not exist at lag-0.  If you would like, you can use the `plot_acf()` function we defined above to plot the PACF estimates because `acf()` and `pacf()` produce identical list structures (results not shown here).
 
-```{r tslab-CO2PACFecho, eval = FALSE, echo = TRUE}
+```{r CO2PACFecho, eval = FALSE, echo = TRUE}
 ## PACF of the CO2 data
 co2_pacf <- pacf(co2)
 
@@ -855,26 +872,26 @@ Often we are interested in looking for relationships between 2 different time se
 
 We begin by defining the sample cross-covariance function (CCVF) in a manner similar to the ACVF, in that
 
-\begin{equation}
+$$
 (\#eq:CCVF)
 g_k^{xy} = \frac{1}{n}\sum_{t=1}^{n-k} \left(y_t-\bar{y}\right) \left(x_{t+k}-\bar{x}\right),
-\end{equation}
+$$
 
 but now we are estimating the correlation between a variable $y$ and a *different* time-shifted variable $x_{t+k}$.  The sample cross-correlation function (CCF) is then defined analogously to the ACF, such that
 
-\begin{equation}
+$$
 (\#eq:CCF)
 r_k^{xy} = \frac{g_k^{xy}}{\sqrt{\text{SD}_x\text{SD}_y}};
-\end{equation}
+$$
 
 SD$_x$ and SD$_y$ are the sample standard deviations of $\{x_t\}$ and $\{y_t\}$, respectively. It is important to re-iterate here that $r_k^{xy} \neq r_{-k}^{xy}$, but $r_k^{xy} = r_{-k}^{yx}$.  Therefore, it is very important to pay particular attention to which variable you call $y$ (*i.e.*, the "response") and which you call $x$ (*i.e.*, the "predictor").
 
 As with the ACF, an approximate 95\% confidence interval on the CCF can be estimated by
 
-\begin{equation}
+$$
 (\#eq:CCF95CI)
 -\frac{1}{n} \pm \frac{2}{\sqrt{n}}
-\end{equation}
+$$
 
 where $n$ is the number of data points used in the calculation of the CCF, and the same assumptions apply to its interpretation.
 
@@ -882,7 +899,7 @@ Computing the CCF in R is easy with the function `ccf()` and it works just like 
 
 To begin, let's get the data, which are conveniently included in the **datasets** package included as part of the base installation of R.  Before calculating the CCF, however, we need to find the matching years of data.  Again, we'll use the `ts.intersect()` function.
 
-```{r tslab-LynxSunspotCCF, eval = TRUE, echo = TRUE}
+```{r LynxSunspotCCF, eval = TRUE, echo = TRUE}
 ## get the matching years of sunspot data
 suns <- ts.intersect(lynx, sunspot.year)[, "sunspot.year"]
 
@@ -892,15 +909,15 @@ lynx <- ts.intersect(lynx, sunspot.year)[, "lynx"]
 
 Here are plots of the time series.
 
-```{r tslab-plotSunsLynxEcho, eval = FALSE, echo = TRUE}
+```{r plotSunsLynxEcho, eval = FALSE, echo = TRUE}
 ## plot time series
 plot(cbind(suns, lynx), yax.flip = TRUE)
 ```
 
 
-(ref:tslab-plotSunsLynx) Time series of sunspot activity (top) and lynx trappings in Canada (bottom) from 1821-1934.
+(ref:plotSunsLynx) Time series of sunspot activity (top) and lynx trappings in Canada (bottom) from 1821-1934.
 
-```{r tslab-plotSunsLynx, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 6, fig.cap = '(ref:tslab-plotSunsLynx)'}
+```{r plotSunsLynx, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 6, fig.cap = '(ref:plotSunsLynx)'}
 ## set the margins & text size
 par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
@@ -912,15 +929,15 @@ plot(cbind(suns, lynx), main = "", yax.flip = TRUE)
 
 It is important to remember which of the 2 variables you call $y$ and $x$ when calling `ccf(x, y, ...)`.  In this case, it seems most relevant to treat lynx as the $y$ and sunspots as the $x$, in which case we are mostly interested in the CCF at negative lags (*i.e.*, when sunspot activity predates inferred lynx abundance).  Furthermore, we'll use log-transformed lynx trappings.
 
-```{r tslab-plotCCFa, eval = FALSE, echo = TRUE}
+```{r plotCCFa, eval = FALSE, echo = TRUE}
 ## CCF of sunspots and lynx
 ccf(suns, log(lynx), ylab = "Cross-correlation")
 ```
 
 
-(ref:tslab-plotCCFb) CCF for annual sunspot activity and the log of the number of lynx trappings in Canada from 1821-1934.
+(ref:plotCCFb) CCF for annual sunspot activity and the log of the number of lynx trappings in Canada from 1821-1934.
 
-```{r tslab-plotCCFb, eval = TRUE, echo = FALSE, fig.cap = '(ref:tslab-plotCCFb)'}
+```{r plotCCFb, eval = TRUE, echo = FALSE, fig.cap = '(ref:plotCCFb)'}
 ## set the margins & text size
 par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
@@ -929,6 +946,6 @@ ccf(suns, lynx, ylab = "Cross-correlation")
 ```
  
 
-From Figures \@ref(fig:tslab-plotSunsLynx) and \@ref(fig:tslab-plotCCFb) it looks like lynx numbers are relatively low 3-5 years after high sunspot activity (*i.e.*, significant correlation at lags of -3 to -5).
+From Figures \@ref(fig:plotSunsLynx) and \@ref(fig:plotCCFb) it looks like lynx numbers are relatively low 3-5 years after high sunspot activity (*i.e.*, significant correlation at lags of -3 to -5).
 
 
