@@ -37,8 +37,6 @@
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-6.4.0/css/all.min.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-6.4.0/css/v4-shims.min.css" rel="stylesheet" />
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -332,17 +330,13 @@ div.tocify {
   <a href="lectures.html">Topics &amp; materials</a>
 </li>
 <li>
-  <a href="homework.html">Assignments</a>
+  <a href="project.html">Project</a>
 </li>
 <li>
   <a href="references.html">References</a>
 </li>
 <li>
-  <a href="https://github.com/SOE592">
-    <span class="fab fa-github"></span>
-     
-    
-  </a>
+  <a href="https://github.com/SOE592/extras/discussions">Q &amp; A</a>
 </li>
       </ul>
     </div><!--/.nav-collapse -->
@@ -383,8 +377,6 @@ analyses, and making inference from the results.</p>
 ARMA(<em>p</em>,<em>q</em>) models for time series data</p></li>
 <li><p>Apply appropriate diagnostic measures to identify any
 shortcomings in model assumptions</p></li>
-<li><p>Understand how to use information theoretic methods and cross
-validation for model selection</p></li>
 <li><p>Understand how to combine state and observation models into a
 state-space model</p></li>
 <li><p>Use multivariate time series models with covariates to identify
@@ -393,8 +385,6 @@ influential explanatory variables and do perturbation analyses</p></li>
 many time series</p></li>
 <li><p>Use Dynamic Linear Models to allow for changing relationships
 between a response variable and any explanatory variable(s)</p></li>
-<li><p>Prepare forecasts with uncertainty using time series
-models</p></li>
 </ul>
 <p><br></p>
 </div>
@@ -562,49 +552,43 @@ it to the University</a>.</p>
 <p>This course will revolve around hands-on computing exercises that
 demonstrate the topics of interest. Therefore, students are strongly
 recommended to bring their own laptop to class, although students are
-certainly free to work with one another. <strong>For students without
-access to a personal laptop</strong>: it is possible to check out UW
-laptops for an entire quarter (see the <a
-href="https://education.uw.edu/admissions/office-of-student-services">Student
-Services office</a> for details).</p>
+certainly free to work with one another.</p>
+<div id="r-rstudio" class="section level3">
+<h3>R &amp; RStudio</h3>
 <p>All of the software we will be using is free and platform
 independent, meaning students may use macOS, Linux, or Windows operating
 systems. In addition to a web browser, we will be using the free <a
 href="https://www.r-project.org/"><strong>R</strong></a> software and
 the desktop version of the <a
-href="https://www.rstudio.com/products/rstudio-desktop/"><strong>R
-Studio</strong></a> integrated development environment (IDE). We will
-also be using various packages not contained in the base installation of
-<strong>R</strong>, but we will wait and install them at the necessary
-time. The instructor will be available during the first week of class to
-help students troubleshoot any software installation problems.</p>
-<p>We will be using <a
-href="https://git-scm.com/downloads"><strong>Git</strong></a>, a free
-and open source version control system for tracking changes to our
-files.</p>
-<p>We will be using <a
-href="https://www.postgresql.org/download/"><strong>PostgreSQL</strong></a>
-to create and access relational databases.</p>
-<p>Students will also be required to have a user account on <a
-href="https://github.com/"><strong>GitHub</strong></a>, which we will be
-using for file hosting and communications via “issues”. If you do not
-already have an account, you can sign up for a free one <a
-href="https://github.com/join?source=header-home">here</a>. The
+href="https://posit.co/products/open-source/rstudio/#rstudio-desktop">RStudio</a>
+integrated development environment (IDE). We will also be using various
+packages not contained in the base installation of <strong>R</strong>,
+but we will wait and install them at the necessary time. The instructor
+will be available during the first week of class to help students
+troubleshoot any software installation problems.</p>
+</div>
+<div id="github" class="section level3">
+<h3>GitHub</h3>
+<p>Students will be required to have a user account on <a
+href="https://github.com/">GitHub</a>, which we use for asking and
+answering questions, getting help, and sharing resources. If you do not
+have an account already, please see the info <a
+href="references/github_signup.html">here</a> for creating one. The
 instructor will provide training on how to use the intended features in
-<strong>GitHub</strong>.</p>
+GitHub.</p>
 <p><br></p>
+</div>
 </div>
 <div id="teaching-methodology" class="section level1">
 <h1>Teaching methodology</h1>
 <p>This course will introduce new material primarily through prepared
 slides and hands-on demonstrations. Students will be expected to work
-both individually and collaboratively (to the extent possible given the
-current conditions); course content and evaluation will emphasize the
-communication of ideas and the ability to think critically more so than
-a specific pathway or method. Other areas of this website provide an
-overview of the topics to be covered, including links to weekly reading
-assignments, lecture materials, computer labs, and homework
-assignments.</p>
+both individually and collaboratively; course content and evaluation
+will emphasize the communication of ideas and the ability to think
+critically more so than a specific pathway or method. Other areas of
+this website provide an overview of the topics to be covered, including
+links to weekly reading assignments, lecture materials, computer labs,
+and homework assignments.</p>
 <p><br></p>
 </div>
 <div id="communication" class="section level1">
@@ -616,40 +600,29 @@ hours. Under more normal circumstances, detailed questions would be
 addressed to me in person–either after class or during a scheduled
 meeting. In this case, however, we will schedule one-on-one or group
 Zoom calls as needed.</p>
-<p>In addition to email and Zoom, we will use the “Issues” feature in
-<strong>GitHub</strong> to ask questions and assist others.
-Specifically, questions and answers can be posted to the issues in the
-course’s “assistance” repository <a
-href="https://github.com/FISH497/assistance/issues">here</a>.</p>
+<p>In addition to email and Zoom, we will use the “Discussions” feature
+in GitHub to ask and answer questions, get help, and share resources.
+Students can post to the discussion board <a
+href="https://github.com/SOE592/extras/discussions">here</a>.</p>
 <p><br></p>
 </div>
 <div id="evaluation" class="section level1">
 <h1>Evaluation</h1>
 <p>Students will be evaluated on their knowledge of course content and
-their ability to communicate their understanding of the material via
-individual homework assignments (80%) and their active participation in
-class (20%). There will be 8 homework assignments, each counting toward
-10% of the final grade. Please note, <strong>all assignments must be
-turned in to achieve a passing grade</strong>.</p>
-<div id="homework" class="section level3">
-<h3>Homework</h3>
-<p>Homework will be assigned each Friday of weeks 2-9 and will be due by
-11:59 PM 9 days later on the following Sunday (weeks 3-10). The
-instructor will evaluate and return student homework assignments within
-one week of their due date. <strong>If for some reason you cannot meet
-the homework deadline, contact the instructor as soon as possible to
-discuss other options</strong>. Please see the <a
-href="homework.html">Homework</a> page for more details.</p>
-</div>
-<div id="participation" class="section level3">
-<h3>Participation</h3>
-<p>Data science is about communicating your ideas and findings to
-others. As such, this course will require students to engage with the
-instructor and one another in small groups. I expect all students to
-contribute to our discussions of concepts, results, bugs/errors,
-etc.</p>
-<p>Students should discuss any potential schedule conflicts with the
-instructor during the first week of class.</p>
+their ability to communicate their understanding of the material via an
+individual research project.</p>
+<div id="due-dates" class="section level3">
+<h3>Due Dates</h3>
+<ul>
+<li><p>Project proposal (10%) due no later than <strong>Friday, February
+2, 2024 at 11:59pm PDT</strong></p></li>
+<li><p>Project methods (20%) due no later than <strong>Friday, March 1,
+2024 at 11:59pm PDT</strong></p></li>
+<li><p>Final paper (70%) due no later than <strong>Friday, April 5, 2024
+at 11:59pm PDT</strong></p></li>
+</ul>
+<p>Please see the <a href="project.html">Project</a> page for more
+details.</p>
 <p><br></p>
 </div>
 <div id="endnotes" class="section level2">
