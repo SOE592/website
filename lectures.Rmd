@@ -7,13 +7,15 @@ output: html_document
 
 #### Navigating through the course notes
 
-* Use the arrow keys (&#8592;/&#8594;) on your keyboard to go forward or backward
+* Use the arrow keys (&#8592; &#8594;) to go forward or backward through lecture notes
 
-* Press the "o" key on any slide to show you an overview of the slide deck
+* Press "o" on any slide to show you an overview of the slide deck and use the arrow keys (&#8592; &#8594;) to go forward or backward
 
 * In overview mode, click on a slide or press "esc" to zoom in on it
 
-* You can print the notes to a pdf by selecting the "print" option from your browser's File menu.
+* Use the arrow keys (&#8593;&#8595;) or your trackpad/mouse to scroll up or down through lab notes
+
+* You can save slide decks and lab notes to a pdf by selecting the "print" option from your browser's File menu
 
 
 ```{r child = "_timeline.Rmd", include=FALSE}
