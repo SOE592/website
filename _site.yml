@@ -6,13 +6,12 @@ navbar:
       href: syllabus.html
     - text: "Topics & materials"
       href: lectures.html
-    - text: "Assignments"
-      href: homework.html
+    - text: "Project"
+      href: project.html
     - text: "References"
       href: references.html
-    - text: ""
-      icon: fab fa-github
-      href: https://github.com/SOE592
+    - text: "Q & A"
+      href: https://github.com/SOE592/extras/discussions
 output_dir: "docs"
 output:
   html_document:
