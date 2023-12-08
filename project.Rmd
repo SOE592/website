@@ -1,0 +1,86 @@
+---
+title: "Final Project"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+As part of the class, each student will have to write a complete paper (<20 page) using the time series analysis techniques learned in class. See below for details on the structure of the paper.
+
+<br>
+
+# Data sets
+
+Students are encouraged to use their own data and the paper may form the basis a chapter for their thesis/dissertation. Those students who do not have their own data may use data from the instructor, public repositories, or datasets included in **R** packages such as [{lterdatasampler}](https://lter.github.io/lterdatasampler/). You might also reach out to your advisor for suggestions on a data set.
+
+<br>
+
+# Project Proposal
+
+**Due no later than Friday, February 2, 2024 at 11:59pm PDT**
+
+Write a 1-2 page description of your project idea that includes
+
+* the question(s) of interest
+* the data you will use
+* your general approach to analyzing the data.
+
+Things to consider:
+
+* what type of time series models do you expect to use?
+* univariate or multivariate
+* one model or multiple models (and multi-model inference)
+* covariates?
+* linear, non-linear, or non-parametric
+* Guassian or non-Gaussian
+
+<br>
+
+# Project Methods
+
+**Due no later than Friday, March 1, 2024 at 11:59pm PDT**
+
+Your methods section should include two elements:
+
+1. Write a draft methods section for your project, which should include a mathematical description of your model sufficient for someone else to understand and fit that model.
+
+2. Show that you can fit a pilot version of your proposed model. In other words, show that you can fit your proposed model to _some_ (possibly simulated) data. Three good options for doing so are to use RMarkdown, Quarto, or a GitHub repository.
+
+<br>
+
+# Final paper
+
+**Due no later than Friday, April 5, 2024 at 11:59pm PDT**
+
+### Length
+
+Final papers should be no more than 20 pages total, including all figures, tables and references. Please submit the PDF or Word version of your paper via email.
+
+### Components
+
+Each paper needs to have the following:
+
+**Title page**: Include the title, your name and contact information 
+
+**Abstract page**: Summarize briefly (ideally < 250 words) the novelty of your analysis, key results, and implications for future work
+
+**Body / main text**: Please include an Introduction / Methods / Results / Discussion section. You're free to use any of the equations from the MARSS manual, or class material to provide equations, variables, descriptions, etc. 
+
+**References**: Please consider using some kind of reference management software (e.g., Zotero, Mendeley) to format all references consistently. 
+
+**Figures / Tables**: Include figures and tables formatted for the journal of your choice. Examples you might want to include are: plots of your raw data, plots of underlying state estimates, plots of future projections, tables of parameter estimates, model selection (AICc) etc. 
+
+### Style
+
+As long as you include page numbers and line numbers, you are free to use the general formatting guidelines for whichever journal you plan to eventually submit your paper to. For some examples, see 
+
+* [Ecology](http://esapubs.org/esapubs/preparation.htm)
+
+* [Journal of Applied Ecology](http://www.journalofappliedecology.org/view/0/authorGuideline.html)
+
