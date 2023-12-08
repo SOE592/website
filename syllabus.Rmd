@@ -26,8 +26,6 @@ By the end of the course, students should be able to:
 
 * Apply appropriate diagnostic measures to identify any shortcomings in model assumptions
 
-* Understand how to use information theoretic methods and cross validation for model selection
-
 * Understand how to combine state and observation models into a state-space model
 
 * Use multivariate time series models with covariates to identify influential explanatory variables and do perturbation analyses
@@ -35,8 +33,6 @@ By the end of the course, students should be able to:
 * Use Dynamic Factor Analysis to identify common patterns among many time series
 
 * Use Dynamic Linear Models to allow for changing relationships between a response variable and any explanatory variable(s)
-
-* Prepare forecasts with uncertainty using time series models
 
 <br>
 
@@ -118,21 +114,21 @@ Although I strive to create and use inclusive materials in this course, there ma
 
 # Technology
 
-This course will revolve around hands-on computing exercises that demonstrate the topics of interest. Therefore, students are strongly recommended to bring their own laptop to class, although students are certainly free to work with one another. **For students without access to a personal laptop**: it is possible to check out UW laptops for an entire quarter (see the [Student Services office](https://education.uw.edu/admissions/office-of-student-services) for details).
+This course will revolve around hands-on computing exercises that demonstrate the topics of interest. Therefore, students are strongly recommended to bring their own laptop to class, although students are certainly free to work with one another.
 
-All of the software we will be using is free and platform independent, meaning students may use macOS, Linux, or Windows operating systems. In addition to a web browser, we will be using the free [**R**](https://www.r-project.org/) software and the desktop version of the [**R Studio**](https://www.rstudio.com/products/rstudio-desktop/) integrated development environment (IDE). We will also be using various packages not contained in the base installation of **R**, but we will wait and install them at the necessary time. The instructor will be available during the first week of class to help students troubleshoot any software installation problems.
+### R & RStudio
 
-We will be using [**Git**](https://git-scm.com/downloads), a free and open source version control system for tracking changes to our files. 
+All of the software we will be using is free and platform independent, meaning students may use macOS, Linux, or Windows operating systems. In addition to a web browser, we will be using the free [**R**](https://www.r-project.org/) software and the desktop version of the [RStudio](https://posit.co/products/open-source/rstudio/#rstudio-desktop) integrated development environment (IDE). We will also be using various packages not contained in the base installation of **R**, but we will wait and install them at the necessary time. The instructor will be available during the first week of class to help students troubleshoot any software installation problems.
 
-We will be using [**PostgreSQL**](https://www.postgresql.org/download/) to create and access relational databases.
+### GitHub
 
-Students will also be required to have a user account on [**GitHub**](https://github.com/), which we will be using for file hosting and communications via "issues". If you do not already have an account, you can sign up for a free one [here](https://github.com/join?source=header-home). The instructor will provide training on how to use the intended features in **GitHub**.
+Students will be required to have a user account on [GitHub](https://github.com/), which we use for asking and answering questions, getting help, and sharing resources. If you do not have an account already, please see the info [here](references/github_signup.html) for creating one. The instructor will provide training on how to use the intended features in GitHub.
 
 <br>
 
 # Teaching methodology
 
-This course will introduce new material primarily through prepared slides and hands-on demonstrations. Students will be expected to work both individually and collaboratively (to the extent possible given the current conditions); course content and evaluation will emphasize the communication of ideas and the ability to think critically more so than a specific pathway or method. Other areas of this website provide an overview of the topics to be covered, including links to weekly reading assignments, lecture materials, computer labs, and homework assignments.
+This course will introduce new material primarily through prepared slides and hands-on demonstrations. Students will be expected to work both individually and collaboratively; course content and evaluation will emphasize the communication of ideas and the ability to think critically more so than a specific pathway or method. Other areas of this website provide an overview of the topics to be covered, including links to weekly reading assignments, lecture materials, computer labs, and homework assignments.
 
 <br>
 
@@ -140,23 +136,23 @@ This course will introduce new material primarily through prepared slides and ha
 
 This course will involve a *lot* of communication between and among students and the instructor. Short questions should be addressed to me via email; I will try my best to respond to your message within 24 hours. Under more normal circumstances, detailed questions would be addressed to me in person--either after class or during a scheduled meeting. In this case, however, we will schedule one-on-one or group Zoom calls as needed.
 
-In addition to email and Zoom, we will use the "Issues" feature in **GitHub** to ask questions and assist others. Specifically, questions and answers can be posted to the issues in the course's "assistance" repository [here](https://github.com/FISH497/assistance/issues).
+In addition to email and Zoom, we will use the "Discussions" feature in GitHub to ask and answer questions, get help, and share resources. Students can post to the discussion board [here](https://github.com/SOE592/extras/discussions).
 
 <br>
 
 # Evaluation
 
-Students will be evaluated on their knowledge of course content and their ability to communicate their understanding of the material via individual homework assignments (80%) and their active participation in class (20%). There will be 8 homework assignments, each counting toward 10% of the final grade. Please note, **all assignments must be turned in to achieve a passing grade**.
+Students will be evaluated on their knowledge of course content and their ability to communicate their understanding of the material via an individual research project.
 
-### Homework
+### Due Dates
 
-Homework will be assigned each Friday of weeks 2-9 and will be due by 11:59 PM 9 days later on the following Sunday (weeks 3-10). The instructor will evaluate and return student homework assignments within one week of their due date. **If for some reason you cannot meet the homework deadline, contact the instructor as soon as possible to discuss other options**. Please see the [Homework](homework.html) page for more details.
+* Project proposal (10%) due no later than **Friday, February 2, 2024 at 11:59pm PDT**
 
-### Participation
+* Project methods (20%) due no later than **Friday, March 1, 2024 at 11:59pm PDT**
 
-Data science is about communicating your ideas and findings to others. As such, this course will require students to engage with the instructor and one another in small groups. I expect all students to contribute to our discussions of concepts, results, bugs/errors, etc. 
+* Final paper (70%) due no later than **Friday, April 5, 2024 at 11:59pm PDT**
 
-Students should discuss any potential schedule conflicts with the instructor during the first week of class.
+Please see the [Project](project.html) page for more details.
 
 <br>
 
