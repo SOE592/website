@@ -455,9 +455,9 @@ plot(co2_decomp, yax.flip = TRUE)
 
 ***
 
-# Differencing to remove a trend or seasonal effects
+# Differencing a time series
 
-An alternative to decomposition for removing trends is differencing.  We saw in lecture how the difference operator works and how it can be used to remove linear and nonlinear trends as well as various seasonal features that might be evident in the data.  As a reminder, we define the difference operator as
+An alternative to decomposition for removing trends and seasonal patterns is so-called _differencing_.  We saw in lecture how the difference operator works and how it can be used to remove linear and nonlinear trends as well as various seasonal features that might be evident in the data.  As a reminder, we define the difference operator as
 
 $$
 \nabla x_t = x_t - x_{t-1},
@@ -499,12 +499,13 @@ In R we can use the `diff()` function for differencing a time series, which requ
 3) `differences`: $d$ in $\nabla^d x_t$.  
 
 <div class="boxy boxy-orange boxy-lightbulb">
-&nbsp; **Tips:**
-<ul>
-<li>First differencing a time series will remove a linear trend (set `differences = 1`).</li>
-<li>Twice differencing a time series will remove a quadratic trend (set `differences = 2`).</li>
-<li>First differencing a time series at a lag equal to `frequency` will remove a seasonal trend (set `lag = 12` for monthly data).</li>
-</ul>
+**Tips:** Some thing to note when differencing:<br>
+
+1. First differencing a time series will remove a linear trend (set `differences = 1`).
+
+2. Twice differencing a time series will remove a quadratic trend (set `differences = 2`).
+
+3. First differencing a time series at a lag equal to `frequency` will remove a seasonal trend (set `lag = 12` for monthly data).
 </div>
 
 <div class="boxy boxy-blue boxy-clipboard-list">
@@ -571,110 +572,66 @@ plot(co2_d2d12, ylab = expression(paste(nabla, "(", nabla^2, "CO"[2], ")")))
 
 ***
 
-# Correlation within and among time series
-  
-The concepts of covariance and correlation are very important in time series analysis.  In particular, we can examine the correlation structure of the original data or random errors from a decomposition model to help us identify possible form(s) of (non)stationary model(s) for the stochastic process.
+# Autocorrelation function
 
-
-## Autocorrelation function (ACF)
-
-Autocorrelation is the correlation of a variable with itself at differing time lags. Recall from lecture that we defined the sample autocovariance function (ACVF), $c_k$, for some lag $k$ as
+Recall that the autocorrelation function (ACF), which we denote as $r_k$, estimates the correlation of a variable with itself at differing time lags
 
 $$
-(\#eq:ACVF)
-c_k = \frac{1}{n}\sum_{t=1}^{n-k} \left(x_t-\bar{x}\right) \left(x_{t+k}-\bar{x}\right)
+r_k = \text{Cor}(x_t,x_{t+k}).
 $$
 
-Note that the sample autocovariance of $\{x_t\}$ at lag 0, $c_0$, equals the sample variance of $\{x_t\}$ calculated with a denominator of $n$.  The sample autocorrelation function (ACF) is defined as
+Recall also that a 95\% confidence interval on the ACF can be estimated by
 
 $$
-(\#eq:ACF)
-r_k = \frac{c_k}{c_0} = \text{Cor}(x_t,x_{t+k})
-$$
-
-Recall also that an approximate 95\% confidence interval on the ACF can be estimated by
-
-$$
-(\#eq:ACF95CI)
--\frac{1}{n} \pm \frac{2}{\sqrt{n}}
+\pm \frac{1.96}{\sqrt{n}}
 $$
 
 where $n$ is the number of data points used in the calculation of the ACF.
 
-It is important to remember two things here.  First, although the confidence interval is commonly plotted and interpreted as a horizontal line over all time lags, the interval itself actually grows as the lag increases because the number of data points $n$ used to estimate the correlation decreases by 1 for every integer increase in lag.  Second, care must be exercised when interpreting the "significance" of the correlation at various lags because we should expect, *a priori*, that approximately 1 out of every 20 correlations will be significant based on chance alone.
+It is important to remember two things here:
 
-We can use the `acf()` function in R to compute the sample ACF (note that adding the option `type = "covariance"` will return the sample auto-covariance (ACVF) instead of the ACF--type `?acf` for details).  Calling the function by itself will will automatically produce a correlogram (*i.e.*, a plot of the autocorrelation versus time lag).  The argument `lag.max` allows you to set the number of positive and negative lags.  Let's try it for the CO<sub>2</sub> data.
+1) Although the confidence interval is commonly plotted and interpreted as a horizontal line over all time lags, the interval itself actually grows as the lag increases because the number of data points $n$ used to estimate the correlation decreases by 1 for every integer increase in lag. 
+
+2) Care must be exercised when interpreting the "significance" of the correlation at various lags because we should expect, *a priori*, that approximately 1 out of every 20 correlations will be significant based on chance alone.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** We can use the `acf()` function in R to compute the sample ACF.   Calling the function by itself will will automatically produce a correlogram. The argument `lag.max` allows you to set the number of positive and negative lags (Type `?acf` for details).
+</div>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Estimate the ACF for the CO<sub>2</sub> data out to a lag of 36 months.
+</div>
 
 ```{r plotACFa, eval = FALSE, echo = TRUE}
 ## correlogram of the CO2 data
 acf(co2, lag.max = 36)
 ```
 
-
-(ref:plotACFb) Correlogram of the observed atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i obtained with the function `acf()`.
-
-```{r plotACFb, eval = TRUE, echo = FALSE, fig.cap = '(ref:plotACFb)'}
+```{r plotACFb, eval = TRUE, echo = FALSE, fig.cap = "Correlogram of the observed atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i obtained with the function `acf()`."}
 ## set the margins & text size
 par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 ## correlogram of the CO2 data
 acf(co2, lag.max = 36)
 ```
  
+<br>
 
-There are 4 things about Figure \@ref(fig:plotACFb) that are noteworthy:
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** There are 2 things about this correlogram worth noting:<br>
 
+1. The $x$-axis has decimal values for lags, which is caused by R using the year index as the lag rather than the month.
 
-1.  the ACF at lag 0, $r_0$, equals 1 by default (*i.e.*, the correlation of a time series with itself)--it's plotted as a reference point;
-2.  the $x$-axis has decimal values for lags, which is caused by R using the year index as the lag rather than the month;
-3.  the horizontal blue lines are the approximate 95\% CI's; and
-4.  there is very high autocorrelation even out to lags of 36 months.
-
-As an alternative to the default plots for **acf** objects, let's define a new plot function for **acf** objects with some better features:
-
-```{r BetterPlotACF, eval = TRUE, echo = TRUE}
-## better ACF plot
-plot_acf <- function(ACFobj) {
-  rr <- ACFobj$acf[-1]
-  kk <- length(rr)
-  nn <- ACFobj$n.used
-  plot(seq(kk), rr,
-    type = "h", lwd = 2, yaxs = "i", xaxs = "i",
-    ylim = c(floor(min(rr)), 1), xlim = c(0, kk + 1),
-    xlab = "Lag", ylab = "Correlation", las = 1
-  )
-  abline(h = -1 / nn + c(-2, 2) / sqrt(nn), lty = "dashed", col = "blue")
-  abline(h = 0)
-}
-```
-
-Now we can assign the result of `acf()` to a variable and then use the information contained therein to plot the correlogram with our new plot function.
-
-```{r betterACF, eval = FALSE, echo = TRUE}
-## acf of the CO2 data
-co2_acf <- acf(co2, lag.max = 36)
-
-## correlogram of the CO2 data
-plot_acf(co2_acf)
-```
-
-```{r DoOurACF, eval = TRUE, echo = FALSE}
-## acf of the CO2 data
-co2_acf <- acf(co2, lag.max = 36)
-```
+2. There is very high autocorrelation even out to lags of 36 months.
+</div>
 
 
-(ref:plotbetterACF) Correlogram of the observed atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i obtained with the function `plot_acf()`.
+## Deterministic time series
 
-```{r plotbetterACF, eval = TRUE, echo = FALSE, fig.cap = '(ref:plotbetterACF)'}
-## set the margins & text size
-par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
+Let's look at the ACF for some deterministic time series, which will help you identify interesting properties (*e.g.*, trends, seasonal effects) in a stochastic time series, and account for them in time series models--an important topic in this course. 
 
-## correlogram of the CO2 data
-plot_acf(co2_acf)
-```
-Notice that all of the relevant information is still there (Figure \@ref(fig:plotbetterACF)), but now $r_0=1$ is not plotted at lag-0 and the lags on the $x$-axis are displayed correctly as integers.
-
-Before we move on to the PACF, let's look at the ACF for some deterministic time series, which will help you identify interesting properties (*e.g.*, trends, seasonal effects) in a stochastic time series, and account for them in time series models--an important topic in this course.  First, let's look at a straight line.
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Examine the ACF for a straight line.
+</div>
 
 ```{r LinearACFecho, eval = FALSE, echo = TRUE}
 ## length of ts
@@ -686,31 +643,20 @@ tt <- seq(nn)
 ## set up plot area
 par(mfrow = c(1, 2))
 
-## plot line
+## plot the line
 plot.ts(tt, ylab = expression(italic(x[t])))
 
-## get ACF
-line.acf <- acf(tt, plot = FALSE)
-
-## plot ACF
-plot_acf(line.acf)
+## plot its ACF
+acf(tt)
 ```
 
-```{r LinearACF, eval = TRUE, echo = FALSE}
+```{r plotLinearACF, eval = TRUE, echo = FALSE, fig.cap = "Time series plot of a straight line (left) and the correlogram of its ACF (right)."}
 ## length of ts
 nn <- 100
 
 ## create straight line
 tt <- seq(nn)
 
-## get ACF
-line.acf <- acf(tt)
-```
-  
-
-(ref:plotLinearACF) Time series plot of a straight line (left) and the correlogram of its ACF (right).
-
-```{r plotLinearACF, eval = TRUE, echo = FALSE, fig.cap = '(ref:plotLinearACF)'}
 ## set the margins & text size
 par(mfrow = c(1, 2), mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
@@ -718,12 +664,16 @@ par(mfrow = c(1, 2), mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 plot.ts(tt, ylab = expression(italic(x[t])))
 
 ## plot ACF
-plot_acf(line.acf)
+acf(tt)
 ```
 
-The correlogram for a straight line is itself a linearly decreasing function over time (Figure \@ref(fig:plotLinearACF)).
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** The correlogram for a straight line is itself a linearly decreasing function over time.
+</div>
 
-Now let's examine the ACF for a sine wave and see what sort of pattern arises.
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Examine the ACF for a sine wave and see what sort of pattern arises.
+</div>
 
 ```{r SineACFecho, eval = FALSE, echo = TRUE}
 ## create sine wave
@@ -742,18 +692,10 @@ sine_acf <- acf(tt, plot = FALSE)
 plot_acf(sine_acf)
 ```
 
-```{r SineACF, eval = TRUE, echo = FALSE}
+```{r plotSineACF, eval = TRUE, echo = FALSE, fig.cap = "Time series plot of a discrete sine wave (left) and the correlogram of its ACF (right)."}
 ## create sine wave
 tt <- sin(2 * pi * seq(nn) / 12)
 
-## get ACF
-sine_acf <- acf(tt, plot = FALSE)
-```
-  
-
-(ref:plotSineACF) Time series plot of a discrete sine wave (left) and the correlogram of its ACF (right).
-
-```{r plotSineACF, eval = TRUE, echo = FALSE, fig.cap = '(ref:plotSineACF)'}
 ## set the margins & text size
 par(mfrow = c(1, 2), mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
@@ -761,12 +703,16 @@ par(mfrow = c(1, 2), mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 plot.ts(tt, ylab = expression(italic(x[t])))
 
 ## plot ACF
-plot_acf(sine_acf)
+acf(tt)
 ```
 
-Perhaps not surprisingly, the correlogram for a sine wave is itself a sine wave whose amplitude decreases linearly over time (Figure \@ref(fig:plotSineACF)).
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** The correlogram for a sine wave is itself a sine wave whose amplitude decreases linearly over time.
+</div>
 
-Now let's examine the ACF for a sine wave with a linear downward trend and see what sort of patterns arise.
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Examine the ACF for a sine wave with a linear downward trend and see what sort of pattern arises.
+</div>
 
 ```{r SiLineACFecho, eval = FALSE, echo = TRUE}
 ## create sine wave with trend
@@ -785,33 +731,27 @@ sili_acf <- acf(tt, plot = FALSE)
 plot_acf(sili_acf)
 ```
 
-```{r SiLiACF, eval = TRUE, echo = FALSE}
+```{r plotSiLiACF, eval = TRUE, echo = FALSE, fig.cap = "Time series plot of a discrete sine wave (left) and the correlogram of its ACF (right)."}
 ## create sine wave with trend
 tt <- sin(2 * pi * seq(nn) / 12) - seq(nn) / 50
 
-## get ACF
-sili_acf <- acf(tt, plot = FALSE)
-```
-  
-
-(ref:plotSiLiACF) Time series plot of a discrete sine wave (left) and the correlogram of its ACF (right).
-
-```{r plotSiLiACF, eval = TRUE, echo = FALSE, fig.cap = '(ref:plotSiLiACF)'}
 ## set the margins & text size
 par(mfrow = c(1, 2), mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
 ## plot line
 plot.ts(tt, ylab = expression(italic(x[t])))
+
 ## plot ACF
-plot_acf(sili_acf)
+acf(tt)
 ```
 
-The correlogram for a sine wave with a trend is itself a nonsymmetrical sine wave whose amplitude and center decrease over time (Figure \@ref(fig:plotSiLiACF)).
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** The correlogram for a sine wave with a trend is itself a nonsymmetrical sine wave whose amplitude and center decrease over time.
+</div>
 
-As we have seen, the ACF is a powerful tool in time series analysis for identifying important features in the data.  As we will see later, the ACF is also an important diagnostic tool for helping to select the proper order of $p$ and $q$ in ARMA($p$,$q$) models.
+***
 
-
-## Partial autocorrelation function (PACF)
+# Partial autocorrelation function
 
 The partial autocorrelation function (PACF) measures the linear correlation of a series $\{x_t\}$ and a lagged version of itself $\{x_{t+k}\}$ with the linear dependence of $\{x_{t-1},x_{t-2},\dots,x_{t-(k-1)}\}$ removed.  Recall from lecture that we define the PACF as
 
