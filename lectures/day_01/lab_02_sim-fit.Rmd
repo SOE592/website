@@ -64,9 +64,9 @@ sigma <- sqrt(2)
 ww <- rnorm(n = nn, mean = 0, sd = sigma)
 ```
 
-## Plotting a time series
+## Plotting white noise
 
-We can use the base function `plot.ts()` to plot a time series by passing only the vector of values without the need to specify both the `x` and `y` arguments for a typical x-y plot. The actual syntax is a bit odd because you specify `x = values` when actually $x$ is the time index (i.e., length of the time series) and $y$ are the values to plot.
+We can use the base function `plot.ts()` to plot our white noise sequence.
 
 ```{r plot_white_noise}
 ## plot the time series of white noise
@@ -327,15 +327,438 @@ Here we will look at some other forms of AR(_p_) models where $|\phi_i| < 1$, wh
 
 ## Simulating an AR(_p_) model
 
-Simulating an AR(_p_) model is also straightforward. One option is to use a `for()` loop like we did above for the [random walk](#simulating-random-walks) and [biased random walk](#simulating-a-biased-random-walk) models. Here we'll explore how to use the `arima.sim()` function in base R.
+Simulating an AR(_p_) model is also straightforward. One option is to use a `for()` loop like we did above for the [random walk](#simulating-random-walks) and [biased random walk](#simulating-a-biased-random-walk) models. The AR in ARIMA stands for "autoregressive", the I for "integrated", and the MA for "moving-average"; we specify the order of ARIMA models as $p,d,q$.  So, for example, we would specify an AR(2) model as ARIMA(2,0,0), or an MA(1) model as ARIMA(0,0,1).  If we had an ARMA(3,1) model that we applied to data that had been twice-differenced, then we would have an ARIMA(3,2,1) model. 
+
+Here we'll explore how to use the `arima.sim()` function in base R.
 
 <div class="boxy boxy-orange boxy-lightbulb">
 **Tip:** Type `?arima.sim` at the command prompt to see all of the options for `arima.sim()`.
 </div>
 
+`arima.sim()` will accept many arguments, but we are interested primarily in three of them:
+
+1. `n`: the length of desired time series 
+
+2. `model`: a list with the following elements
+
+    i) `order`: a vector of length 3 containing the ARIMA($p,d,q$) order
+    
+    ii) `ar`: a vector of length $p$ containing the AR($p$) coefficients
+    
+    iii) `ma`: a vector of length $q$ containing the MA($q$) coefficients
+
+3. `sd`: the standard deviation of the Gaussian errors
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** You can omit the `ma` element entirely if you have an AR($p$) model, or omit the `ar` element if you have an MA($q$) model.  If you omit the `sd` element, `arima.sim()` will assume you want normally distributed errors with SD = 1.  Also note that you can pass `arima.sim()` your own time series of random errors or the name of a function that will generate the errors (*e.g.*, you could use `rpois()` if you wanted a model with Poisson errors).
+</div>
+
+Let's begin by simulating some AR(1) models and comparing their behavior.  First, let's choose models with contrasting AR coefficients.  Recall that in order for an AR(1) model to be stationary, $\phi < \lvert 1 \rvert$, so we'll try 0.1 and 0.9.  We'll again set the random number seed so we will get the same answers.
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Simulate two AR(1) models with contrasting coefficients.
+</div>
+
+```{r simAR1, echo = TRUE, eval = TRUE}
+## list description for AR(1) model with a small coef
+AR_sm <- list(order = c(1, 0, 0), ar = 0.1)
+
+## list description for AR(1) model with a large coef
+AR_lg <- list(order = c(1, 0, 0), ar = 0.9)
+
+## simulate AR(1)
+AR1_sm <- arima.sim(n = 50, model = AR_sm, sd = 0.1)
+AR1_lg <- arima.sim(n = 50, model = AR_lg, sd = 0.1)
+```
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Plot the simulated series.
+</div>
+
+```{r plotAR1sims, eval = FALSE, echo = TRUE}
+## setup plot region
+par(mfrow = c(1, 2))
+
+## get y-limits for common plots
+ylm <- c(min(AR1_sm, AR1_lg), max(AR1_sm, AR1_lg))
+
+## plot the ts
+plot.ts(AR1_sm,
+  ylim = ylm,
+  ylab = expression(italic(x)[italic(t)]),
+  main = expression(paste(phi, " = 0.1"))
+)
+plot.ts(AR1_lg,
+  ylim = ylm,
+  ylab = expression(italic(x)[italic(t)]),
+  main = expression(paste(phi, " = 0.9"))
+)
+```
+
+```{r plotAR1contrast, eval = TRUE, echo = FALSE, fig.dim = c(8, 4.5), fig.cap = "Time series of simulated AR(1) processes with a small (left) and large (right) cofficient."}
+## get y-limits for common plots
+ylm <- c(min(AR1_sm, AR1_lg), max(AR1_sm, AR1_lg))
+
+## set the margins & text size
+par(mfrow = c(1, 2), mai = c(1.2, 1, 0.3, 0), omi = c(0, 0, 0.5, 1), cex = 1)
+
+## plot the ts
+plot.ts(AR1_sm,
+  ylim = ylm,
+  ylab = expression(italic(x)[italic(t)]),
+  main = expression(paste(phi, " = 0.1"))
+)
+plot.ts(AR1_lg,
+  ylim = ylm,
+  ylab = expression(italic(x)[italic(t)]),
+  main = expression(paste(phi, " = 0.9"))
+)
+```
+ 
+<br>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** What do you notice about these two plots?
+</div>
+
+It looks like the time series with the smaller AR coefficient is more "choppy" and seems to stay closer to 0 whereas the time series with the larger AR coefficient appears to wander around more.  Remember that as the coefficient in an AR(1) model goes to 0, the model approaches a WN sequence, which is stationary in both the mean and variance.  As the coefficient goes to 1, however, the model approaches a random walk, which is not stationary in either the mean or variance.
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Generate two AR(1) models that have the same magnitude of coeficient, but opposite signs, and compare their behavior.
+</div>
+
+```{r simAR1opps, echo = TRUE, eval = TRUE}
+## list description for AR(1) model with positive coef
+AR_pos <- list(order = c(1, 0, 0), ar = 0.5)
+
+## list description for AR(1) model with negative coef
+AR_neg <- list(order = c(1, 0, 0), ar = -0.5)
+
+## simulate AR(1)
+AR1_pos <- arima.sim(n = 50, model = AR_pos, sd = 0.1)
+AR1_neg <- arima.sim(n = 50, model = AR_neg, sd = 0.1)
+```
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Plot the simulated series.
+</div>
+
+```{r plotAR1oppsEcho, eval = FALSE, echo = TRUE}
+## setup plot region
+par(mfrow = c(1, 2))
+
+## get y-limits for common plots
+ylm <- c(min(AR1_pos, AR1_neg), max(AR1_pos, AR1_neg))
+
+## plot the ts
+plot.ts(AR1_pos,
+  ylim = ylm,
+  ylab = expression(italic(x)[italic(t)]),
+  main = expression(paste(phi[1], " = 0.5"))
+)
+plot.ts(AR1_neg,
+  ylab = expression(italic(x)[italic(t)]),
+  main = expression(paste(phi[1], " = -0.5"))
+)
+```
+
+```{r plotAR1opps, eval = TRUE, echo = FALSE, fig.dim = c(8, 4.5), fig.cap = "Time series of simulated AR(1) processes with a positive (left) and negative (right) cofficient of the same magnitude."}
+## get y-limits for common plots
+ylm <- c(min(AR1_pos, AR1_neg), max(AR1_pos, AR1_neg))
+
+## set the margins & text size
+par(mfrow = c(1, 2), mai = c(1.2, 1, 0.3, 0), omi = c(0, 0, 0.5, 1), cex = 1)
+
+## plot the ts
+plot.ts(AR1_pos,
+  ylim = ylm,
+  ylab = expression(italic(x)[italic(t)]),
+  main = expression(paste(phi[1], " = 0.5"))
+)
+plot.ts(AR1_neg,
+  ylim = ylm,
+  ylab = expression(italic(x)[italic(t)]),
+  main = expression(paste(phi[1], " = -0.5"))
+)
+```
+ 
+<br>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** What do you notice about these two plots?
+</div>
+
+It appears like both time series vary around the mean by about the same amount, but the model with the negative coefficient produces a much more "sawtooth" time series.  It turns out that _any_ AR(1) model with $-1<\phi<0$ will exhibit the 2-point oscillation you see here.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** We can simulate higher order AR(_p_) models in the same manner, but care must be exercised when choosing a set of coefficients that result in a stationary model or else `arima.sim()` will fail and report an error.
+</div>
+
+For example, an AR(2) model with both coefficients equal to 0.5 is not stationary, and therefore this function call will not work:
+
+```{r AR_p_coefFail, eval = FALSE, echo = TRUE}
+arima.sim(n = 100, model = list(order(2, 0, 0), ar = c(0.5, 0.5)))
+```
+
+If you try, R will respond with an error that the `'ar' part of model is not stationary`.
+
+
+## Correlation of AR(_p_) processes
+
+Let's review what we learned in lecture about the general behavior of the ACF and PACF for AR($p$) models.  To do so, we'll simulate four stationary AR($p$) models of increasing order $p$ and then examine their ACF's and PACF's.  Let's use a really big $n$ so as to make them "pure", which will provide a much better estimate of the correlation structure.
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Simulate four stationary AR($p$) models of increasing order $p$.
+</div>
+
+```{r AR_p_coefSims, eval = TRUE, echo = TRUE}
+## the 4 AR coefficients
+AR_p_coef <- c(0.7, 0.2, -0.1, -0.3)
+
+## empty list for storing models
+AR_mods <- list()
+
+## loop over orders of p
+for (p in 1:4) {
+  ## assume sd = 1, so not specified
+  AR_mods[[p]] <- arima.sim(n = 10000, list(ar = AR_p_coef[1:p]))
+}
+```
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Now that we have our four AR($p$) models, lets look at plots of the time series, ACF's, and PACF's.
+</div>
+
+```{r plotAR_p_coefCompsEcho, eval = FALSE, echo = TRUE}
+## set up plot region
+par(mfrow = c(4, 3))
+
+## loop over orders of p
+for (p in 1:4) {
+  plot.ts(AR_mods[[p]][1:50],
+    ylab = paste("AR(", p, ")", sep = "")
+  )
+  acf(AR_mods[[p]], lag.max = 12)
+  pacf(AR_mods[[p]], lag.max = 12, ylab = "PACF")
+}
+```
+
+```{r plotAR-p-coefComps, eval = TRUE, echo = FALSE, fig.dim = c(8, 8), fig.cap = "Time series of simulated AR(_p_) processes (left column) of increasing orders from 1-4 (rows) with their associated ACF's (center column) and PACF's (right column).  Note that only the first 50 values of $x_t$ are plotted."}
+## set the margins & text size
+par(mfrow = c(4, 3), mar = c(4, 4, 0.5, 0.5), omi = c(0.3, 0, 0, 0), cex = 1)
+
+## loop over orders of p
+for (p in 1:4) {
+  plot.ts(AR_mods[[p]][1:50], ylab = paste("AR(", p, ")", sep = ""))
+  acf(AR_mods[[p]], lag.max = 12)
+  pacf(AR_mods[[p]], lag.max = 12, ylab = "PACF")
+}
+```
+ 
+<br>
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** As we saw in lecture and is evident from our examples shown above, the ACF for an AR($p$) process tails off toward zero very slowly, but the PACF goes to zero for lags > $p$.  This is an important diagnostic tool when trying to identify the order of $p$ in ARMA($p,q$) models.
+</div>
 
 ***
 
-# Partial autocorrelation
+# Moving-average (MA) models
+
+A moving-averge process of order $q$, or MA($q$), is a weighted sum of the current random error plus the $q$ most recent errors, and can be written as
+
+\begin{equation}
+x_t = w_t + \theta_1 w_{t-1} + \theta_2 w_{t-2} + \dots + \theta_q w_{t-q},
+\end{equation}
+
+where $\{w_t\}$ is a white noise sequence with zero mean and some variance $\sigma^2$; for our purposes we usually assume that $w_t \sim \text{N}(0,q)$.  Of particular note is that because MA processes are finite sums of stationary errors, they themselves are stationary.
+
+## Simulating an MA($q$) process
+
+We can simulate MA($q$) processes just as we did for AR($p$) processes using `arima.sim()`.  Here are 3 different ones with contrasting $\theta$'s:
+
+```{r simMA1opps, echo = TRUE, eval = TRUE}
+## list description for MA(1) model with small coef
+MA_sm <- list(order = c(0, 0, 1), ma = 0.2)
+
+## list description for MA(1) model with large coef
+MA_lg <- list(order = c(0, 0, 1), ma = 0.8)
+
+## list description for MA(1) model with large coef
+MA_neg <- list(order = c(0, 0, 1), ma = -0.5)
+
+## simulate MA(1)
+MA1_sm <- arima.sim(n = 50, model = MA_sm, sd = 0.1)
+MA1_lg <- arima.sim(n = 50, model = MA_lg, sd = 0.1)
+MA1_neg <- arima.sim(n = 50, model = MA_neg, sd = 0.1)
+```
+
+with their associated plots.
+
+```{r plotMA1oppsEcho, eval = FALSE, echo = TRUE}
+## setup plot region
+par(mfrow = c(1, 3))
+
+## plot the ts
+plot.ts(MA1_sm,
+  ylab = expression(italic(x)[italic(t)]),
+  main = expression(paste(theta, " = 0.2"))
+)
+plot.ts(MA1_lg,
+  ylab = expression(italic(x)[italic(t)]),
+  main = expression(paste(theta, " = 0.8"))
+)
+plot.ts(MA1_neg,
+  ylab = expression(italic(x)[italic(t)]),
+  main = expression(paste(theta, " = -0.5"))
+)
+```
+
+```{r plotMA1opps, eval = TRUE, echo = FALSE, fig.dim = c(8,4), fig.cap = "Time series of simulated MA(1) processes with varying signs and magnitudes of coefficients."}
+## set the margins & text size
+par(mfrow = c(1, 3), mar = c(4, 4, 1.5, 0.5), omi = c(0.3, 0, 0, 0), cex = 1)
+
+## plot the ts
+plot.ts(MA1_sm,
+  ylab = expression(italic(x)[italic(t)]),
+  main = expression(paste(theta, " = 0.2"))
+)
+plot.ts(MA1_lg,
+  ylab = expression(italic(x)[italic(t)]),
+  main = expression(paste(theta, " = 0.8"))
+)
+plot.ts(MA1_neg,
+  ylab = expression(italic(x)[italic(t)]),
+  main = expression(paste(theta, " = -0.5"))
+)
+```
+ 
+<br>
+
+In contrast to AR(1) processes, MA(1) models do not exhibit radically different behavior with changing $\theta$.  This should not be too surprising given that they are simply linear combinations of white noise.
+
+
+
+## Correlation of MA($q$) processes
+
+We saw in lecture and above how the ACF and PACF have distinctive features for AR($p$) models, and they do for MA($q$) models as well.  Here are examples of four MA($q$) processes.  As before, we'll use a really big $n$ so as to make them "pure", which will provide a much better estimate of the correlation structure.
+
+```{r MA_q_coefSims, eval = TRUE, echo = TRUE}
+## the 4 MA coefficients
+MA_q_coef <- c(0.7, 0.2, -0.1, -0.3)
+
+## empty list for storing models
+MA_mods <- list()
+
+## loop over orders of q
+for (q in 1:4) {
+  ## assume sd = 1, so not specified
+  MA_mods[[q]] <- arima.sim(n = 1000, list(ma = MA_q_coef[1:q]))
+}
+```
+
+Now that we have our four MA($q$) models, lets look at plots of the time series, ACF's, and PACF's.
+
+```{r plotMApCompsEcho, eval = FALSE, echo = TRUE}
+## set up plot region
+par(mfrow = c(4, 3))
+
+## loop over orders of q
+for (q in 1:4) {
+  plot.ts(MA_mods[[q]][1:50],
+    ylab = paste("MA(", q, ")", sep = "")
+  )
+  acf(MA_mods[[q]], lag.max = 12)
+  pacf(MA_mods[[q]], lag.max = 12, ylab = "PACF")
+}
+```
+
+```{r plotMApComps, eval = TRUE, echo = FALSE, fig.dim = c(8, 8), fig.cap = "Time series of simulated MA($q$) processes (left column) of increasing orders from 1-4 (rows) with their associated ACF's (center column) and PACF's (right column).  Note that only the first 50 values of $x_t$ are plotted."}
+## set the margins & text size
+par(mfrow = c(4, 3), mar = c(4, 4, 0.5, 0.5), omi = c(0.3, 0, 0, 0), cex = 1)
+
+## loop over orders of q
+for (q in 1:4) {
+  plot.ts(MA_mods[[q]][1:50], ylab = paste("MA(", q, ")", sep = ""))
+  acf(MA_mods[[q]], lag.max = 12)
+  pacf(MA_mods[[q]], lag.max = 12, ylab = "PACF")
+}
+```
+ 
+<br>
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** As we saw in lecture and is evident from our examples here, the ACF for an MA($q$) process goes to zero for lags > $q$, but the PACF tails off toward zero very slowly.  This is an important diagnostic tool when trying to identify the order of $q$ in ARMA($p,q$) models.
+</div>
+
+***
+
+# Fitting ARMA($p,q$) models with `arima()` {#sec-fitting-armapq-models-with-verbarima}
+
+We have already seen how to simulate AR($p$) and MA($q$) models with `arima.sim()`; the same concepts apply to ARMA($p,q$) models and therefore we will not do that here.  Instead, we will move on to fitting ARMA($p,q$) models when we only have a realization of the process (*i.e.*, the data) and do not know the underlying parameters that generated it.
+
+The function `arima()` accepts a number of arguments, but two of them are most important:
+
+* `x`: a univariate time series
+* `order`: a vector of length 3 specifying the order of ARIMA(p,d,q) model
+
+In addition, note that by default `arima()` will estimate an underlying mean of the time series unless $d>0$.  For example, an AR(1) process with mean $\mu$ would be written
+
+\begin{equation}
+x_t = \mu + \phi (x_{t-1} - \mu) + w_t.
+\end{equation}
+
+If you know for a fact that the time series data have a mean of zero (*e.g.*, you already subtracted the mean from them), you should include the argument `include.mean = FALSE`, which is set to `TRUE` by default.  Note that ignoring and not estimating a mean in ARMA($p,q$) models when one exists will bias the estimates of all other parameters.
+
+Let's see an example of how `arima()` works.  First we'll simulate an ARMA(2,2) model and then estimate the parameters to see how well we can recover them.  In addition, we'll add in a constant to create a non-zero mean, which `arima()` reports as `intercept` in its output.
+
+```{r ARMAest, eval = TRUE, echo = TRUE}
+## ARMA(2,2) description for arim.sim()
+ARMA22 <- list(order = c(2, 0, 2), ar = c(-0.7, 0.2), ma = c(0.7, 0.2))
+
+## mean of process
+mu <- 5
+
+## simulated process (+ mean)
+ARMA_sim <- arima.sim(n = 10000, model = ARMA22) + mu
+
+## estimate parameters
+arima(x = ARMA_sim, order = c(2, 0, 2))
+```
+
+It looks like we were pretty good at estimating the true parameters, but our sample size was admittedly quite large; the estimate of the variance of the process errors is reported as `sigma^2` below the other coefficients.  As an exercise, try decreasing the length of time series in the  `arima.sim()` call above from 10,000 to something like 100 and see what effect it has on the parameter estimates.
+
+
+## Searching over model orders
+
+In an ideal situation, you could examine the ACF and PACF of the time series of interest and immediately decipher what orders of $p$ and $q$ must have generated the data, but that doesn't always work in practice.  Instead, we are often left with the task of searching over several possible model forms and seeing which of them provides the most parsimonious fit to the data.  There are two easy ways to do this for ARIMA models in R.  The first is to write a little script that loops ove the possible dimensions of $p$ and $q$.  Let's try that for the process we simulated above and search over orders of $p$ and $q$ from 0-3 (it will take a few moments to run and will likely report an error about a "`possible convergence problem`", which you can ignore).
+
+```{r ARMAsearch1, eval = TRUE, echo = TRUE, cache=TRUE}
+## empty list to store model fits
+ARMA_res <- list()
+## set counter
+cc <- 1
+## loop over AR
+for (p in 0:3) {
+  ## loop over MA
+  for (q in 0:3) {
+    ARMA_res[[cc]] <- arima(x = ARMA_sim, order = c(p, 0, q))
+    cc <- cc + 1
+  }
+}
+## get AIC values for model evaluation
+ARMA_AIC <- sapply(ARMA_res, function(x) x$aic)
+## model with lowest AIC is the best
+ARMA_res[[which(ARMA_AIC == min(ARMA_AIC))]]
+```
+
+It looks like our search worked, so let's look at the other method for fitting ARIMA models.  The `auto.arima()` function in the **forecast** package  will conduct an automatic search over all possible orders of ARIMA models that you specify.  For details, type `?auto.arima` after loading the package.  Let's repeat our search using the same criteria.
+
+```{r autoARIMA, eval = TRUE, echo = TRUE, cache = TRUE}
+## find best ARMA(p,q) model
+forecast::auto.arima(ARMA_sim, start.p = 0, max.p = 3, start.q = 0, max.q = 3)
+```
+
+We get the same results with an increase in speed and less coding, which is nice.  If you want to see the form for each of the models checked by `auto.arima()` and their associated AIC values, include the argument `trace = 1`.
 
 
