@@ -753,90 +753,56 @@ acf(tt)
 
 # Partial autocorrelation function
 
-The partial autocorrelation function (PACF) measures the linear correlation of a series $\{x_t\}$ and a lagged version of itself $\{x_{t+k}\}$ with the linear dependence of $\{x_{t-1},x_{t-2},\dots,x_{t-(k-1)}\}$ removed.  Recall from lecture that we define the PACF as
+The partial autocorrelation function (PACF) measures the linear correlation of a series $\{x_t\}$ and a lagged version of itself $\{x_{t+k}\}$ with the linear dependence of $\{x_{t-1},x_{t-2},\dots,x_{t-(k-1)}\}$ removed.
 
-$$
-(\#eq:PACFdefn)
-f_k = \begin{cases}
-        \text{Cor}(x_1,x_0)=r_1 & \text{if } k = 1;\\
-        \text{Cor}(x_k-x_k^{k-1},x_0-x_0^{k-1}) & \text{if } k \geq 2;
-      \end{cases}
-$$
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** It's easy to compute the PACF in R using the `pacf()` function, which will automatically plot a correlogram when called by itself.
+</div>
 
-with
-
-\begin{subequations}(\#eq:PACFdefnP2)
-  \begin{align}
-    x_k^{k-1} &= \beta_1x_{k-1} + \beta_2x_{k-2} + \dots + \beta_{k-1}x_1; \\
-    x_0^{k-1} &= \beta_1x_1 + \beta_2x_2 + \dots + \beta_{k-1}x_{k-1}.
-  \end{align}
-\end{subequations}
-
-It's easy to compute the PACF for a variable in R using the `pacf()` function, which will automatically plot a correlogram when called by itself (similar to `acf()`).  Let's look at the PACF for the CO<sub>2</sub> data.
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Look at the PACF for the CO<sub>2</sub> data.
+</div>
 
 ```{r plotPACFa, eval = FALSE, echo = TRUE}
 ## PACF of the CO2 data
 pacf(co2, lag.max = 36)
 ```
 
-The default plot for PACF is a bit better than for ACF, but here is another plotting function that might be useful.
-
-```{r BetterPlotPACF, eval = TRUE, echo = TRUE}
-## better PACF plot
-plot_pacf <- function(PACFobj) {
-  rr <- PACFobj$acf
-  kk <- length(rr)
-  nn <- PACFobj$n.used
-  plot(seq(kk), rr,
-    type = "h", lwd = 2, yaxs = "i", xaxs = "i",
-    ylim = c(floor(min(rr)), 1), xlim = c(0, kk + 1),
-    xlab = "Lag", ylab = "PACF", las = 1
-  )
-  abline(h = -1 / nn + c(-2, 2) / sqrt(nn), lty = "dashed", col = "blue")
-  abline(h = 0)
-}
-```
-
-
-(ref:plotPACFb) Correlogram of the PACF for the observed atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i obtained with the function `pacf()`.
-
-```{r plotPACFb, eval = TRUE, echo = FALSE, fig.cap = '(ref:plotPACFb)'}
+```{r plotPACFb, eval = TRUE, echo = FALSE, fig.cap = "Correlogram of the PACF for the observed atmospheric CO<sub>2</sub> concentration at Mauna Loa, Hawai'i obtained with the function `pacf()`."}
 ## set the margins & text size
 par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
 ## correlogram of the CO2 data
 pacf(co2, lag.max = 36)
 ```
-Notice in Figure \@ref(fig:plotPACFb) that the partial autocorrelation at lag-1 is very high (it equals the ACF at lag-1), but the other values at lags > 1 are relatively small, unlike what we saw for the ACF.  We will discuss this in more detail later on in this lab.
 
-Notice also that the PACF plot again has real-valued indices for the time lag, but it does not include any value for lag-0 because it is impossible to remove any intermediate autocorrelation between $t$ and $t-k$ when $k=0$, and therefore the PACF does not exist at lag-0.  If you would like, you can use the `plot_acf()` function we defined above to plot the PACF estimates because `acf()` and `pacf()` produce identical list structures (results not shown here).
+<div class="boxy boxy-red boxy-exclamation">
+**Note** the following about this PACF:<br>
 
-```{r CO2PACFecho, eval = FALSE, echo = TRUE}
-## PACF of the CO2 data
-co2_pacf <- pacf(co2)
+1. The partial autocorrelation at lag-1 is very high (it equals the ACF at lag-1), but the other values at lags > 1 are relatively small, unlike what we saw for the ACF.
 
-## correlogram of the CO2 data
-plot_acf(co2_pacf)
-```
+2. The PACF plot again has real-valued indices for the time lag, but it does not include any value for lag-0 because it is impossible to remove any intermediate autocorrelation between $t$ and $t-k$ when $k=0$, and therefore the PACF does not exist at lag-0.
+</div>
 
-As with the ACF, we will see later on how the PACF can also be used to help identify the appropriate order of $p$ and $q$ in ARMA($p$,$q$) models.
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** As with the ACF, we will see later on how the PACF can also be used to help identify the appropriate order of $p$ and $q$ in ARMA($p$,$q$) models.
+</div>
 
+***
 
-## Cross-correlation function (CCF)
+# Cross-correlation function (CCF)
 
 Often we are interested in looking for relationships between 2 different time series.  There are many ways to do this, but a simple method is via examination of their cross-covariance and cross-correlation.
 
 We begin by defining the sample cross-covariance function (CCVF) in a manner similar to the ACVF, in that
 
 $$
-(\#eq:CCVF)
 g_k^{xy} = \frac{1}{n}\sum_{t=1}^{n-k} \left(y_t-\bar{y}\right) \left(x_{t+k}-\bar{x}\right),
 $$
 
 but now we are estimating the correlation between a variable $y$ and a *different* time-shifted variable $x_{t+k}$.  The sample cross-correlation function (CCF) is then defined analogously to the ACF, such that
 
 $$
-(\#eq:CCF)
 r_k^{xy} = \frac{g_k^{xy}}{\sqrt{\text{SD}_x\text{SD}_y}};
 $$
 
@@ -845,8 +811,7 @@ SD$_x$ and SD$_y$ are the sample standard deviations of $\{x_t\}$ and $\{y_t\}$,
 As with the ACF, an approximate 95\% confidence interval on the CCF can be estimated by
 
 $$
-(\#eq:CCF95CI)
--\frac{1}{n} \pm \frac{2}{\sqrt{n}}
+\pm \frac{1.96}{\sqrt{n}}
 $$
 
 where $n$ is the number of data points used in the calculation of the CCF, and the same assumptions apply to its interpretation.
