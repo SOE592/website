@@ -307,7 +307,7 @@ acf(x = xb)
 
 ***
 
-# Autoregressive models
+# Autoregressive (AR) models
 
 Recall that an autoregressive model of order _p_, or AR(_p_), is defined as
 
@@ -343,14 +343,14 @@ Here we'll explore how to use the `arima.sim()` function in base R.
 
     i) `order`: a vector of length 3 containing the ARIMA($p,d,q$) order
     
-    ii) `ar`: a vector of length $p$ containing the AR($p$) coefficients
+    ii) `ar`: a vector of length $p$ containing the AR(_p_) coefficients
     
-    iii) `ma`: a vector of length $q$ containing the MA($q$) coefficients
+    iii) `ma`: a vector of length $q$ containing the MA(_q_) coefficients
 
 3. `sd`: the standard deviation of the Gaussian errors
 
 <div class="boxy boxy-orange boxy-lightbulb">
-**Tip:** You can omit the `ma` element entirely if you have an AR($p$) model, or omit the `ar` element if you have an MA($q$) model.  If you omit the `sd` element, `arima.sim()` will assume you want normally distributed errors with SD = 1.  Also note that you can pass `arima.sim()` your own time series of random errors or the name of a function that will generate the errors (*e.g.*, you could use `rpois()` if you wanted a model with Poisson errors).
+**Tip:** You can omit the `ma` element entirely if you have an AR(_p_) model, or omit the `ar` element if you have an MA(_q_) model.  If you omit the `sd` element, `arima.sim()` will assume you want normally distributed errors with SD = 1.  Also note that you can pass `arima.sim()` your own time series of random errors or the name of a function that will generate the errors (*e.g.*, you could use `rpois()` if you wanted a model with Poisson errors).
 </div>
 
 Let's begin by simulating some AR(1) models and comparing their behavior.  First, let's choose models with contrasting AR coefficients.  Recall that in order for an AR(1) model to be stationary, $\phi < \lvert 1 \rvert$, so we'll try 0.1 and 0.9.  We'll again set the random number seed so we will get the same answers.
@@ -505,10 +505,10 @@ If you try, R will respond with an error that the `'ar' part of model is not sta
 
 ## Correlation of AR(_p_) processes
 
-Let's review what we learned in lecture about the general behavior of the ACF and PACF for AR($p$) models.  To do so, we'll simulate four stationary AR($p$) models of increasing order $p$ and then examine their ACF's and PACF's.  Let's use a really big $n$ so as to make them "pure", which will provide a much better estimate of the correlation structure.
+Let's review what we learned in lecture about the general behavior of the ACF and PACF for AR(_p_) models.  To do so, we'll simulate four stationary AR(_p_) models of increasing order $p$ and then examine their ACF's and PACF's.  Let's use a really big $n$ so as to make them "pure", which will provide a much better estimate of the correlation structure.
 
 <div class="boxy boxy-blue boxy-clipboard-list">
-**Task:** Simulate four stationary AR($p$) models of increasing order $p$.
+**Task:** Simulate four stationary AR(_p_) models of increasing order $p$.
 </div>
 
 ```{r AR_p_coefSims, eval = TRUE, echo = TRUE}
@@ -526,7 +526,7 @@ for (p in 1:4) {
 ```
 
 <div class="boxy boxy-blue boxy-clipboard-list">
-**Task:** Now that we have our four AR($p$) models, lets look at plots of the time series, ACF's, and PACF's.
+**Task:** Now that we have our four AR(_p_) models, lets look at plots of the time series, ACF's, and PACF's.
 </div>
 
 ```{r plotAR_p_coefCompsEcho, eval = FALSE, echo = TRUE}
@@ -558,14 +558,14 @@ for (p in 1:4) {
 <br>
 
 <div class="boxy boxy-orange boxy-lightbulb">
-**Tip:** As we saw in lecture and is evident from our examples shown above, the ACF for an AR($p$) process tails off toward zero very slowly, but the PACF goes to zero for lags > $p$.  This is an important diagnostic tool when trying to identify the order of $p$ in ARMA($p,q$) models.
+**Tip:** As we saw in lecture and is evident from our examples shown above, the ACF for an AR(_p_) process tails off toward zero very slowly, but the PACF goes to zero for lags > $p$.  This is an important diagnostic tool when trying to identify the order of $p$ in ARMA(_p_,_q_) models.
 </div>
 
 ***
 
 # Moving-average (MA) models
 
-A moving-averge process of order $q$, or MA($q$), is a weighted sum of the current random error plus the $q$ most recent errors, and can be written as
+A moving-averge process of order $q$, or MA(_q_), is a weighted sum of the current random error plus the $q$ most recent errors, and can be written as
 
 \begin{equation}
 x_t = w_t + \theta_1 w_{t-1} + \theta_2 w_{t-2} + \dots + \theta_q w_{t-q},
@@ -573,9 +573,9 @@ x_t = w_t + \theta_1 w_{t-1} + \theta_2 w_{t-2} + \dots + \theta_q w_{t-q},
 
 where $\{w_t\}$ is a white noise sequence with zero mean and some variance $\sigma^2$; for our purposes we usually assume that $w_t \sim \text{N}(0,q)$.  Of particular note is that because MA processes are finite sums of stationary errors, they themselves are stationary.
 
-## Simulating an MA($q$) process
+## Simulating an MA(_q_) process
 
-We can simulate MA($q$) processes just as we did for AR($p$) processes using `arima.sim()`.  Here are 3 different ones with contrasting $\theta$'s:
+We can simulate MA(_q_) processes just as we did for AR(_p_) processes using `arima.sim()`.  Here are 3 different ones with contrasting $\theta$'s.
 
 ```{r simMA1opps, echo = TRUE, eval = TRUE}
 ## list description for MA(1) model with small coef
@@ -593,7 +593,7 @@ MA1_lg <- arima.sim(n = 50, model = MA_lg, sd = 0.1)
 MA1_neg <- arima.sim(n = 50, model = MA_neg, sd = 0.1)
 ```
 
-with their associated plots.
+And here are their associated plots.
 
 ```{r plotMA1oppsEcho, eval = FALSE, echo = TRUE}
 ## setup plot region
@@ -635,13 +635,14 @@ plot.ts(MA1_neg,
  
 <br>
 
-In contrast to AR(1) processes, MA(1) models do not exhibit radically different behavior with changing $\theta$.  This should not be too surprising given that they are simply linear combinations of white noise.
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** In contrast to AR(1) processes, MA(1) models do not exhibit radically different behavior with changing $\theta$.  This should not be too surprising given that they are simply linear combinations of white noise.
+</div>
 
 
+## Correlation of MA(_q_) processes
 
-## Correlation of MA($q$) processes
-
-We saw in lecture and above how the ACF and PACF have distinctive features for AR($p$) models, and they do for MA($q$) models as well.  Here are examples of four MA($q$) processes.  As before, we'll use a really big $n$ so as to make them "pure", which will provide a much better estimate of the correlation structure.
+We saw in lecture and above how the ACF and PACF have distinctive features for AR(_p_) models, and they do for MA(_q_) models as well.  Here are examples of four MA(_q_) processes.  As before, we'll use a really big $n$ so as to make them "pure", which will provide a much better estimate of the correlation structure.
 
 ```{r MA_q_coefSims, eval = TRUE, echo = TRUE}
 ## the 4 MA coefficients
@@ -657,7 +658,7 @@ for (q in 1:4) {
 }
 ```
 
-Now that we have our four MA($q$) models, lets look at plots of the time series, ACF's, and PACF's.
+Now that we have our four MA(_q_) models, lets look at plots of the time series, ACF's, and PACF's.
 
 ```{r plotMApCompsEcho, eval = FALSE, echo = TRUE}
 ## set up plot region
@@ -673,7 +674,7 @@ for (q in 1:4) {
 }
 ```
 
-```{r plotMApComps, eval = TRUE, echo = FALSE, fig.dim = c(8, 8), fig.cap = "Time series of simulated MA($q$) processes (left column) of increasing orders from 1-4 (rows) with their associated ACF's (center column) and PACF's (right column).  Note that only the first 50 values of $x_t$ are plotted."}
+```{r plotMApComps, eval = TRUE, echo = FALSE, fig.dim = c(8, 8), fig.cap = "Time series of simulated MA(_q_) processes (left column) of increasing orders from 1-4 (rows) with their associated ACF's (center column) and PACF's (right column).  Note that only the first 50 values of $x_t$ are plotted."}
 ## set the margins & text size
 par(mfrow = c(4, 3), mar = c(4, 4, 0.5, 0.5), omi = c(0.3, 0, 0, 0), cex = 1)
 
@@ -688,29 +689,43 @@ for (q in 1:4) {
 <br>
 
 <div class="boxy boxy-orange boxy-lightbulb">
-**Tip:** As we saw in lecture and is evident from our examples here, the ACF for an MA($q$) process goes to zero for lags > $q$, but the PACF tails off toward zero very slowly.  This is an important diagnostic tool when trying to identify the order of $q$ in ARMA($p,q$) models.
+**Tip:** As we saw in lecture and is evident from our examples here, the ACF for an MA(_q_) process goes to zero for lags > $q$, but the PACF tails off toward zero very slowly.  This is an important diagnostic tool when trying to identify the order of $q$ in ARMA(_p_,_q_) models.
 </div>
 
 ***
 
-# Fitting ARMA($p,q$) models with `arima()` {#sec-fitting-armapq-models-with-verbarima}
+# Fitting ARMA(_p_,_q_) models
 
-We have already seen how to simulate AR($p$) and MA($q$) models with `arima.sim()`; the same concepts apply to ARMA($p,q$) models and therefore we will not do that here.  Instead, we will move on to fitting ARMA($p,q$) models when we only have a realization of the process (*i.e.*, the data) and do not know the underlying parameters that generated it.
+We have already seen how to simulate AR(_p_) and MA(_q_) models with `arima.sim()`; the same concepts apply to ARMA(_p_,_q_) models and therefore we will not do that here.  Instead, we will move on to fitting ARMA(_p_,_q_) models when we only have a realization of the process (*i.e.*, the data) and do not know the underlying parameters that generated it.
 
 The function `arima()` accepts a number of arguments, but two of them are most important:
 
 * `x`: a univariate time series
 * `order`: a vector of length 3 specifying the order of ARIMA(p,d,q) model
 
-In addition, note that by default `arima()` will estimate an underlying mean of the time series unless $d>0$.  For example, an AR(1) process with mean $\mu$ would be written
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** Type `?arima` at the command prompt to see all of the options.
+</div>
+
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** By default, `arima()` will estimate an underlying mean of the time series unless $d>0$.
+</div>
+
+For example, an AR(1) process with nonzero mean $\mu$ would be written
 
 \begin{equation}
 x_t = \mu + \phi (x_{t-1} - \mu) + w_t.
 \end{equation}
 
-If you know for a fact that the time series data have a mean of zero (*e.g.*, you already subtracted the mean from them), you should include the argument `include.mean = FALSE`, which is set to `TRUE` by default.  Note that ignoring and not estimating a mean in ARMA($p,q$) models when one exists will bias the estimates of all other parameters.
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** If you know for a fact that the time series has a mean of zero (*e.g.*, you already subtracted the mean), you should include the argument `include.mean = FALSE`, which is set to `TRUE` by default.  Ignoring and not estimating a mean in ARMA(_p_,_q_) models when one exists will bias the estimates of all other parameters.
+</div>
 
 Let's see an example of how `arima()` works.  First we'll simulate an ARMA(2,2) model and then estimate the parameters to see how well we can recover them.  In addition, we'll add in a constant to create a non-zero mean, which `arima()` reports as `intercept` in its output.
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Simulate data from an ARMA(2,2) model and estimate the parameters.
+</div>
 
 ```{r ARMAest, eval = TRUE, echo = TRUE}
 ## ARMA(2,2) description for arim.sim()
@@ -726,18 +741,30 @@ ARMA_sim <- arima.sim(n = 10000, model = ARMA22) + mu
 arima(x = ARMA_sim, order = c(2, 0, 2))
 ```
 
-It looks like we were pretty good at estimating the true parameters, but our sample size was admittedly quite large; the estimate of the variance of the process errors is reported as `sigma^2` below the other coefficients.  As an exercise, try decreasing the length of time series in the  `arima.sim()` call above from 10,000 to something like 100 and see what effect it has on the parameter estimates.
+It looks like we were pretty good at estimating the true parameters, but our sample size was admittedly quite large; the estimate of the variance of the process errors is reported as `sigma^2` below the other coefficients.  
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Try decreasing the length of time series in the  `arima.sim()` call above from 10,000 to something like 100 and see what effect it has on the parameter estimates.
+</div>
 
 
 ## Searching over model orders
 
-In an ideal situation, you could examine the ACF and PACF of the time series of interest and immediately decipher what orders of $p$ and $q$ must have generated the data, but that doesn't always work in practice.  Instead, we are often left with the task of searching over several possible model forms and seeing which of them provides the most parsimonious fit to the data.  There are two easy ways to do this for ARIMA models in R.  The first is to write a little script that loops ove the possible dimensions of $p$ and $q$.  Let's try that for the process we simulated above and search over orders of $p$ and $q$ from 0-3 (it will take a few moments to run and will likely report an error about a "`possible convergence problem`", which you can ignore).
+In an ideal situation, you could examine the ACF and PACF of the time series of interest and immediately decipher what orders of $p$ and $q$ must have generated the data, but that doesn't always work in practice.  Instead, we are often left with the task of searching over several possible model forms and seeing which of them provides the most parsimonious fit to the data.  There are two easy ways to do this for ARIMA models in R.
+
+The first is to write a little script that loops ove the possible dimensions of $p$ and $q$.  Let's try that for the process we simulated above and search over orders of $p$ and $q$ from 0-3 (it will take a few moments to run and will likely report an error about a "`possible convergence problem`", which you can ignore).
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Use a `for()` loop to search over various orders of ARMA(_p,_,_q_) models.
+</div>
 
 ```{r ARMAsearch1, eval = TRUE, echo = TRUE, cache=TRUE}
 ## empty list to store model fits
 ARMA_res <- list()
-## set counter
+
+## set counter for model index
 cc <- 1
+
 ## loop over AR
 for (p in 0:3) {
   ## loop over MA
@@ -746,19 +773,34 @@ for (p in 0:3) {
     cc <- cc + 1
   }
 }
+
 ## get AIC values for model evaluation
 ARMA_AIC <- sapply(ARMA_res, function(x) x$aic)
+
 ## model with lowest AIC is the best
 ARMA_res[[which(ARMA_AIC == min(ARMA_AIC))]]
 ```
 
-It looks like our search worked, so let's look at the other method for fitting ARIMA models.  The `auto.arima()` function in the **forecast** package  will conduct an automatic search over all possible orders of ARIMA models that you specify.  For details, type `?auto.arima` after loading the package.  Let's repeat our search using the same criteria.
+<div class="boxy boxy-success boxy-check">
+**Success:** It looks like our search worked, so let's look at the other method for fitting ARIMA models.
+</div>
+
+The `auto.arima()` function in the {forecast} package will conduct an automatic search over all possible orders of ARIMA models that you specify.  For details, type `?auto.arima` after loading the package.
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Repeat the model search process using the same criteria as above.
+</div>
 
 ```{r autoARIMA, eval = TRUE, echo = TRUE, cache = TRUE}
 ## find best ARMA(p,q) model
 forecast::auto.arima(ARMA_sim, start.p = 0, max.p = 3, start.q = 0, max.q = 3)
 ```
 
-We get the same results with an increase in speed and less coding, which is nice.  If you want to see the form for each of the models checked by `auto.arima()` and their associated AIC values, include the argument `trace = 1`.
+<div class="boxy boxy-success boxy-check">
+**Success:** We get the same results with an increase in speed and less coding, which is nice.
+</div>
 
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** If you want to see the form for each of the models checked by `auto.arima()` and their associated AIC values, include the argument `trace = 1`.
+</div>
 
