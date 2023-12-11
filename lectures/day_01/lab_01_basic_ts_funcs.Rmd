@@ -790,7 +790,7 @@ pacf(co2, lag.max = 36)
 
 ***
 
-# Cross-correlation function (CCF)
+# Cross-correlation function
 
 Often we are interested in looking for relationships between 2 different time series.  There are many ways to do this, but a simple method is via examination of their cross-covariance and cross-correlation.
 
