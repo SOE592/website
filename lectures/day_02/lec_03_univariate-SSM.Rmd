@@ -649,20 +649,54 @@ $$
 ## Stochastic Gompertz model | What is the expectation of $x_t$?
 
 $$
-x_t = u + b x_{t-1} + w_t
+x_t = u + b x_{t-1} + w_t \\
+w_t \sim \text{N}(0,q)
 $$
 
 
 ## Stochastic Gompertz model | What is the expectation of $x_t$?
 
 $$
-x_t = u + b x_{t-1} + w_t
+x_t = u + b x_{t-1} + w_t \\
+w_t \sim \text{N}(0,q)
 $$
 
 <br>
 
 $$
 \text{E}(x_t) = \frac{u}{1 - b}
+$$
+
+Hint: We need to think about this over very long (infinite) time scales
+
+
+## Stochastic Gompertz model | What is the expectation of $x_t$?
+
+Begin by taking the limit as $t \to \infty$
+
+$$
+\lim\limits_{t \to \infty} (x_t = u + b x_{t-1} + w_t) \\
+\Downarrow \\
+\begin{align}
+x_\infty &= u + b x_\infty + w_t \\
+x_\infty -b x_\infty &= u + w_t \\
+(1 - b)x_\infty &= u + w_t \\
+x_\infty &= \frac{(u + w_t)}{(1 - b)} 
+\end{align}
+$$
+
+
+## Stochastic Gompertz model | What is the expectation of $x_t$?
+
+And then recall that the expectation (mean) of $w_t$ is 0
+
+$$
+\begin{align}
+\text{E} (x_\infty) &= \text{E} \left( \frac{u + w_t}{1 - b} \right)\\
+\text{E} (x_\infty) &= \text{E} \left( \frac{u}{1 - b} \right) + \text{E} \left( \frac{w_t}{1 - b} \right) \\
+\text{E} (x_\infty) &= \frac{u}{1 - b} + \frac{0}{1 - b} \\
+\text{E} (x_\infty) &= \frac{u}{1 - b}
+\end{align}
 $$
 
 

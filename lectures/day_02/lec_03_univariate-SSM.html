@@ -3625,19 +3625,51 @@ x_t = u + b x_{t-1} + w_t
 </article></slide><slide class=""><hgroup><h2>Stochastic Gompertz model </h2><h3> What is the expectation of \(x_t\)?</h3></hgroup><article  id="stochastic-gompertz-model-what-is-the-expectation-of-x_t">
 
 <p>\[
-x_t = u + b x_{t-1} + w_t
+x_t = u + b x_{t-1} + w_t \\
+w_t \sim \text{N}(0,q)
 \]</p>
 
 </article></slide><slide class=""><hgroup><h2>Stochastic Gompertz model </h2><h3> What is the expectation of \(x_t\)?</h3></hgroup><article  id="stochastic-gompertz-model-what-is-the-expectation-of-x_t-1">
 
 <p>\[
-x_t = u + b x_{t-1} + w_t
+x_t = u + b x_{t-1} + w_t \\
+w_t \sim \text{N}(0,q)
 \]</p>
 
 <p><br></p>
 
 <p>\[
 \text{E}(x_t) = \frac{u}{1 - b}
+\]</p>
+
+<p>Hint: We need to think about this over very long (infinite) time scales</p>
+
+</article></slide><slide class=""><hgroup><h2>Stochastic Gompertz model </h2><h3> What is the expectation of \(x_t\)?</h3></hgroup><article  id="stochastic-gompertz-model-what-is-the-expectation-of-x_t-2">
+
+<p>Begin by taking the limit as \(t \to \infty\)</p>
+
+<p>\[
+\lim\limits_{t \to \infty} (x_t = u + b x_{t-1} + w_t) \\
+\Downarrow \\
+\begin{align}
+x_\infty &amp;= u + b x_\infty + w_t \\
+x_\infty -b x_\infty &amp;= u + w_t \\
+(1 - b)x_\infty &amp;= u + w_t \\
+x_\infty &amp;= \frac{(u + w_t)}{(1 - b)} 
+\end{align}
+\]</p>
+
+</article></slide><slide class=""><hgroup><h2>Stochastic Gompertz model </h2><h3> What is the expectation of \(x_t\)?</h3></hgroup><article  id="stochastic-gompertz-model-what-is-the-expectation-of-x_t-3">
+
+<p>And then recall that the expectation (mean) of \(w_t\) is 0</p>
+
+<p>\[
+\begin{align}
+\text{E} (x_\infty) &amp;= \text{E} \left( \frac{u + w_t}{1 - b} \right)\\
+\text{E} (x_\infty) &amp;= \text{E} \left( \frac{u}{1 - b} \right) + \text{E} \left( \frac{w_t}{1 - b} \right) \\
+\text{E} (x_\infty) &amp;= \frac{u}{1 - b} + \frac{0}{1 - b} \\
+\text{E} (x_\infty) &amp;= \frac{u}{1 - b}
+\end{align}
 \]</p>
 
 </article></slide><slide class=""><hgroup><h2>Stochastic Gompertz model </h2><h3> Estimating parameters</h3></hgroup><article  id="stochastic-gompertz-model-estimating-parameters">
