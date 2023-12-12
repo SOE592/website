@@ -790,23 +790,19 @@ pacf(co2, lag.max = 36)
 
 ***
 
-# Cross-correlation function (CCF)
+# Cross-correlation function
 
 Often we are interested in looking for relationships between 2 different time series.  There are many ways to do this, but a simple method is via examination of their cross-covariance and cross-correlation.
 
-We begin by defining the sample cross-covariance function (CCVF) in a manner similar to the ACVF, in that
+The sample cross-correlation function (CCF) is defined analogously to the ACF, such that
 
 $$
-g_k^{xy} = \frac{1}{n}\sum_{t=1}^{n-k} \left(y_t-\bar{y}\right) \left(x_{t+k}-\bar{x}\right),
+r_k^{xy} = \text{Cor}(y_t,x_{t+k}).
 $$
 
-but now we are estimating the correlation between a variable $y$ and a *different* time-shifted variable $x_{t+k}$.  The sample cross-correlation function (CCF) is then defined analogously to the ACF, such that
-
-$$
-r_k^{xy} = \frac{g_k^{xy}}{\sqrt{\text{SD}_x\text{SD}_y}};
-$$
-
-SD$_x$ and SD$_y$ are the sample standard deviations of $\{x_t\}$ and $\{y_t\}$, respectively. It is important to re-iterate here that $r_k^{xy} \neq r_{-k}^{xy}$, but $r_k^{xy} = r_{-k}^{yx}$.  Therefore, it is very important to pay particular attention to which variable you call $y$ (*i.e.*, the "response") and which you call $x$ (*i.e.*, the "predictor").
+<div class="boxy boxy-red boxy-exclamation">
+**Note** that $r_k^{xy} \neq r_{-k}^{xy}$, but $r_k^{xy} = r_{-k}^{yx}$.  Therefore, it is very important to pay particular attention to which variable you call $y$ ("response") and which you call $x$ ("predictor").
+</div>
 
 As with the ACF, an approximate 95\% confidence interval on the CCF can be estimated by
 
@@ -816,57 +812,80 @@ $$
 
 where $n$ is the number of data points used in the calculation of the CCF, and the same assumptions apply to its interpretation.
 
-Computing the CCF in R is easy with the function `ccf()` and it works just like `acf()`.  In fact, `ccf()` is just a "wrapper" function that calls `acf()`.  As an example, let's examine the CCF between sunspot activity and number of lynx trapped in Canada as in the classic paper by Moran\footnote{Moran, P.A.P. 1949. The statistical analysis of the sunspot and lynx cycles. *J. Anim. Ecol.* 18:115-116}.
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** Computing the CCF is easy with the `ccf()` function, which works just like `acf()`.  In fact, `ccf()` is just a "wrapper" function that calls `acf()`.
+</div>
 
-To begin, let's get the data, which are conveniently included in the **datasets** package included as part of the base installation of R.  Before calculating the CCF, however, we need to find the matching years of data.  Again, we'll use the `ts.intersect()` function.
+As an example, let's examine the CCF between sunspot activity and number of lynx trapped in Canada as in the classic paper by Moran (Moran, P.A.P. 1949. The statistical analysis of the sunspot and lynx cycles. *J. Anim. Ecol.* 18:115-116).
+
+To begin, let's get the data, which are conveniently included in the {datasets} package included as part of the base installation of R.  Before calculating the CCF, however, we need to find the matching years of data.  
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Use the `ts.intersect()` function to join the two datasets.
+</div>
 
 ```{r LynxSunspotCCF, eval = TRUE, echo = TRUE}
-## get the matching years of sunspot data
-suns <- ts.intersect(lynx, sunspot.year)[, "sunspot.year"]
+## join the two data sets
+data_both <- ts.intersect(sunspot.year, lynx)
 
-## get the matching lynx data
-lynx <- ts.intersect(lynx, sunspot.year)[, "lynx"]
+## rename `sunspot.year` to `sunspots`
+dimnames(data_both)[[2]][1] <- "sunspots"
 ```
 
-Here are plots of the time series.
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Plot both time series.
+</div>
 
 ```{r plotSunsLynxEcho, eval = FALSE, echo = TRUE}
-## plot time series
-plot(cbind(suns, lynx), yax.flip = TRUE)
+## plot the time series
+plot.ts(data_both, yax.flip = TRUE, main = "")
 ```
 
-
-(ref:plotSunsLynx) Time series of sunspot activity (top) and lynx trappings in Canada (bottom) from 1821-1934.
-
-```{r plotSunsLynx, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 6, fig.cap = '(ref:plotSunsLynx)'}
+```{r plotSunsLynx, eval = TRUE, echo = FALSE, fig = TRUE, fig.height = 6, fig.cap = "Time series of sunspot activity (top) and lynx trappings in Canada (bottom) from 1821-1934."}
 ## set the margins & text size
 par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
 ## plot the ts
-plot(cbind(suns, lynx), main = "", yax.flip = TRUE)
+plot(data_both, main = "", yax.flip = TRUE)
 ```
  
+<br>
 
-
-It is important to remember which of the 2 variables you call $y$ and $x$ when calling `ccf(x, y, ...)`.  In this case, it seems most relevant to treat lynx as the $y$ and sunspots as the $x$, in which case we are mostly interested in the CCF at negative lags (*i.e.*, when sunspot activity predates inferred lynx abundance).  Furthermore, we'll use log-transformed lynx trappings.
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** In this case, it seems most relevant to treat lynx as the $y$ and sunspots as the $x$ in `ccf(x, y, ...)`, in which case we are interested in the CCF at negative lags (*i.e.*, when sunspot activity predates lynx abundance).
+</div>
+  
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Compute the CCF between sunspot activity and the log of lynx abundance.
+</div>
 
 ```{r plotCCFa, eval = FALSE, echo = TRUE}
-## CCF of sunspots and lynx
-ccf(suns, log(lynx), ylab = "Cross-correlation")
+## get sunspot data
+sunspots <- data_both[, "sunspots"]
+
+## get  lynx data
+lynx <- data_both[, "lynx"]
+
+## CCF of sunspots and log(lynx)
+ccf(sunspots, log(lynx), ylab = "Cross-correlation")
 ```
 
+```{r plotCCFb, eval = TRUE, echo = FALSE, fig.cap = "CCF for annual sunspot activity and the log of the number of lynx trappings in Canada from 1821-1934."}
+## get sunspot data
+sunspots <- data_both[, "sunspots"]
 
-(ref:plotCCFb) CCF for annual sunspot activity and the log of the number of lynx trappings in Canada from 1821-1934.
+## get  lynx data
+lynx <- data_both[, "lynx"]
 
-```{r plotCCFb, eval = TRUE, echo = FALSE, fig.cap = '(ref:plotCCFb)'}
 ## set the margins & text size
 par(mai = c(1.2, 1, 0.3, 1), omi = c(0, 0, 0, 0), cex = 1)
 
 ## CCF of sunspots and lynx
-ccf(suns, lynx, ylab = "Cross-correlation")
+ccf(sunspots, log(lynx), ylab = "Cross-correlation")
 ```
  
+<br>
 
-From Figures \@ref(fig:plotSunsLynx) and \@ref(fig:plotCCFb) it looks like lynx numbers are relatively low 3-5 years after high sunspot activity (*i.e.*, significant correlation at lags of -3 to -5).
+It looks like lynx numbers are relatively low 3-5 years after high sunspot activity (*i.e.*, significant correlation at lags of -3 to -5).
 
 

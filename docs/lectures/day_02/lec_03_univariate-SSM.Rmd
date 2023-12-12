@@ -10,7 +10,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-set.seed(206)
+set.seed(592)
 ```
 
 ## Topics
@@ -97,13 +97,18 @@ Consider for a moment the very act of collecting data
 
 Information gathered depends on many factors
 
-* Environmental conditions (eg, turbidity, currents)
+* Environmental conditions (eg, cloud cover)
 
-* Behavior (eg, vertical migration, threat avoidance)
+* Behavior (eg, threat avoidance)
 
 * Demographics (age, sex, maturity)
 
 * Sampling design/coverage
+
+* Observer skill
+
+
+## &nbsp; {data-background=images/sea_lions_aerial.jpg data-background-size=95%}
 
 
 ## Part 2: Observation model
@@ -166,15 +171,28 @@ plot.ts(yy, ylim = range(xx,yy),
 ```
 
 
+## Two model options
+
+Linear regression 
+
+$y_t = \alpha + \beta t + e_t$
+
+<br>
+
+Biased random walk
+
+$x_t = x_{t-1} + u + e_t$
+
+
 ## Model options | Linear regression
 
 State model
 
-$x_t = \alpha - \beta t$
+$x_t = \alpha + \beta t$
 
 Observation model
 
-$y_t = x_t + v_t ~ \text{with} ~ v_t \sim \text{N}(0,r)$
+$y_t = x_t + v_t$ with $v_t \sim \text{N}(0,r)$
 
 ## Linear regression fitted values
 
@@ -213,27 +231,11 @@ segments(seq(TT), y0 = y_obs, y1 = yy, col = "red")
 
 State model
 
-$x_t = x_{t-1} + u + w_t ~ \text{with} ~ w_t \sim \text{N}(0,q)$
+$x_t = x_{t-1} + u + w_t$ with $w_t \sim \text{N}(0,q)$
 
 Observation model
 
 $y_t = x_t$
-
-
-## Biased random walk
-
-```{r brw_states_obs_0}
-xw <- rbind(cbind(seq(TT), xx), cbind(seq(TT)+0.5, xx+uu))
-xw <- xw[order(xw[,1]),]
-xw[,1] <- c(1, rep(seq(2, TT), ea = 2), TT)
-  
-par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
-## blank slate
-plot.ts(yy, ylim = range(xx,yy), type = "n",
-        las = 1, ylab = expression(italic(x[t])))
-lines(xw[,1], xw[,2], lwd = 2, col = "gray")
-lines(xx, lwd = 2, type = "o", pch = 16, col = "#488fdf")
-```
 
 
 ## Examples of biased random walks
@@ -282,6 +284,22 @@ for(i in 9:3) {
 ```
 
 
+## Biased random walk
+
+```{r brw_states_obs_0}
+xw <- rbind(cbind(seq(TT), xx), cbind(seq(TT)+0.5, xx+uu))
+xw <- xw[order(xw[,1]),]
+xw[,1] <- c(1, rep(seq(2, TT), ea = 2), TT)
+  
+par(mai = c(0.9,0.9,0.1,0.1), omi = c(0,0,0,0))
+## blank slate
+plot.ts(yy, ylim = range(xx,yy), type = "n",
+        las = 1, ylab = expression(italic(x[t])))
+lines(xw[,1], xw[,2], lwd = 2, col = "gray")
+lines(xx, lwd = 2, type = "o", pch = 16, col = "#488fdf")
+```
+
+
 ## Biased random walk fit to earlier data
 
 ```{r biased_rw_fit}
@@ -311,15 +329,11 @@ segments(seq(2,TT), y0 = yy[-TT], y1 = yy[-1], col = "red")
 
 State model
 
-$$
-x_t = x_{t-1} + u + w_t ~ \text{with} ~ w_t \sim \text{N}(0,q)
-$$
+$x_t = x_{t-1} + u + w_t$ with $w_t \sim \text{N}(0,q)$
 
 Observation model
 
-$$
-y_t = x_t + v_t ~ \text{with} ~ v_t \sim \text{N}(0,r)
-$$
+$y_t = x_t + v_t$ with $v_t \sim \text{N}(0,r)$
 
 
 ## Biased random walk
