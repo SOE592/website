@@ -111,7 +111,7 @@ yy <- xx + vv
 
 # Fitting models with {MARSS}
 
-The workhorse function in the {MARSS} package that allows us to fit state-state models is `MARSS()`, which has four important arguments:
+The workhorse function in the {MARSS} package that allows us to fit state-state models is `MARSS()`, which has four important arguments (two are required):
 
 ```{r, echo=TRUE, eval=FALSE}
 MARSS(y, model = NULL, inits = NULL, control = NULL, ...)
@@ -119,20 +119,23 @@ MARSS(y, model = NULL, inits = NULL, control = NULL, ...)
 
 * `y` is an $n \times T$ `matrix` of data (observations)
 
-* `model` a `list` that defines the state-space model in terms of parameters to be estimated
+* `model` is a `list` that defines the state-space model in terms of parameters to be estimated
 
-* `inits` [_optional_] a `list` of initial values for parameters to be estimated
+* `inits` [_optional_] is a `list` of initial values for parameters to be estimated
 
-* `control` [_optional_] a `list` of options for controlling fitting algorithms, setting tolerance & convergence parameters, etc
+* `control` [_optional_] is a `list` of options for controlling fitting algorithms, setting tolerance & convergence parameters, etc
 
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** Type `?MARSS` at the command prompt to view the help file. You can also see the detailed user guide [here](https://cran.r-project.org/web/packages/MARSS/vignettes/UserGuide.pdf).
+</div>
 
-## Fitting models with `MARSS()`
+## Defining the model for `MARSS()`
 
-`MARSS()` uses an expanded form of state-space model, such that our biased random walk
+`MARSS()` uses an expanded form of state-space model, such that our Gompertz model
 
 $$
 \begin{align}
-x_t &= x_{t-1} + u + w_t \\
+x_t &= b x_{t-1} + w_t \\
 y_t &= x_t + v_t
 \end{align}
 $$
@@ -145,93 +148,53 @@ y_t &= Z x_t + a + v_t
 \end{align}
 $$
 
-with $b = 1$, $Z = 1$, and $a = 0$
+with $u = 0$, $Z = 1$, and $a = 0$.
 
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** `MARSS()` works with the `matrix` class in R, so we have to define any scalar as a $1 \times 1$ matrix.
+</div>
 
-## Fitting models with `MARSS()`
-
-State model  
-$x_t = b x_{t-1} + u + w_t ~~ \text{with} ~~ w_t \sim \text{N}(0,q)$
-
-Observation model  
-$y_t = Z x_t + a + v_t ~~ \text{with} ~~ v_t \sim \text{N}(0,r)$
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Define the model list with matrices for the known and estimated model parameters, including the variance(s) of the process and/or observation errors. You can skip the definition of the initial state `x0` because `MARSS()` will do this for us.
+</div>
 
 ```{r, echo=TRUE}
 mod_list <- list(
   ## state model
-  B = matrix(1), U = matrix("u"), Q = matrix("q"),
+  B = matrix("b"), # AR(1) parameter 
+  U = matrix(0),   # bias or intrinsic growth
+  Q = matrix("q"), # variance of the process errors
   ## obs model
-  Z = matrix(1), A = matrix(0), R = matrix("r")
+  Z = matrix(1),   # maps the states onto the observation
+  A = matrix(0),   # sampling bias/offset
+  R = matrix("r")  # variance of the obs errors
   )
 ```
 
-**Note**: `MARSS()` works with the `matrix` class in **R**, so we have to define any scalar as a $1 \times 1$ matrix
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** `MARSS()` uses uppercase letters in its model definition. You will get an error if you try lowercase letters.
+</div>
 
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Define the data as a $1$ (rows) $\times$ $T$ (cols) matrix.
+</div>
 
-## Fitting models with `MARSS()`
-
-`MARSS()` will do this for us
-
-
-## Fitting models with `MARSS()`
-
-We can ignore the `inits` and `control` arguments for now and fit the model
-
-```{r, echo=TRUE, eval=FALSE}
-## load MARSS package
-library(MARSS)
+```{r define_data}
 ## define the data as an N (rows) x T (cols) matrix
-dat <- matrix(yy, nrow = 1, ncol = TT)
-## fit the model
-mod_fit <- MARSS(y = dat, model = mod_list)
+YY <- matrix(yy, nrow = 1, ncol = TT)
 ```
 
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Ignore the `inits` and `control` arguments for now and fit the model.
+</div>
 
-## Fitting models with `MARSS()` {.smaller}
-
-```{r brw_fit, echo=FALSE, eval=TRUE}
+```{r gompertz_fit, echo = TRUE, eval = TRUE}
 ## load MARSS package
 library(MARSS)
-## define the data as an N (rows) x T (cols) matrix
-dat <- matrix(yy, nrow = 1, ncol = TT)
+
 ## fit the model
-mod_fit <- MARSS(y = dat, model = mod_list)
+mod_fit <- MARSS(y = YY, model = mod_list)
 ```
-
-
-## A note on model fitting
-
-When we have 2+ observations of process, our estimates of model parameters are much more accurate and precise.
-
-$$
-\begin{align}
-x_t &= x_{t-1} + u + w_t ~~ \text{with} ~ w_t \sim \text{N}(0,q) \\
-~ \\
-\begin{bmatrix}
-y_1 \\
-y_2 \\
-\vdots \\
-y_n
-\end{bmatrix}_t
-&=
-\begin{bmatrix}
-1 \\
-1 \\
-\vdots \\
-1
-\end{bmatrix}
-x_t + 
-\begin{bmatrix}
-v_1 \\
-v_2 \\
-\vdots \\
-v_n
-\end{bmatrix}_t
-~~ \text{with} ~
-\mathbf{v_t} \sim \text{MVN}(\mathbf{0},\mathbf{R})
-\end{align}
-$$
-
 
 
 ## Extracting fitted model objects
@@ -350,7 +313,7 @@ mod_list <- list(
 
 ```{r rw_fit, echo = TRUE, eval=TRUE}
 ## fit the model
-mod_fit_2 <- MARSS(y = dat, model = mod_list)
+mod_fit_2 <- MARSS(y = YY, model = mod_list)
 ```
 
 
