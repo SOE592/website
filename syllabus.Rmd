@@ -142,19 +142,25 @@ In addition to email and Zoom, we will use the "Discussions" feature in GitHub t
 
 # Evaluation
 
-Students will be evaluated on their knowledge of course content and their ability to communicate their understanding of the material via an individual research project.
+Students will be evaluated on their knowledge of course content and their ability to communicate their understanding of the material via an individual research project. In preparation for a final paper describing the project in detail (70% of overall course grade), students will turn in a project proposal (10% of overall course grade) and their project methods (20% of overall course grade) to which the instructor will provide feedback and guidance for completing the final project.
 
 ### Due Dates
 
-* Project proposal (10%) due no later than **Friday, February 2, 2024 at 11:59pm PDT**
+* Project proposal due no later than **Friday, February 2, 2024 at 11:59pm PST**
 
-* Project methods (20%) due no later than **Friday, March 1, 2024 at 11:59pm PDT**
+* Project methods due no later than **Friday, March 1, 2024 at 11:59pm PST**
 
-* Final paper (70%) due no later than **Friday, April 5, 2024 at 11:59pm PDT**
+* Final paper due no later than **Friday, April 5, 2024 at 11:59pm PDT**
 
 Please see the [Project](project.html) page for more details.
 
+### Late policy
+
+All three assignments (proposal, methods, paper) must be turned in to receive a passing grade for the course. Scores of assignments received after the due date will be reduced by 10% per day late.
+
 <br>
+
+***
 
 ## Endnotes
 
