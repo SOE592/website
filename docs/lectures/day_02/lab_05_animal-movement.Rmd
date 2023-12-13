@@ -18,3 +18,84 @@ knitr::opts_knit$set(unnamed.chunk.label = "dfa-")
 
 # Introduction
 
+
+***
+
+# Model comparisons
+
+## Evidence for bias
+
+Q: Is there data support for the bias term?
+
+To answer this, we can fit a model without the bias term and compare AICc
+
+
+## Evidence for bias
+
+We need to modify the model definition for `MARSS()` by setting `U = matrix(0)` 
+
+```{r rw_model, echo=TRUE}
+mod_list <- list(
+  ## state model
+  B = matrix(1), U = matrix(0), Q = matrix("q"),
+  ## obs model
+  Z = matrix(1), A = matrix(0), R = matrix("r")
+  )
+```
+
+
+## Re-fit the model with `MARSS()`
+
+```{r rw_fit, echo = TRUE, eval=TRUE}
+## fit the model
+mod_fit_2 <- MARSS(y = YY, model = mod_list)
+```
+
+
+## Compare AIC values
+
+```{r compare_AICc, echo = TRUE, eval = TRUE}
+## biased RW
+mod_fit$AICc
+
+## unbiased RW
+mod_fit_2$AICc
+```
+
+***
+
+## A note on model fitting
+
+When we have 2+ observations of process, our estimates of model parameters are much more accurate and precise.
+
+$$
+\begin{align}
+x_t &= x_{t-1} + u + w_t ~~ \text{with} ~ w_t \sim \text{N}(0,q) \\
+~ \\
+\begin{bmatrix}
+y_1 \\
+y_2 \\
+\vdots \\
+y_n
+\end{bmatrix}_t
+&=
+\begin{bmatrix}
+1 \\
+1 \\
+\vdots \\
+1
+\end{bmatrix}
+x_t + 
+\begin{bmatrix}
+v_1 \\
+v_2 \\
+\vdots \\
+v_n
+\end{bmatrix}_t
+~~ \text{with} ~
+\mathbf{v_t} \sim \text{MVN}(\mathbf{0},\mathbf{R})
+\end{align}
+$$
+
+
+

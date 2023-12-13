@@ -11,7 +11,7 @@ subtitle: FISH 550 – Applied Time Series Analysis
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-# library(kableExtra)
+library(kableExtra)
 set.seed(123)
 ```
 
