@@ -14,15 +14,19 @@ output:
 
 ```{r setup, include=FALSE, purl=FALSE}
 knitr::opts_chunk$set(
-  fig.dim = c(7, 5),
+  fig.dim = c(8, 5),
   fig.align = "center"
   )
 set.seed(592)
 ```
 
+***
+
 # Introduction
 
 Many problems in environmental science can be addressed with state-space models and we've already seen a few examples of how some simple population models can be written as state-space models.  This lab will introduce you to fitting univariate state-space models with the {MARSS} package. Notably, {MARSS} follows the same notation for defining state-space models as we would write on a whiteboard. Also, because {MARSS} was designed to fit mutlivariate state-space models, which we will see later, each of the model elements must be a `matrix` class. This also applies to scalar values such that they're not `numeric` or `integer`.
+
+***
 
 # Gompertz model
 
@@ -71,6 +75,8 @@ x_0 \sim \text{N}(\pi,0).
 $$
 
 
+***
+
 # Simulate some data
 
 <div class="boxy boxy-blue boxy-clipboard-list">
@@ -108,6 +114,8 @@ vv <- rnorm(TT, 0, 0.5)
 yy <- xx + vv
 ```
 
+
+***
 
 # Fitting models with {MARSS}
 
@@ -196,32 +204,112 @@ library(MARSS)
 mod_fit <- MARSS(y = YY, model = mod_list)
 ```
 
+## Interpreting `MARSS()` output
 
-## Extracting fitted model objects
+`MARSS()` returns a block of information when it's finished that contains some useful information, but also lacks some other stuff that we'll extract below. 
 
-Fitted values are stored in an $N \times T$ matrix (here $N = 1$) accessed with `$states`
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** The first block of information tells us if all of the parameters converged within the default number of iterations (500) (`Success!`). It also suggests we try more conservative convergence limits, but this can largely be ignored.
+</div>
 
-Standard errors of fitted values are stored in an $N \times T$ matrix (vector) accessed with `$states.se`
+```
+## Success! abstol and log-log tests passed at 40 iterations.
+## Alert: conv.test.slope.tol is 0.5.
+## Test with smaller values (<0.1) to ensure convergence.
+```
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** The second block tells us
+
+* the method used for fitting (`kem` here)
+
+* the convergence test parameters
+
+* number of iterations before convergence
+
+* the log-likelihood and associated information scores
+</div>
+
+```
+## MARSS fit is
+## Estimation method: kem 
+## Convergence test: conv.test.slope.tol = 0.5, abstol = 0.001
+## Estimation converged in 40 iterations. 
+## Log-likelihood: -57.95738 
+## AIC: 123.9148   AICc: 125.0576   
+```
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** The third block lists the point estimates of the model parameters corresponding to the model list (`mod_list` above), including the initial state `x0`. By default `MARSS()` appends the model list item (eg, `Q`) and the specific parameter as defined by the user (eg, `q`). When we fit multivariate models, there will be multiple entries for those list items containing multiple parameters (eg, `Q.var`, `Q.cov`).
+</div>
+
+```
+##       Estimate
+## R.r      0.287
+## B.b      0.683
+## Q.q      0.682
+## x0.x0    1.233
+## Initial states (x0) defined at t=0
+```
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** The last block tells you that standard errors of the estimated parameters have not been estimated and that you can use the `MARSSparamCIs()` function to estimate them.
+</div>
+
+```
+## Standard errors have not been calculated. 
+## Use MARSSparamCIs to compute CIs and bias estimates.
+```
+
+***
+
+# Extracting info from {MARSS}
+
+Although `MARSS()` returns some useful information after execution, the `MARSS` object also contains a lot of other important information that we can extract and act upon. Specifically, when assigned to an object, `MARSS()` returns a long `list` containing details about the model structure, control parameters, estimated parameters, hidden states and their standard errors.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** Type `str(MARSS_object)` where `MARSS_object` is the object you assigned to the `MARSS()` call (ie, `mod_fit` above) to see a detailed outline of the list structure. 
+</div>
+
+
+## Estimated states
+
+Fitted values are stored in an $N \times T$ matrix (here $N = 1$) accessed with `$states`. The standard errors of the estimated states are stored in an $N \times T$ matrix accessed with `$states.se`. 
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Extract the estimated state and its standard error.
+</div>
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** It's often easier to transpose the state(s) after extracting them for use in plotting or other comparisons.
+</div>
 
 ```{r, echo = TRUE, eval = TRUE}
 ## T x 1 (transposed) vector of states
-mod_fits <- t(mod_fit$states)
+mod_fits <- mod_fit$states |> t()
 
 ## T x 1 (transposed) vector of SE's
-mod_fits_SE <- t(mod_fit$states.se)
+mod_fits_SE <- mod_fit$states.se |> t()
 ```
 
 
-## Approximate confidence intervals
+## Model parameters
 
-We can estimate a $[(1 - \alpha)  \times 100]\%$ confidence interval as
+
+***
+
+# Approximate confidence intervals
+
+We can estimate a [(1 - $\alpha$)  $\times$ 100]% confidence interval around the estimated states as
 
 $$
 \hat{x} ~ \pm ~ t_{1 - \alpha/2} \times \text{SE}(\hat{x})
 $$
 
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** You can get values from the t-distribution with the function `qt()`.
+</div>
 
-## Approximate confidence intervals
 
 ```{r brw_CI, eval = TRUE, echo = TRUE}
 ## upper 95% CI
@@ -231,26 +319,14 @@ mod_fits_CI_hi <- mod_fits + qt(p = 0.975, df = TT - 1) * mod_fits_SE
 mod_fits_CI_lo <- mod_fits - qt(p = 0.975, df = TT - 1) * mod_fits_SE
 ```
 
+***
 
-<!-- ## Plot the model fit & uncertainty -->
-
-<!-- Plot the state and observation -->
-
-<!-- ```{r rw_plot_fit_code, echo=TRUE, eval=FALSE} -->
-<!-- plot.ts(xx, lwd = 2, type = "o", pch = 16, col = "#488fdf", -->
-<!--         las = 1, ylim = c(min(xx,yy), max(xx,yy)), -->
-<!--         ylab = expression(italic(x[t])~~or~~italic(y[t]))) -->
-<!-- lines(yy, lwd = 2, type = "o", pch = 16, cex = 1.5, col = "#844870") -->
-<!-- lines(mod_fits, lwd = 2, type = "l", cex = 1.5, col = "black") -->
-<!-- lines(mod_fits_CI_hi, lwd = 2, type = "l", cex = 1.5, col = "gray") -->
-<!-- lines(mod_fits_CI_lo, lwd = 2, type = "l", cex = 1.5, col = "gray") -->
-<!-- ``` -->
-
+# Plotting the states & SE
 
 ## Model fit and true states 
 
 ```{r rw_plot_fits_states, align.fig="center"}
-par(mai = c(0.8,0.8,0,0), omi = c(0,0,0,0))
+par(mai = c(1.2, 1, 0.3, 0), omi = c(0, 0, 0.5, 1))
 plot.ts(xx, lwd = 2, type = "o", pch = 16, col = "#488fdf",
         las = 1, ylim = c(min(xx,yy), max(xx,yy)),
         ylab = expression(italic(x[t])~~or~~italic(y[t])))
@@ -264,7 +340,7 @@ lines(mod_fits_CI_lo, lwd = 2, type = "l", cex = 1.5, col = "gray")
 ## Model fit with observations only
 
 ```{r rw_plot_fit_nostate, align.fig="center"}
-par(mai = c(0.8,0.8,0,0), omi = c(0,0,0,0))
+par(mai = c(1.2, 1, 0.3, 0), omi = c(0, 0, 0.5, 1))
 plot.ts(yy, lwd = 2, type = "o", pch = 16, cex = 1.5, col = "#844870",
         las = 1, ylim = c(min(xx,yy), max(xx,yy)),
         ylab = expression(italic(x[t])~~or~~italic(y[t])))
@@ -277,7 +353,7 @@ lines(mod_fits_CI_lo, lwd = 2, type = "l", cex = 1.5, col = "gray")
 ## Model fit with observations & states 
 
 ```{r rw_plot_fit, align.fig="center"}
-par(mai = c(0.8,0.8,0,0), omi = c(0,0,0,0))
+par(mai = c(1.2, 1, 0.3, 0), omi = c(0, 0, 0.5, 1))
 plot.ts(xx, lwd = 2, type = "o", pch = 16, col = "#488fdf",
         las = 1, ylim = c(min(xx,yy), max(xx,yy)),
         ylab = expression(italic(x[t])~~or~~italic(y[t])))
@@ -288,43 +364,19 @@ lines(mod_fits_CI_lo, lwd = 2, type = "l", cex = 1.5, col = "gray")
 ```
 
 
-## Evidence for bias
+## Parameter summaries
 
-Q: Is there data support for the bias term?
+* `coef(mod_fit)` to get the estimated parameters
 
-To answer this, we can fit a model without the bias term and compare AICc
+* `tidy(mod_fit)` to get estimated parameters with CIs
 
+* `fitted(mod_)` to get the model estimates of mean y
 
-## Evidence for bias
+* `plot(mod_fit)` to view a series of plots of the states, data, and diagnostics
 
-We need to modify the model definition for `MARSS()` by setting `U = matrix(0)` 
+* `ggplot2::autoplot(mod_fit)` to view a series of ggplots of the states, data, and diagnostics
 
-```{r rw_model, echo=TRUE}
-mod_list <- list(
-  ## state model
-  B = matrix(1), U = matrix(0), Q = matrix("q"),
-  ## obs model
-  Z = matrix(1), A = matrix(0), R = matrix("r")
-  )
-```
+***
 
-
-## Re-fit the model with `MARSS()`
-
-```{r rw_fit, echo = TRUE, eval=TRUE}
-## fit the model
-mod_fit_2 <- MARSS(y = YY, model = mod_list)
-```
-
-
-## Compare AIC values
-
-```{r compare_AICc, echo = TRUE, eval = TRUE}
-## biased RW
-mod_fit$AICc
-
-## unbiased RW
-mod_fit_2$AICc
-```
-
+# Model diagnostics
 
