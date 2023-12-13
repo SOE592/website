@@ -23,6 +23,8 @@ Students are encouraged to use their own data and the paper may form the basis a
 
 # Project Proposal
 
+#### 10% of final grade
+
 **Due no later than Friday, February 2, 2024 at 11:59pm PDT**
 
 Write a 1-2 page description of your project idea that includes
@@ -44,6 +46,8 @@ Things to consider:
 
 # Project Methods
 
+#### 20% of final grade
+
 **Due no later than Friday, March 1, 2024 at 11:59pm PDT**
 
 Your methods section should include two elements:
@@ -55,6 +59,8 @@ Your methods section should include two elements:
 <br>
 
 # Final paper
+
+#### 70% of final grade
 
 **Due no later than Friday, April 5, 2024 at 11:59pm PDT**
 
