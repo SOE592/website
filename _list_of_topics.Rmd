@@ -79,11 +79,11 @@ lec_3 <- list(
 
 ## session 7 ####
 lab_4 <- list(
-  title = "Count-based PVA",
-  topics = c("Count-based PVA"),
+  title = "Fitting state-space models",
+  topics = c("Fitting state-space models"),
   pdf = c(""),
   rmd = "",
-  html = "lectures/day_02/lab_04_PVA.html",
+  html = "lectures/day_02/lab_04_fitting-ssm.html",
   background = c("<br><br>"),
   zoom = ""
 )
