@@ -5749,7 +5749,8 @@ around the estimated states as</p>
 \]</span></p>
 <div class="boxy boxy-orange boxy-lightbulb">
 <p><strong>Tip:</strong> You can get values from the t-distribution with
-the function <code>qt()</code>.</p>
+the function <code>qt()</code>. Type <code>?qt</code> for more
+information.</p>
 </div>
 <pre class="r"><code>## upper 95% CI
 mod_fits_CI_hi &lt;- mod_fits + qt(p = 0.975, df = TT - 1) * mod_fits_SE
@@ -5760,6 +5761,11 @@ mod_fits_CI_lo &lt;- mod_fits - qt(p = 0.975, df = TT - 1) * mod_fits_SE</code><
 </div>
 <div id="plotting-the-states-se" class="section level1">
 <h1>Plotting the states &amp; SE</h1>
+<p>It’s common to plot the estimated state and some uncertainty about it
+(i.e., standard error, confidence interval), along with the data. Here
+are some examples using the base functions <code>plot()</code> and
+<code>lines()</code>. Similar plots could easily be made with
+<code>ggplot()</code> as well.</p>
 <div id="model-fit-and-true-states" class="section level2">
 <h2>Model fit and true states</h2>
 <pre class="r"><code>par(mai = c(1.2, 1, 0.3, 0), omi = c(0, 0, 0.5, 1))

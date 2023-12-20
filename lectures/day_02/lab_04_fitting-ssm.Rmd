@@ -307,7 +307,7 @@ $$
 $$
 
 <div class="boxy boxy-orange boxy-lightbulb">
-**Tip:** You can get values from the t-distribution with the function `qt()`.
+**Tip:** You can get values from the t-distribution with the function `qt()`. Type `?qt` for more information.
 </div>
 
 
@@ -322,6 +322,8 @@ mod_fits_CI_lo <- mod_fits - qt(p = 0.975, df = TT - 1) * mod_fits_SE
 ***
 
 # Plotting the states & SE
+
+It's common to plot the estimated state and some uncertainty about it (i.e., standard error, confidence interval), along with the data. Here are some examples using the base functions `plot()` and `lines()`. Similar plots could easily be made with `ggplot()` as well.
 
 ## Model fit and true states 
 
