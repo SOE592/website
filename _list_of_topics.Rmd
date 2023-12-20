@@ -15,9 +15,9 @@ lec_1 <- list(
   pdf = c(""),
   rmd = "",
   html = "lectures/day_01/lec_01_intro-concepts.html",
-  background = c("[Cowperwait & Metcalf (2009); Chap 1 & 2](references/Introductory_Time_Series_With_R.pdf)",
-                 "[Hyndman & Athanasopoulos (2018); Chap 6](https://otexts.org/fpp2/decomposition.html)",
-                 "[Holmes et al (2021); Chap 3](https://atsa-es.github.io/atsa-labs/chap-ts.html)"),
+  background = c("[Chap 1 & 2, Cowperwait & Metcalf (2009)](references/Introductory_Time_Series_With_R.pdf)",
+                 "[Chap 6, Hyndman & Athanasopoulos (2018)](https://otexts.org/fpp2/decomposition.html)",
+                 "[Chap 3, Holmes et al (2021)](https://atsa-es.github.io/atsa-labs/chap-ts.html)"),
   zoom = ""
 )
 
@@ -39,8 +39,8 @@ lec_2 <- list(
   pdf = c(""),
   rmd = "",
   html = "lectures/day_01/lec_02_autoregressive-models.html",
-  background = c("[Cowperwait & Metcalf (2009); Chap 4](references/Introductory_Time_Series_With_R.pdf)",
-                 "[Holmes et al (2021); Chap 3](https://atsa-es.github.io/atsa-labs/chap-ts.html)<br>"),
+  background = c("[Chap 4, Cowperwait & Metcalf (2009)](references/Introductory_Time_Series_With_R.pdf)",
+                 "[Chap 3, Holmes et al (2021)](https://atsa-es.github.io/atsa-labs/chap-ts.html)<br>"),
   zoom = ""
 )
 
@@ -73,7 +73,9 @@ lec_3 <- list(
   pdf = c(""),
   rmd = "",
   html = "lectures/day_02/lec_03_univariate-SSM.html",
-  background = c("<br><br>"),
+  background = c("[Chap 12, Cowperwait & Metcalf (2009)](references/Introductory_Time_Series_With_R.pdf)",
+                 "[Auger-Méthé et al (2021)](references/Auger‐Methe_guide_state-space_models.pdf)",
+                 "<br>"),
   zoom = ""
 )
 
@@ -95,7 +97,8 @@ lec_4 <- list(
   pdf = c(""),
   rmd = "",
   html = "lectures/day_02/lec_04_multivariate-SSM.html",
-  background = c("<br><br>"),
+  background = c("[Matrix math review](https://atsa-es.github.io/atsa-labs/chap-basicmat.html)",
+                 "<br>"),
   zoom = ""
 )
 
