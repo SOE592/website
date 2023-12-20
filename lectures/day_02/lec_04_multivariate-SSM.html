@@ -3439,40 +3439,114 @@ w_{3,t}
  \end{bmatrix}
 \]</p>
 
-</article></slide><slide class=""><hgroup><h2>Animal tracking</h2></hgroup><article  id="animal-tracking">
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Animal tracking</h2></hgroup><article  id="animal-tracking">
 
-<p>Estimating animal locations from tagging is a classic example of applying this type of multivariate state-space model</p>
+</article></slide><slide class=""><hgroup><h2>Animal tracking</h2></hgroup><article  id="animal-tracking-1">
+
+<p>Estimating animal locations from tags is a classic example of applying this type of multivariate state-space model</p>
+
+<center>
+
+State
+
+</center>
 
 <p>\[
-LAT_t = LAT_{t-1} + w_{LAT,t} \\
-LON_t = LON_{t-1} + w_{LON,t} \\
+x^\text{(lat)}_t = x^\text{(lat)}_{t-1} + w^\text{(lat)}_t \\
+x^\text{(lon)}_t = x^\text{(lon)}_{t-1} + w^\text{(lon)}_t \\
 \]</p>
 
+<center>
+
+Observation
+
+</center>
+
 <p>\[
-y_t = LAT_t + v_{y,t} \\
-x_t = LON_t + v_{x,t} \\
+y^\text{(lat)}_t = x^\text{(lat)}_t + v^\text{(lat)}_t \\
+y^\text{(lon)}_t = x^\text{(lon)}_t + v^\text{(lon)}_t \\
 \]</p>
 
 </article></slide><slide class=""><hgroup><h2>Random walk observed with error </h2><h3> In matrix form</h3></hgroup><article  id="random-walk-observed-with-error-in-matrix-form-2">
 
-<p>\[
-\mathbf{x}_t = \mathbf{x}_{t-1} + \mathbf{w}_t \\
-\mathbf{y}_t = \mathbf{x}_t + \mathbf{a} + \mathbf{v}_t \\
-\Downarrow \\
-\mathbf{x}_t = \mathbf{x}_{t-1} + \mathbf{w}_t \\
-\mathbf{y}_t = \mathbf{Z} \mathbf{x}_t + \mathbf{a} + \mathbf{v}_t
-\]</p>
+<center>
 
-<p>with \(\mathbf{Z}\) equal to the \(n \times n\) Identity matrix \(\mathbf{I}_n\)</p>
+State
 
-</article></slide><slide class=""><hgroup><h2>Random walk observed with error </h2><h3> In matrix form</h3></hgroup><article  id="random-walk-observed-with-error-in-matrix-form-3">
+</center>
 
 <p>\[
 \mathbf{x}_t = \mathbf{x}_{t-1} + \mathbf{w}_t \\
-\mathbf{y}_t = \mathbf{Z} \mathbf{x}_t + \mathbf{a} + \mathbf{v}_t
 \]</p>
 
-<p>Note that both \(\mathbf{x}_t\) and \(\mathbf{y}_t\) are \(n \times 1\) column vectors</p>
+<center>
+
+Observation
+
+</center>
+
+<p>\[
+\mathbf{y}_t = \mathbf{x}_t + \mathbf{v}_t \\
+\]</p>
+
+</article></slide><slide class=""><hgroup><h2>Biased RW observed with error </h2><h3> In matrix form</h3></hgroup><article  id="biased-rw-observed-with-error-in-matrix-form">
+
+<center>
+
+State
+
+</center>
+
+<p>\[
+\begin{bmatrix}
+x^\text{(lat)}_{t} \\
+x^\text{(lon)}_{t} \\
+\end{bmatrix} =
+\begin{bmatrix}
+x^\text{(lat)}_{t-1} \\
+x^\text{(lon)}_{t-1} \\
+\end{bmatrix} + 
+\begin{bmatrix}
+u^\text{(lat)} \\
+u^\text{(lon)} \\
+\end{bmatrix} + 
+\begin{bmatrix}
+w^\text{(lat)}_{t} \\
+w^\text{(lon)}_{t} \\
+\end{bmatrix}
+\]</p>
+
+<center>
+
+Observation
+
+</center>
+
+<p>\[
+\mathbf{y}_t = \mathbf{x}_t + \mathbf{v}_t \\
+\]</p>
+
+</article></slide><slide class=""><hgroup><h2>Biased RW observed with error </h2><h3> In matrix form</h3></hgroup><article  id="biased-rw-observed-with-error-in-matrix-form-1">
+
+<center>
+
+State
+
+</center>
+
+<p>\[
+\mathbf{x}_t = \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{w}_t \\
+\]</p>
+
+<center>
+
+Observation
+
+</center>
+
+<p>\[
+\mathbf{y}_t = \mathbf{x}_t + \mathbf{v}_t \\
+\]</p>
 
 </article></slide><slide class=""><hgroup><h2>Multiple observations of one state</h2></hgroup><article  id="multiple-observations-of-one-state">
 
