@@ -366,7 +366,11 @@ lines(mod_fits_CI_lo, lwd = 2, type = "l", cex = 1.5, col = "gray")
 ```
 
 
-## Parameter summaries
+***
+
+# Model summaries
+
+In addition to accessing the various aspects contained in the list of a fitted object of class `marssMLE` returned by `MARSS()`, you can use some summary functions to obtain parameter estimates and model fits. You can also get a set of standard plots of the model fits and diagnostics. Here are a few of the options:
 
 * `coef(mod_fit)` to get the estimated parameters
 
@@ -377,6 +381,7 @@ lines(mod_fits_CI_lo, lwd = 2, type = "l", cex = 1.5, col = "gray")
 * `plot(mod_fit)` to view a series of plots of the states, data, and diagnostics
 
 * `ggplot2::autoplot(mod_fit)` to view a series of ggplots of the states, data, and diagnostics
+
 
 ***
 
