@@ -401,3 +401,18 @@ We can assess how well something fits a normal distribution via a q-q plot or `q
 **Tip:** The `plot()` and `ggplot2::autoplot()` functions produce useful diagnostic plots.
 </div>
 
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Use either `plot()` or `ggplot2::autoplot()` to see how well our fitted model meets the assumptions.
+</div>
+
+```{r model_diags, echo = TRUE, eval = FALSE}
+## get summary & diagnostic plots
+plot(mod_fit)
+```
+
+```{r model_diags_show, echo = FALSE}
+par(mai = c(1.2, 1, 0.3, 0), omi = c(0, 0, 0.5, 1))
+## get summary & diagnostic plots
+plot(mod_fit)
+```
+
