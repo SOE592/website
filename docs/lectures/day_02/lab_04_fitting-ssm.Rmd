@@ -307,7 +307,7 @@ $$
 $$
 
 <div class="boxy boxy-orange boxy-lightbulb">
-**Tip:** You can get values from the t-distribution with the function `qt()`.
+**Tip:** You can get values from the t-distribution with the function `qt()`. Type `?qt` for more information.
 </div>
 
 
@@ -322,6 +322,8 @@ mod_fits_CI_lo <- mod_fits - qt(p = 0.975, df = TT - 1) * mod_fits_SE
 ***
 
 # Plotting the states & SE
+
+It's common to plot the estimated state and some uncertainty about it (i.e., standard error, confidence interval), along with the data. Here are some examples using the base functions `plot()` and `lines()`. Similar plots could easily be made with `ggplot()` as well.
 
 ## Model fit and true states 
 
@@ -364,7 +366,11 @@ lines(mod_fits_CI_lo, lwd = 2, type = "l", cex = 1.5, col = "gray")
 ```
 
 
-## Parameter summaries
+***
+
+# Model summaries
+
+In addition to accessing the various aspects contained in the list of a fitted object of class `marssMLE` returned by `MARSS()`, you can use some summary functions to obtain parameter estimates and model fits. You can also get a set of standard plots of the model fits and diagnostics. Here are a few of the options:
 
 * `coef(mod_fit)` to get the estimated parameters
 
@@ -376,7 +382,37 @@ lines(mod_fits_CI_lo, lwd = 2, type = "l", cex = 1.5, col = "gray")
 
 * `ggplot2::autoplot(mod_fit)` to view a series of ggplots of the states, data, and diagnostics
 
+
 ***
 
 # Model diagnostics
+
+Just like other statistical models, state-space models come with their own set of assumptions. As such, it's a good idea to examine some model diagnostics to see if the assumptions have been met. For the univariate state-space models we're using here, the assumptions include the following:
+
+* The errors ($w_t$ and $v_t$) are normally distributed
+
+* The errors ($w_t$ and $v_t$) have constant variance
+
+* The errors ($w_t$ and $v_t$) are independent
+
+We can assess how well something fits a normal distribution via a q-q plot or `qqplot()`. We can use plots of the errors versus time to see if the variance changes. We can use the familiar autocorrelaction function `acf()` to assess whether the errors are independent over time.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** The `plot()` and `ggplot2::autoplot()` functions produce useful diagnostic plots.
+</div>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Use either `plot()` or `ggplot2::autoplot()` to see how well our fitted model meets the assumptions.
+</div>
+
+```{r model_diags, echo = TRUE, eval = FALSE}
+## get summary & diagnostic plots
+plot(mod_fit)
+```
+
+```{r model_diags_show, echo = FALSE}
+par(mai = c(1.2, 1, 0.3, 0), omi = c(0, 0, 0.5, 1))
+## get summary & diagnostic plots
+plot(mod_fit)
+```
 
