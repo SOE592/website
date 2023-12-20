@@ -3220,6 +3220,17 @@ x_{2,t} = x_{2,t-1} + w_{2,t} \\
 x_{n,t} = x_{n,t-1} + w_{n,t}
 \]</p>
 
+</article></slide><slide class=""><hgroup><h2>Random walk observed with error</h2></hgroup><article  id="random-walk-observed-with-error-1">
+
+<p>\[
+x_{1,t} = x_{1,t-1} + w_{1,t} \\
+x_{2,t} = x_{2,t-1} + w_{2,t} \\
+\vdots \\
+x_{n,t} = x_{n,t-1} + w_{n,t}
+\]</p>
+
+<p><br></p>
+
 <p>\[
 y_{1,t} = x_{1,t} + a_1 + v_{1,t} \\
 y_{2,t} = x_{2,t} + a_2 + v_{2,t} \\
@@ -3290,84 +3301,142 @@ v_{n,t} \\
 
 <p>\(\mathbf{v}_t \sim \text{MVN}(\mathbf{0}, \mathbf{R})\)</p>
 
-</article></slide><slide class=""><hgroup><h2>Forms of covariances matrices \(\mathbf{Q}\)</h2></hgroup><article  id="forms-of-covariances-matrices-mathbfq">
+</article></slide><slide class=""><hgroup><h2>Multivariate normal errors </h2><h3> Example with 3 states</h3></hgroup><article  id="multivariate-normal-errors-example-with-3-states">
 
-<p>No covariance</p>
+<p>\[
+\mathbf{w}_t \sim \text{MVN}(\mathbf{0}, \mathbf{Q}) \\
+\Downarrow \\
+\begin{bmatrix}
+w_{1,t} \\
+w_{2,t} \\
+w_{3,t}
+\end{bmatrix}
+\sim
+\text{MVN}
+\left(
+\begin{bmatrix}
+0 \\
+0 \\
+0
+\end{bmatrix},
+\begin{bmatrix}
+ q &amp; 0 &amp; 0 \\
+ 0 &amp; q  &amp; 0 \\
+ 0 &amp; 0 &amp; q
+\end{bmatrix}
+\right)
+\]</p>
+
+</article></slide><slide class=""><hgroup><h2>Forms of covariances matrices \(\mathbf{Q}\) </h2><h3> No covariance</h3></hgroup><article  id="forms-of-covariances-matrices-mathbfq-no-covariance">
 
 <p>\[
 \mathbf{Q} \stackrel{?}{=}
 \begin{bmatrix}
- \sigma &amp; 0 &amp; 0 &amp; 0 \\
- 0 &amp; \sigma &amp; 0 &amp; 0 \\
- 0 &amp; 0 &amp; \sigma &amp; 0 \\
- 0 &amp; 0 &amp; 0 &amp; \sigma
+ q &amp; 0 &amp; 0 &amp; 0 \\
+ 0 &amp; q &amp; 0 &amp; 0 \\
+ 0 &amp; 0 &amp; q &amp; 0 \\
+ 0 &amp; 0 &amp; 0 &amp; q
 \end{bmatrix}
 ~\text{or}~~
 \mathbf{Q} \stackrel{?}{=}
 \begin{bmatrix}
- \sigma_1 &amp; 0 &amp; 0 &amp; 0 \\
- 0 &amp; \sigma_2 &amp; 0 &amp; 0 \\
- 0 &amp; 0 &amp; \sigma_3 &amp; 0 \\
- 0 &amp; 0 &amp; 0 &amp; \sigma_4
+ q_1 &amp; 0 &amp; 0 &amp; 0 \\
+ 0 &amp; q_2 &amp; 0 &amp; 0 \\
+ 0 &amp; 0 &amp; q_3 &amp; 0 \\
+ 0 &amp; 0 &amp; 0 &amp; q_4
 \end{bmatrix}
 \]</p>
 
-</article></slide><slide class=""><hgroup><h2>Forms of covariances matrices \(\mathbf{Q}\)</h2></hgroup><article  id="forms-of-covariances-matrices-mathbfq-1">
-
-<p>With covariance</p>
+</article></slide><slide class=""><hgroup><h2>Forms of covariances matrices \(\mathbf{Q}\) </h2><h3> With covariance</h3></hgroup><article  id="forms-of-covariances-matrices-mathbfq-with-covariance">
 
 <p>\[
 \mathbf{Q} \stackrel{?}{=}
 \begin{bmatrix}
- \sigma &amp; \gamma &amp; \gamma &amp; \gamma \\
- \gamma &amp; \sigma &amp; \gamma &amp; \gamma \\
- \gamma &amp; \gamma &amp; \sigma &amp; \gamma \\
- \gamma &amp; \gamma &amp; \gamma &amp; \sigma
+ q &amp; \gamma &amp; \gamma &amp; \gamma \\
+ \gamma &amp; q &amp; \gamma &amp; \gamma \\
+ \gamma &amp; \gamma &amp; q &amp; \gamma \\
+ \gamma &amp; \gamma &amp; \gamma &amp; q
 \end{bmatrix}
 ~\text{or}~~
 \mathbf{Q} \stackrel{?}{=}
 \begin{bmatrix}
- \sigma_1 &amp; \gamma_{1,2} &amp; \gamma_{1,3} &amp; \gamma_{1,4} \\
- \gamma_{1,2} &amp; \sigma_2 &amp; \gamma_{2,3} &amp; \gamma_{2,4} \\
- \gamma_{1,3} &amp; \gamma_{2,3} &amp; \sigma_3 &amp; \gamma_{3,4} \\
- \gamma_{1,4} &amp; \gamma_{2,4} &amp; \gamma_{3,4} &amp; \sigma_4
+ q_1 &amp; \gamma_{1,2} &amp; \gamma_{1,3} &amp; \gamma_{1,4} \\
+ \gamma_{1,2} &amp; q_2 &amp; \gamma_{2,3} &amp; \gamma_{2,4} \\
+ \gamma_{1,3} &amp; \gamma_{2,3} &amp; q_3 &amp; \gamma_{3,4} \\
+ \gamma_{1,4} &amp; \gamma_{2,4} &amp; \gamma_{3,4} &amp; q_4
 \end{bmatrix}
 \]</p>
 
-</article></slide><slide class=""><hgroup><h2>Forms of covariances matrices \(\mathbf{R}\)</h2></hgroup><article  id="forms-of-covariances-matrices-mathbfr">
-
-<p>No covariance</p>
+</article></slide><slide class=""><hgroup><h2>Forms of covariances matrices \(\mathbf{R}\) </h2><h3> No covariance</h3></hgroup><article  id="forms-of-covariances-matrices-mathbfr-no-covariance">
 
 <p>\[
 \mathbf{R} \stackrel{?}{=}
 \begin{bmatrix}
- \sigma &amp; 0 &amp; 0 &amp; 0 \\
- 0 &amp; \sigma &amp; 0 &amp; 0 \\
- 0 &amp; 0 &amp; \sigma &amp; 0 \\
- 0 &amp; 0 &amp; 0 &amp; \sigma
+ r &amp; 0 &amp; 0 &amp; 0 \\
+ 0 &amp; r &amp; 0 &amp; 0 \\
+ 0 &amp; 0 &amp; r &amp; 0 \\
+ 0 &amp; 0 &amp; 0 &amp; r
 \end{bmatrix}
 ~\text{or}~~
 \mathbf{R} \stackrel{?}{=}
 \begin{bmatrix}
- \sigma_1 &amp; 0 &amp; 0 &amp; 0 \\
- 0 &amp; \sigma_2 &amp; 0 &amp; 0 \\
- 0 &amp; 0 &amp; \sigma_3 &amp; 0 \\
- 0 &amp; 0 &amp; 0 &amp; \sigma_4
+ r_1 &amp; 0 &amp; 0 &amp; 0 \\
+ 0 &amp; r_2 &amp; 0 &amp; 0 \\
+ 0 &amp; 0 &amp; r_3 &amp; 0 \\
+ 0 &amp; 0 &amp; 0 &amp; r_4
 \end{bmatrix}
 \]</p>
 
-</article></slide><slide class=""><hgroup><h2>Forms of covariances matrices \(\mathbf{R}\)</h2></hgroup><article  id="forms-of-covariances-matrices-mathbfr-1">
-
-<p>With covariance</p>
+</article></slide><slide class=""><hgroup><h2>Forms of covariances matrices \(\mathbf{R}\) </h2><h3> With covariance</h3></hgroup><article  id="forms-of-covariances-matrices-mathbfr-with-covariance">
 
 <p>\[
 \mathbf{R} \stackrel{?}{=}
 \begin{bmatrix}
- \sigma &amp; \gamma &amp; \gamma &amp; \gamma \\
- \gamma &amp; \sigma &amp; \gamma &amp; \gamma \\
- \gamma &amp; \gamma &amp; \sigma &amp; \gamma \\
- \gamma &amp; \gamma &amp; \gamma &amp; \sigma
+ r &amp; \gamma &amp; \gamma &amp; \gamma \\
+ \gamma &amp; r &amp; \gamma &amp; \gamma \\
+ \gamma &amp; \gamma &amp; r &amp; \gamma \\
+ \gamma &amp; \gamma &amp; \gamma &amp; r
 \end{bmatrix}
+\]</p>
+
+</article></slide><slide class=""><hgroup><h2>A note on covariance matrices</h2></hgroup><article  id="a-note-on-covariance-matrices">
+
+<p>Covariance matrices must be symmetric around the diagonal</p>
+
+<p><br></p>
+
+<p>\[
+\mathbf{R}  \stackrel{\checkmark}{=}
+\begin{bmatrix}
+ r &amp; g &amp; h \\
+ g &amp; r &amp; g \\
+ h &amp; g &amp; r
+ \end{bmatrix}
+~~~~~~~~
+\mathbf{R}  \stackrel{\checkmark}{=}
+\begin{bmatrix}
+ r &amp; 0 &amp; h \\
+ 0 &amp; r &amp; g \\
+ h &amp; g &amp; r
+ \end{bmatrix}
+\]</p>
+
+<p><br></p>
+
+<p>\[
+\mathbf{R}  \neq
+\begin{bmatrix}
+ r &amp; g &amp; g \\
+ h &amp; r &amp; g \\
+ h &amp; h &amp; r
+ \end{bmatrix}
+~~~~~~~~
+\mathbf{R}  \neq
+\begin{bmatrix}
+ r &amp; 0 &amp; g \\
+ h &amp; r &amp; h \\
+ g &amp; 0 &amp; r
+ \end{bmatrix}
 \]</p>
 
 </article></slide><slide class=""><hgroup><h2>Animal tracking</h2></hgroup><article  id="animal-tracking">

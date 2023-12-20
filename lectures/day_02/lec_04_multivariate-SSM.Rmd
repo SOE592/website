@@ -45,6 +45,18 @@ x_{2,t} = x_{2,t-1} + w_{2,t} \\
 x_{n,t} = x_{n,t-1} + w_{n,t}
 $$
 
+
+## Random walk observed with error
+
+$$
+x_{1,t} = x_{1,t-1} + w_{1,t} \\
+x_{2,t} = x_{2,t-1} + w_{2,t} \\
+\vdots \\
+x_{n,t} = x_{n,t-1} + w_{n,t}
+$$
+
+<br>
+
 $$
 y_{1,t} = x_{1,t} + a_1 + v_{1,t} \\
 y_{2,t} = x_{2,t} + a_2 + v_{2,t} \\
@@ -118,87 +130,147 @@ $\mathbf{w}_t \sim \text{MVN}(\mathbf{0}, \mathbf{Q})$
 $\mathbf{v}_t \sim \text{MVN}(\mathbf{0}, \mathbf{R})$
 
 
-## Forms of covariances matrices $\mathbf{Q}$
+## Multivariate normal errors | Example with 3 states
 
-No covariance
+$$
+\mathbf{w}_t \sim \text{MVN}(\mathbf{0}, \mathbf{Q}) \\
+\Downarrow \\
+\begin{bmatrix}
+w_{1,t} \\
+w_{2,t} \\
+w_{3,t}
+\end{bmatrix}
+\sim
+\text{MVN}
+\left(
+\begin{bmatrix}
+0 \\
+0 \\
+0
+\end{bmatrix},
+\begin{bmatrix}
+ q & 0 & 0 \\
+ 0 & q  & 0 \\
+ 0 & 0 & q
+\end{bmatrix}
+\right)
+$$
+
+
+## Forms of covariances matrices $\mathbf{Q}$ | No covariance
 
 $$
 \mathbf{Q} \stackrel{?}{=}
 \begin{bmatrix}
- \sigma & 0 & 0 & 0 \\
- 0 & \sigma & 0 & 0 \\
- 0 & 0 & \sigma & 0 \\
- 0 & 0 & 0 & \sigma
+ q & 0 & 0 & 0 \\
+ 0 & q & 0 & 0 \\
+ 0 & 0 & q & 0 \\
+ 0 & 0 & 0 & q
 \end{bmatrix}
 ~\text{or}~~
 \mathbf{Q} \stackrel{?}{=}
 \begin{bmatrix}
- \sigma_1 & 0 & 0 & 0 \\
- 0 & \sigma_2 & 0 & 0 \\
- 0 & 0 & \sigma_3 & 0 \\
- 0 & 0 & 0 & \sigma_4
+ q_1 & 0 & 0 & 0 \\
+ 0 & q_2 & 0 & 0 \\
+ 0 & 0 & q_3 & 0 \\
+ 0 & 0 & 0 & q_4
 \end{bmatrix}
 $$
 
 
-## Forms of covariances matrices $\mathbf{Q}$
-
-With covariance
+## Forms of covariances matrices $\mathbf{Q}$ | With covariance
 
 $$
 \mathbf{Q} \stackrel{?}{=}
 \begin{bmatrix}
- \sigma & \gamma & \gamma & \gamma \\
- \gamma & \sigma & \gamma & \gamma \\
- \gamma & \gamma & \sigma & \gamma \\
- \gamma & \gamma & \gamma & \sigma
+ q & \gamma & \gamma & \gamma \\
+ \gamma & q & \gamma & \gamma \\
+ \gamma & \gamma & q & \gamma \\
+ \gamma & \gamma & \gamma & q
 \end{bmatrix}
 ~\text{or}~~
 \mathbf{Q} \stackrel{?}{=}
 \begin{bmatrix}
- \sigma_1 & \gamma_{1,2} & \gamma_{1,3} & \gamma_{1,4} \\
- \gamma_{1,2} & \sigma_2 & \gamma_{2,3} & \gamma_{2,4} \\
- \gamma_{1,3} & \gamma_{2,3} & \sigma_3 & \gamma_{3,4} \\
- \gamma_{1,4} & \gamma_{2,4} & \gamma_{3,4} & \sigma_4
+ q_1 & \gamma_{1,2} & \gamma_{1,3} & \gamma_{1,4} \\
+ \gamma_{1,2} & q_2 & \gamma_{2,3} & \gamma_{2,4} \\
+ \gamma_{1,3} & \gamma_{2,3} & q_3 & \gamma_{3,4} \\
+ \gamma_{1,4} & \gamma_{2,4} & \gamma_{3,4} & q_4
 \end{bmatrix}
 $$
 
 
-## Forms of covariances matrices $\mathbf{R}$
-
-No covariance
+## Forms of covariances matrices $\mathbf{R}$ | No covariance
 
 $$
 \mathbf{R} \stackrel{?}{=}
 \begin{bmatrix}
- \sigma & 0 & 0 & 0 \\
- 0 & \sigma & 0 & 0 \\
- 0 & 0 & \sigma & 0 \\
- 0 & 0 & 0 & \sigma
+ r & 0 & 0 & 0 \\
+ 0 & r & 0 & 0 \\
+ 0 & 0 & r & 0 \\
+ 0 & 0 & 0 & r
 \end{bmatrix}
 ~\text{or}~~
 \mathbf{R} \stackrel{?}{=}
 \begin{bmatrix}
- \sigma_1 & 0 & 0 & 0 \\
- 0 & \sigma_2 & 0 & 0 \\
- 0 & 0 & \sigma_3 & 0 \\
- 0 & 0 & 0 & \sigma_4
+ r_1 & 0 & 0 & 0 \\
+ 0 & r_2 & 0 & 0 \\
+ 0 & 0 & r_3 & 0 \\
+ 0 & 0 & 0 & r_4
 \end{bmatrix}
 $$
 
 
-## Forms of covariances matrices $\mathbf{R}$
-
-With covariance
+## Forms of covariances matrices $\mathbf{R}$ | With covariance
 
 $$
 \mathbf{R} \stackrel{?}{=}
 \begin{bmatrix}
- \sigma & \gamma & \gamma & \gamma \\
- \gamma & \sigma & \gamma & \gamma \\
- \gamma & \gamma & \sigma & \gamma \\
- \gamma & \gamma & \gamma & \sigma
+ r & \gamma & \gamma & \gamma \\
+ \gamma & r & \gamma & \gamma \\
+ \gamma & \gamma & r & \gamma \\
+ \gamma & \gamma & \gamma & r
 \end{bmatrix}
+$$
+
+
+## A note on covariance matrices
+
+Covariance matrices must be symmetric around the diagonal
+
+<br>
+
+$$
+\mathbf{R}  \stackrel{\checkmark}{=}
+\begin{bmatrix}
+ r & g & h \\
+ g & r & g \\
+ h & g & r
+ \end{bmatrix}
+~~~~~~~~
+\mathbf{R}  \stackrel{\checkmark}{=}
+\begin{bmatrix}
+ r & 0 & h \\
+ 0 & r & g \\
+ h & g & r
+ \end{bmatrix}
+$$
+
+<br>
+
+$$
+\mathbf{R}  \neq
+\begin{bmatrix}
+ r & g & g \\
+ h & r & g \\
+ h & h & r
+ \end{bmatrix}
+~~~~~~~~
+\mathbf{R}  \neq
+\begin{bmatrix}
+ r & 0 & g \\
+ h & r & h \\
+ g & 0 & r
+ \end{bmatrix}
 $$
 
 
@@ -240,8 +312,6 @@ $$
 $$
 
 Note that both $\mathbf{x}_t$ and $\mathbf{y}_t$ are $n \times 1$ column vectors
-
-
 
 
 ## Multiple observations of one state
