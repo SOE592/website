@@ -5827,6 +5827,26 @@ ggplots of the states, data, and diagnostics</p></li>
 </div>
 <div id="model-diagnostics" class="section level1">
 <h1>Model diagnostics</h1>
+<p>Just like other statistical models, state-space models come with
+their own set of assumptions. As such, it’s a good idea to examine some
+model diagnostics to see if the assumptions have been met. For the
+univariate state-space models we’re using here, the assumptions include
+the following:</p>
+<ul>
+<li><p>The errors (<span class="math inline">\(w_t\)</span> and <span class="math inline">\(v_t\)</span>) are normally distributed</p></li>
+<li><p>The errors (<span class="math inline">\(w_t\)</span> and <span class="math inline">\(v_t\)</span>) have constant variance</p></li>
+<li><p>The errors (<span class="math inline">\(w_t\)</span> and <span class="math inline">\(v_t\)</span>) are independent</p></li>
+</ul>
+<p>We can assess how well something fits a normal distribution via a q-q
+plot or <code>qqplot()</code>. We can use plots of the errors versus
+time to see if the variance changes. We can use the familiar
+autocorrelaction function <code>acf()</code> to assess whether the
+errors are independent over time.</p>
+<div class="boxy boxy-orange boxy-lightbulb">
+<p><strong>Tip:</strong> The <code>plot()</code> and
+<code>ggplot2::autoplot()</code> functions produce useful diagnostic
+plots.</p>
+</div>
 </div>
 
 
