@@ -4,22 +4,133 @@ subtitle: "SOE 592 – Intro to Time Series Analysis"
 date: "<br>4 Jan 2024"
 output:
   html_document:
-    theme: sandstone
+    theme: simplex
     highlight: textmate
+    css: ["lecture_inst.css", "fontawesome.css", "solid.css"]
     toc: true
     toc_float: true
     toc_depth: 3
 ---
 
-```{r dfa-setup, include=FALSE, purl=FALSE}
+```{r setup, include=FALSE, purl=FALSE}
 ## in case you forget to add a chunk label
-knitr::opts_knit$set(unnamed.chunk.label = "dfa-")
+knitr::opts_chunk$set(
+  fig.dim = c(8, 5),
+  fig.align = "center"
+  )
+set.seed(592)
 ```
+
+***
 
 # Introduction
 
+Using time series models to analyze animal movement is common in wildlife ecology. The topic has seen increasingly more interest as the technology for tracking animals has become more sophisticated and less expensive. In this lab, we'll see how to use multivariate state-space models to estimate movement tracks and rates of travel for several different behaviors.
+
 
 ***
+
+# Wandering
+
+Sometimes animals appear to be merely wandering around in search of food, mates, or resting spots. For these types of behavior, random walks models are most appropriate. For terrestrial animals, most movement models consider locations in two dimensions, latitude and longitude, and generally ignore the height above the ground. For some fishes and marine mammals, however, the models may additionally include the animal's depth below the surface of the water. Here we will consider only two-dimensional movement, but the concepts are the same when applied to three dimensions.
+
+## Random walk model
+
+Recall that random walk models are extremely flexible in their ability to fit a variety of temporal patterns. As such, random walk models work really well for animals that appear to be wandering around with a lack of clear direction or a tendency to stay around some particular area.
+
+### State model
+
+We can write the state model for movement in two dimensions as
+
+$$
+x^\text{(lat)}_t = x^\text{(lat)}_{t-1} + w^\text{(lat)}_t \\
+x^\text{(lon)}_t = x^\text{(lon)}_{t-1} + w^\text{(lon)}_t \\
+\Downarrow \\
+\begin{bmatrix}
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_t =
+\begin{bmatrix}
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_{t-1} + 
+\begin{bmatrix}
+w^\text{(lat)} \\
+w^\text{(lon)} \\
+\end{bmatrix}_t \\
+\Downarrow \\
+\mathbf{x}_t = \mathbf{x}_{t-1} + \mathbf{w}_t \\
+$$
+
+where the process errors are distributed as $\mathbf{w}_t \sim \text{MVN}(\mathbf{0}, \mathbf{Q})$.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** The form for $\mathbf{Q}$ can be changed to account for more/less variance in the latitude or longitude step size (ie, `diagonal and unequal` in `MARSS()`), or to model covariance between the errors (ie, `equalvarcov` in `MARSS()`).
+</div>
+
+### Observation model
+
+Our observation model is straightforward and includes terms for the data, states, and errors.
+
+$$
+y^\text{(lat)}_t = x^\text{(lat)}_t + v^\text{(lat)}_t \\
+y^\text{(lon)}_t = x^\text{(lon)}_t + v^\text{(lon)}_t \\
+\Downarrow \\
+\begin{bmatrix}
+y^\text{(lat)} \\
+y^\text{(lon)} \\
+\end{bmatrix}_t =
+\begin{bmatrix}
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_t + 
+\begin{bmatrix}
+v^\text{(lat)} \\
+v^\text{(lon)} \\
+\end{bmatrix}_t \\
+\Downarrow \\
+\mathbf{y}_t = \mathbf{x}_t + \mathbf{v}_t \\
+$$
+
+where the process errors are distributed as $\mathbf{v}_t \sim \text{MVN}(\mathbf{0}, \mathbf{R})$.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** It's rare that the variance in observation errors would be different for latitude or longitude so we typically assume that they're "independent and identically distributed" (IID), such that the form for $\mathbf{R}$ is `diagonal and equal` in `MARSS()`.
+</div>
+
+
+
+***
+
+# Migration
+
+## Biased random walk
+
+$$
+\begin{bmatrix}
+x^\text{(lat)}_{t} \\
+x^\text{(lon)}_{t} \\
+\end{bmatrix} =
+\begin{bmatrix}
+x^\text{(lat)}_{t-1} \\
+x^\text{(lon)}_{t-1} \\
+\end{bmatrix} + 
+\begin{bmatrix}
+u^\text{(lat)} \\
+u^\text{(lon)} \\
+\end{bmatrix} + 
+\begin{bmatrix}
+w^\text{(lat)}_{t} \\
+w^\text{(lon)}_{t} \\
+\end{bmatrix}
+$$
+
+
+***
+
+# Home range
+
+
 
 # Model comparisons
 
@@ -48,7 +159,7 @@ mod_list <- list(
 
 ```{r rw_fit, echo = TRUE, eval=TRUE}
 ## fit the model
-mod_fit_2 <- MARSS(y = YY, model = mod_list)
+# mod_fit_2 <- MARSS(y = YY, model = mod_list)
 ```
 
 
@@ -56,10 +167,10 @@ mod_fit_2 <- MARSS(y = YY, model = mod_list)
 
 ```{r compare_AICc, echo = TRUE, eval = TRUE}
 ## biased RW
-mod_fit$AICc
+# mod_fit$AICc
 
 ## unbiased RW
-mod_fit_2$AICc
+# mod_fit_2$AICc
 ```
 
 ***
