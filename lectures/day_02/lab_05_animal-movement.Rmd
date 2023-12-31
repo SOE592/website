@@ -98,6 +98,53 @@ where the process errors are distributed as $\mathbf{v}_t \sim \text{MVN}(\mathb
 **Tip:** It's rare that the variance in observation errors would be different for latitude or longitude so we typically assume that they're "independent and identically distributed" (IID), such that the form for $\mathbf{R}$ is `diagonal and equal` in `MARSS()`.
 </div>
 
+### Full MARSS model
+
+Recall that when fitting models with the {MARSS} package, we need to explicitly specify the forms for ***all*** of the vectors and matrices in the full MARSS model given by
+
+$$
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{C} \mathbf{c}_{t-k} + \mathbf{w}_t \\
+\mathbf{y}_t = \mathbf{Z} \mathbf{x}_t + \mathbf{a} + \mathbf{D} \mathbf{d}_{t-h}+ \mathbf{v}_t \\
+$$
+
+Thus, to fit our movement model for a wandering animal, we need to set the various elements of the vectors and matrices in the full form model to either 0 or 1. Specifically, we set the following:
+
+$$
+\begin{align}
+\mathbf{B} &= 
+\begin{bmatrix}
+1 & 0 \\ 0 & 1
+\end{bmatrix} \\
+\mathbf{u} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{C} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{c}_{t-k} &=
+\begin{bmatrix}
+0
+\end{bmatrix} \\
+\mathbf{Z} &= 
+\begin{bmatrix}
+1 & 0 \\ 0 & 1
+\end{bmatrix} \\
+\mathbf{a} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{D} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{d}_{t-h} &=
+\begin{bmatrix}
+0
+\end{bmatrix}
+\end{align}
+$$
 
 
 ***

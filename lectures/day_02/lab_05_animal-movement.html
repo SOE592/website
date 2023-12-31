@@ -5539,6 +5539,57 @@ assume that they’re “independent and identically distributed” (IID),
 such that the form for <span class="math inline">\(\mathbf{R}\)</span>
 is <code>diagonal and equal</code> in <code>MARSS()</code>.</p>
 </div>
+</div>
+<div id="full-marss-model" class="section level3">
+<h3>Full MARSS model</h3>
+<p>Recall that when fitting models with the {MARSS} package, we need to
+explicitly specify the forms for <strong><em>all</em></strong> of the
+vectors and matrices in the full MARSS model given by</p>
+<p><span class="math display">\[
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{C}
+\mathbf{c}_{t-k} + \mathbf{w}_t \\
+\mathbf{y}_t = \mathbf{Z} \mathbf{x}_t + \mathbf{a} + \mathbf{D}
+\mathbf{d}_{t-h}+ \mathbf{v}_t \\
+\]</span></p>
+<p>Thus, to fit our movement model for a wandering animal, we need to
+set the various elements of the vectors and matrices in the full form
+model to either 0 or 1. Specifically, we set the following:</p>
+<p><span class="math display">\[
+\begin{align}
+\mathbf{B} &amp;=
+\begin{bmatrix}
+1 &amp; 0 \\ 0 &amp; 1
+\end{bmatrix} \\
+\mathbf{u} &amp;=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{C} &amp;=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{c}_{t-k} &amp;=
+\begin{bmatrix}
+0
+\end{bmatrix} \\
+\mathbf{Z} &amp;=
+\begin{bmatrix}
+1 &amp; 0 \\ 0 &amp; 1
+\end{bmatrix} \\
+\mathbf{a} &amp;=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{D} &amp;=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{d}_{t-k} &amp;=
+\begin{bmatrix}
+0
+\end{bmatrix}
+\end{align}
+\]</span></p>
 <hr />
 </div>
 </div>
