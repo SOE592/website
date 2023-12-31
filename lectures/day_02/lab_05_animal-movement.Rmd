@@ -15,7 +15,7 @@ output:
 ```{r setup, include=FALSE, purl=FALSE}
 ## in case you forget to add a chunk label
 knitr::opts_chunk$set(
-  fig.dim = c(8, 5),
+  fig.dim = c(6, 6),
   fig.align = "center"
   )
 set.seed(592)
@@ -98,7 +98,110 @@ where the process errors are distributed as $\mathbf{v}_t \sim \text{MVN}(\mathb
 **Tip:** It's rare that the variance in observation errors would be different for latitude or longitude so we typically assume that they're "independent and identically distributed" (IID), such that the form for $\mathbf{R}$ is `diagonal and equal` in `MARSS()`.
 </div>
 
-### Full MARSS model
+## Simulated data
+
+As we've discussed before, it's a great idea to use simulated data when first learning to fit models, estimate parameters, and interpret their meaning. We'll begin by simulating some data indicative of an animal that was tracked while wandering aimlessly through its habitat.
+
+### `mvrnorm()` function
+
+We can use the `mvrnorm()` function from the {MASS} package (note spelling here) to draw random numbers from a multivariate normal distribution, such as the process and observation errors in a MARSS model.
+
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** If you do not already have the {MASS} package installed, do so now with `install.packages("MASS")`.
+</div>
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** The `mvrnorm()` function requires 3 arguments:
+
+1. `n`: the desired number of samples
+
+2. `mu`: the vector specifying the means (all 0's in our models)
+
+3. `Sigma`: the variance-covariance matrix
+</div>
+
+## Create animal track
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Simulate some data from a two-dimensional random walk and plot the animal's track.
+</div>
+
+```{r sim_data_x_1, fig.cap = "Simulated track of an animal wandering around its habitat, starting at the diamond and ending at the square."}
+## load MASS library
+library(MASS)
+
+## number of time steps
+TT <- 31
+
+## var-cov matrix for process errors (Q); no covariance
+QQ <- diag(c(0.007, 0.007))
+
+## process errors; transposed to match equational form
+ww <- mvrnorm(n = TT, mu = c(0, 0), Sigma = QQ) |> t()
+
+## initialize state vector
+xx <- ww
+
+## set starting lat & lon (degrees N & W)
+xx[,1] <- c(45, 120)
+
+## random walk; 1st row is latitude, 2nd row is longitude
+for(t in 2:TT) {
+  xx[,t] <- xx[,t-1] + ww[,t]
+}
+
+## plot the true locations
+par(mai = c(1.2, 1, 0.3, 0),
+    omi = c(0, 0, 0.5, 1))
+plot(xx[2,], xx[1, ],
+     pch = 16, type = "o", col = "blue",
+     xlab = "Longitude (W)", ylab = "Latitude (N)")
+## add start & end points
+points(xx[2, 1], xx[1, 1],
+       pch = 5, cex = 2, col = "blue")
+points(xx[2, TT], xx[1, TT],
+       pch = 0, cex = 2, col = "blue")
+```
+
+<br>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Add some observation error to the true locations and plot both time series.
+</div>
+
+```{r sim_data_y_1, fig.cap = "Simulated true track of an animal wandering around its habitat (blue) and the observed locations (gray). Each track starts at the diamond and ends at the square."}
+## var-cov matrix for obs errors (R); no covariance
+RR <- diag(c(0.004, 0.004))
+
+## obs errors; transposed to match states
+vv <- mvrnorm(n = TT, mu = c(0, 0), Sigma = RR) |> t()
+
+## add errors to true locations
+yy <- xx + vv
+
+## plot the true locations
+par(mai = c(1.2, 1, 0.3, 0),
+    omi = c(0, 0, 0.5, 1))
+plot(xx[2,], xx[1, ],
+     xlim = range(xx[2, ], yy[2, ]), ylim = range(xx[1, ], yy[1, ]),
+     pch = 16, type = "o", col = "blue",
+     xlab = "Longitude (W)", ylab = "Latitude (N)")
+## add start & end points
+points(xx[2, 1], xx[1, 1],
+       pch = 5, cex = 2, col = "blue")
+points(xx[2, TT], xx[1, TT],
+       pch = 0, cex = 2, col = "blue")
+## add the obs
+lines(yy[2,], yy[1,],
+      type = "o", pch = 16, col = "darkgray")
+points(yy[2, 1], yy[1, 1],
+       pch = 5, cex = 2, col = "darkgray")
+points(yy[2, TT], yy[1, TT],
+       pch = 0, cex = 2, col = "darkgray")
+```
+
+
+## Fitting the model
 
 Recall that when fitting models with the {MARSS} package, we need to explicitly specify the forms for ***all*** of the vectors and matrices in the full MARSS model given by
 
@@ -146,93 +249,102 @@ $$
 \end{align}
 $$
 
+### Matrices as lists
 
-## Simulated data
+Because `MARSS()` uses model definitions as written in equation form, we need a way to mix both numbers and characters inside a matrix. Unfortunately, however, **R** does not let us mix `numeric` and `character` classes within a matrix. So, for example, the following code block tries to mix them in a 2x2 matrix, but everything will become a `character`.
 
-As we've discussed before, it's a great idea to use simulated data when first learning to fit models, estimate parameters, and interpret their meaning. We'll begin by simulating some data indicative of an animal that was tracked while wandering aimlessly through its habitat.
+```{r ex_matrix_list_n}
+## characters along the diagonal, numbers in the off-diagonals
+M <- matrix(c("a", 0, 1, "b"), 2, 2)
 
-### `mvrnorm()` function
-
-We can use the `mvrnorm()` function from the {MASS} package (note spelling here) to draw random numbers from a multivariate normal distribution, such as the process and observation errors in a MARSS model.
-
-<div class="boxy boxy-red boxy-exclamation">
-**Note:** If you do not already have the {MASS} package installed, do so now with `install.packages("MASS")`.
-</div>
-
-<div class="boxy boxy-orange boxy-lightbulb">
-**Tip:** The `mvrnorm()` function requires 3 arguments:
-
-1. `n`: the desired number of samples
-
-2. `mu`: the vector specifying the means (all 0's in our models)
-
-3. `Sigma`: the variance-covariance matrix
-</div>
-
-## Create animal track
-
-<div class="boxy boxy-blue boxy-clipboard-list">
-**Task:** Simulate some data from a two-dimensional random walk and plot the animal's track.
-</div>
-
-```{r sim_data_x_1, fig.dim = c(6, 6), fig.cap = "Simulated track of an animal wandering around its habitat, starting at the diamond and ending at the square."}
-## load MASS library
-library(MASS)
-
-## number of time steps
-TT <- 31
-
-## var-cov matrix for process errors (Q); no covariance
-QQ <- diag(c(0.007, 0.007))
-
-## process errors; transposed to match equational form
-ww <- mvrnorm(n = TT, mu = c(0, 0), Sigma = QQ) |> t()
-
-## initialize state vector
-xx <- ww
-
-## set starting lat & lon (degrees N & W)
-xx[,1] <- c(45, 120)
-
-## random walk; 1st row is latitude, 2nd row is longitude
-for(t in 2:TT) {
-  xx[,t] <- xx[,t-1] + ww[,t]
-}
-
-## plot the true locations
-par(mai = c(1.2, 1, 0.3, 0),
-    omi = c(0, 0, 0.5, 1))
-plot(xx[2,], xx[1, ],
-     pch = 16, type = "o", col = "blue",
-     xlab = "Longitude (W)", ylab = "Latitude (N)")
-## add start & end points
-points(xx[2, 1], xx[1, 1],
-       pch = 5, cex = 2, col = "blue")
-points(xx[2, TT], xx[1, TT],
-       pch = 0, cex = 2, col = "blue")
+## this won't work
+M
 ```
 
-<br>
-
-<div class="boxy boxy-blue boxy-clipboard-list">
-**Task:** Add some observation error to the true locations and plot both time series.
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** We can create a matrix in R where every element is instead a `list`, which will allow us to mix `numeric` and `character` classes within a matrix.
 </div>
 
-```{r sim_data_y_1, fig.dim = c(6, 6), fig.cap = "Simulated true track of an animal wandering around its habitat (blue) and the observed locations (gray). Each track starts at the diamond and ends at the square."}
-## var-cov matrix for obs errors (R); no covariance
-RR <- diag(c(0.004, 0.004))
+```{r ex_matrix_list_y}
+## 2x2 matrix with empty lists
+M <- matrix(list(), 2, 2)
 
-## obs errors; transposed to match states
-vv <- mvrnorm(n = TT, mu = c(0, 0), Sigma = RR) |> t()
+## characters along the diagonal, numbers in the off-diagonals
+diag(M) <- c("a", "b")
+M[1, 2] <- 1
+M[2, 1] <- 0
 
-## add errors to true locations
-yy <- xx + vv
+## this works!
+M
+```
 
-## plot the true locations
+### Define the model
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Create the model list for specifying our multivariate random walk in `MARSS()`. Use a diagonal and equal $\mathbf{Q}$ and $\mathbf{R}$.
+</div>
+
+```{r mod_list_rw}
+## create model list for MARSS()
+mod_list <- list(
+  ## state model
+  B = diag(2),             # 2x2 identity matrix
+  U = matrix(0, 2, 1),     # 2x1 vector of biases = 0
+  C = matrix(0, 2, 1),     # 2x1 vector of covariate effects = 0
+  c = matrix(0),           # 1x1 matrix of covariates (none)
+  Q = matrix(c(list("q"),  # 2x2 covariance matrix
+               list(0),
+               list(0),
+               list("q")),
+             2, 2),
+  ## obs model
+  Z = diag(2),             # 2x2 identity matrix
+  A = matrix(0, 2, 1),     # 2x1 vector of offsets = 0
+  D = matrix(0, 2, 1),     # 2x1 vector of covariate effects = 0
+  d = matrix(0),           # 1x1 matrix of covariates (none)
+  R = matrix(c(list("r"),  # 2x2 covariance matrix
+               list(0),
+               list(0),
+               list("r")),
+             2, 2)
+  )
+
+```
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** There are textual shortcuts in {MARSS} that we can use when defining the specific forms for vectors and matrices in a model list. For example, `"diagonal and equal"` gives a covariance matrix with the same elements on the diagonal and 0's elsewhere. Type `?MARSS.marxss` or check the User Guide [here]("https://cran.r-project.org/web/packages/MARSS/vignettes/UserGuide.pdf) for more info.
+</div>
+
+### Fit with `MARSS()`
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Fit a random walk model to our simulated data with `MARSS()`.
+</div>
+
+```{r fit_rw, cache = TRUE}
+## load {MARSS}
+library(MARSS)
+
+## fit the model
+mod_rw <- MARSS(y = yy, model = mod_list)
+```
+
+### Compare the results
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Compare our estimated states with the simulate values.
+</div>
+
+```{r compare_rw_model, fig.cap = "Simulated true track of an animal wandering around its habitat (blue), the observed locations (gray), and the estimated true locations (red). Each track starts at the diamond and ends at the square."}
+## extract the estimated states
+xx_hat <- mod_rw$states
+
+## plot the estimated states with the data
 par(mai = c(1.2, 1, 0.3, 0),
     omi = c(0, 0, 0.5, 1))
 plot(xx[2,], xx[1, ],
-     xlim = range(xx[2, ], yy[2, ]), ylim = range(xx[1, ], yy[1, ]),
+     xlim = range(xx[2, ], yy[2, ], xx_hat[2, ]),
+     ylim = range(xx[1, ], yy[1, ], xx_hat[1, ]),
      pch = 16, type = "o", col = "blue",
      xlab = "Longitude (W)", ylab = "Latitude (N)")
 ## add start & end points
@@ -247,20 +359,20 @@ points(yy[2, 1], yy[1, 1],
        pch = 5, cex = 2, col = "darkgray")
 points(yy[2, TT], yy[1, TT],
        pch = 0, cex = 2, col = "darkgray")
+## add the estimated states
+lines(xx_hat[2,], xx_hat[1,],
+      type = "o", pch = 16, col = "darkred")
+points(xx_hat[2, 1], xx_hat[1, 1],
+       pch = 5, cex = 2, col = "darkred")
+points(xx_hat[2, TT], xx_hat[1, TT],
+       pch = 0, cex = 2, col = "darkred")
 ```
 
-
+<br>
 
 <div class="boxy boxy-blue boxy-clipboard-list">
-**Task:** 
+**Task:** What do you notice about the true track and its estimate? What does this say about the relative levels of estimated process and observation errors?
 </div>
-
-<div class="boxy boxy-orange boxy-lightbulb">
-**Tip:** 
-</div>
-
-
-
 
 
 ***
