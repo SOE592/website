@@ -5723,6 +5723,133 @@ model to either 0 or 1. Specifically, we set the following:</p>
 </div>
 <div id="home-range" class="section level1">
 <h1>Home range</h1>
+<p>Many animals that are not actively migrating to or from a breeding
+location or simply wandering around tend to establish some form of home
+range with which they move in search of food. For example, a female
+cougar with kittens in a den will forage for prey in various directions
+and distances from her den, but she will then return there to feed her
+young.</p>
+<div id="mean-reverting-model" class="section level2">
+<h2>Mean-reverting model</h2>
+<p>For animals moving within a home range, we want a model that doesn’t
+allow for unrestricted or directional movement and instead treats
+movements as temporary deviations away from some central location (ie,
+“mean reverting”). To do so, we will add two terms to our random walk
+model that account for the general stationarity in location.</p>
+<div id="state-model-2" class="section level3">
+<h3>State model</h3>
+<p>Our state model for movement in two dimensions around a central
+location includes an additional term for the degree of mean-reversion in
+both the <em>x</em> and <em>y</em> directions, such that</p>
+<p><span class="math display">\[
+x^\text{(lat)}_t = b^\text{(lat)}x^\text{(lat)}_{t-1} + w^\text{(lat)}_t
+\\
+x^\text{(lon)}_t = b^\text{(lon)}x^\text{(lon)}_{t-1} + w^\text{(lon)}_t
+\\
+\Downarrow \\
+\begin{bmatrix}
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_t =
+\begin{bmatrix}
+b^\text{(lat)} &amp; 0 \\
+0 &amp; b^\text{(lon)} \\
+\end{bmatrix}_t\begin{bmatrix}
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_{t-1} +
+\begin{bmatrix}
+w^\text{(lat)} \\
+w^\text{(lon)} \\
+\end{bmatrix}_t \\
+\Downarrow \\
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{w}_t \\
+\]</span></p>
+<p>where the process errors are again distributed as <span class="math inline">\(\mathbf{w}_t \sim \text{MVN}(\mathbf{0},
+\mathbf{Q})\)</span>.</p>
+<div class="boxy boxy-orange boxy-lightbulb">
+<p><strong>Tip:</strong> In most cases, we would expect an animal’s home
+range to be non-circular, which is why we’ve set the diagonal elements
+of <span class="math inline">\(\mathbf{B}\)</span> to be unequal. There
+is, however, no reason you couldn’t assume the elements were the
+same.</p>
+</div>
+</div>
+<div id="observation-model-2" class="section level3">
+<h3>Observation model</h3>
+<p>Our observation model does not change from the original one we’ve
+been using, and is given by</p>
+<p><span class="math display">\[
+y^\text{(lat)}_t = x^\text{(lat)}_t + v^\text{(lat)}_t \\
+y^\text{(lon)}_t = x^\text{(lon)}_t + v^\text{(lon)}_t \\
+\Downarrow \\
+\begin{bmatrix}
+y^\text{(lat)} \\
+y^\text{(lon)} \\
+\end{bmatrix}_t =
+\begin{bmatrix}
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_t +
+\begin{bmatrix}
+v^\text{(lat)} \\
+v^\text{(lon)} \\
+\end{bmatrix}_t \\
+\Downarrow \\
+\mathbf{y}_t = \mathbf{x}_t + \mathbf{v}_t \\
+\]</span></p>
+<p>where the process errors are distributed as <span class="math inline">\(\mathbf{v}_t \sim \text{MVN}(\mathbf{0},
+\mathbf{R})\)</span>.</p>
+</div>
+<div id="full-marss-model-2" class="section level3">
+<h3>Full MARSS model</h3>
+<p>As with our models, we need to explicitly specify the forms for
+<strong><em>all</em></strong> of the vectors and matrices in the full
+MARSS model given by</p>
+<p><span class="math display">\[
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{C}
+\mathbf{c}_{t-k} + \mathbf{w}_t \\
+\mathbf{y}_t = \mathbf{Z} \mathbf{x}_t + \mathbf{a} + \mathbf{D}
+\mathbf{d}_{t-h}+ \mathbf{v}_t \\
+\]</span></p>
+<p>To fit our movement model for a animal moving around a central
+location, we need to set the various elements of the vectors and
+matrices in the full form model to either 0 or 1. Specifically, we set
+the following:</p>
+<p><span class="math display">\[
+\begin{align}
+\mathbf{u} &amp;=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{C} &amp;=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{c}_{t-k} &amp;=
+\begin{bmatrix}
+0
+\end{bmatrix} \\
+\mathbf{Z} &amp;=
+\begin{bmatrix}
+1 &amp; 0 \\ 0 &amp; 1
+\end{bmatrix} \\
+\mathbf{a} &amp;=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{D} &amp;=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{d}_{t-h} &amp;=
+\begin{bmatrix}
+0
+\end{bmatrix}
+\end{align}
+\]</span></p>
+</div>
+</div>
 </div>
 <div id="model-comparisons" class="section level1">
 <h1>Model comparisons</h1>
