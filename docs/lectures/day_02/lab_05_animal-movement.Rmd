@@ -4,22 +4,378 @@ subtitle: "SOE 592 – Intro to Time Series Analysis"
 date: "<br>4 Jan 2024"
 output:
   html_document:
-    theme: sandstone
+    theme: simplex
     highlight: textmate
+    css: ["lecture_inst.css", "fontawesome.css", "solid.css"]
     toc: true
     toc_float: true
     toc_depth: 3
 ---
 
-```{r dfa-setup, include=FALSE, purl=FALSE}
+```{r setup, include=FALSE, purl=FALSE}
 ## in case you forget to add a chunk label
-knitr::opts_knit$set(unnamed.chunk.label = "dfa-")
+knitr::opts_chunk$set(
+  fig.dim = c(8, 5),
+  fig.align = "center"
+  )
+set.seed(592)
 ```
+
+***
 
 # Introduction
 
+Using time series models to analyze animal movement is common in wildlife ecology. The topic has seen increasingly more interest as the technology for tracking animals has become more sophisticated and less expensive. In this lab, we'll see how to use multivariate state-space models to estimate movement tracks and rates of travel for several different behaviors.
+
 
 ***
+
+# Wandering
+
+Sometimes animals appear to be merely wandering around in search of food, mates, or resting spots. For these types of behavior, random walks models are most appropriate. For terrestrial animals, most movement models consider locations in two dimensions, latitude and longitude, and generally ignore the height above the ground. For some fishes and marine mammals, however, the models may additionally include the animal's depth below the surface of the water. Here we will consider only two-dimensional movement, but the concepts are the same when applied to three dimensions.
+
+## Random walk model
+
+Recall that random walk models are extremely flexible in their ability to fit a variety of temporal patterns. As such, random walk models work really well for animals that appear to be wandering around with a lack of clear direction or a tendency to stay around some particular area.
+
+### State model
+
+We can write the state model for movement in two dimensions as
+
+$$
+x^\text{(lat)}_t = x^\text{(lat)}_{t-1} + w^\text{(lat)}_t \\
+x^\text{(lon)}_t = x^\text{(lon)}_{t-1} + w^\text{(lon)}_t \\
+\Downarrow \\
+\begin{bmatrix}
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_t =
+\begin{bmatrix}
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_{t-1} + 
+\begin{bmatrix}
+w^\text{(lat)} \\
+w^\text{(lon)} \\
+\end{bmatrix}_t \\
+\Downarrow \\
+\mathbf{x}_t = \mathbf{x}_{t-1} + \mathbf{w}_t \\
+$$
+
+where the process errors are distributed as $\mathbf{w}_t \sim \text{MVN}(\mathbf{0}, \mathbf{Q})$.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** The form for $\mathbf{Q}$ can be changed to account for more/less variance in the latitude or longitude step size (ie, `diagonal and unequal` in `MARSS()`), or to model covariance between the errors (ie, `equalvarcov` in `MARSS()`).
+</div>
+
+### Observation model
+
+Our observation model is straightforward and includes terms for the data, states, and errors.
+
+$$
+y^\text{(lat)}_t = x^\text{(lat)}_t + v^\text{(lat)}_t \\
+y^\text{(lon)}_t = x^\text{(lon)}_t + v^\text{(lon)}_t \\
+\Downarrow \\
+\begin{bmatrix}
+y^\text{(lat)} \\
+y^\text{(lon)} \\
+\end{bmatrix}_t =
+\begin{bmatrix}
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_t + 
+\begin{bmatrix}
+v^\text{(lat)} \\
+v^\text{(lon)} \\
+\end{bmatrix}_t \\
+\Downarrow \\
+\mathbf{y}_t = \mathbf{x}_t + \mathbf{v}_t \\
+$$
+
+where the process errors are distributed as $\mathbf{v}_t \sim \text{MVN}(\mathbf{0}, \mathbf{R})$.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** It's rare that the variance in observation errors would be different for latitude or longitude so we typically assume that they're "independent and identically distributed" (IID), such that the form for $\mathbf{R}$ is `diagonal and equal` in `MARSS()`.
+</div>
+
+### Full MARSS model
+
+Recall that when fitting models with the {MARSS} package, we need to explicitly specify the forms for ***all*** of the vectors and matrices in the full MARSS model given by
+
+$$
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{C} \mathbf{c}_{t-k} + \mathbf{w}_t \\
+\mathbf{y}_t = \mathbf{Z} \mathbf{x}_t + \mathbf{a} + \mathbf{D} \mathbf{d}_{t-h}+ \mathbf{v}_t \\
+$$
+
+Thus, to fit our movement model for a wandering animal, we need to set the various elements of the vectors and matrices in the full form model to either 0 or 1. Specifically, we set the following:
+
+$$
+\begin{align}
+\mathbf{B} &= 
+\begin{bmatrix}
+1 & 0 \\ 0 & 1
+\end{bmatrix} \\
+\mathbf{u} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{C} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{c}_{t-k} &=
+\begin{bmatrix}
+0
+\end{bmatrix} \\
+\mathbf{Z} &= 
+\begin{bmatrix}
+1 & 0 \\ 0 & 1
+\end{bmatrix} \\
+\mathbf{a} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{D} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{d}_{t-h} &=
+\begin{bmatrix}
+0
+\end{bmatrix}
+\end{align}
+$$
+
+
+***
+
+# Migration
+
+Daily or seasonal migrations are one of the most fascinating and well studied behaviors in animal ecology. When modeling these behaviors, we typically want to estimate the rates of movement (eg, kilometers per day) in addition to the actual track the animal took during its migration.
+
+## Biased random walk
+
+For animals undertaking a directed migration, we need to modify our random walk model to include an additional term for the bias in movement direction.
+
+### State model
+
+Our state model for directional movement (migration) in two dimensions simply includes an additional term for the bias in both the *x* and *y* directions, such that
+
+$$
+x^\text{(lat)}_t = x^\text{(lat)}_{t-1} + u^\text{(lat)} + w^\text{(lat)}_t \\
+x^\text{(lon)}_t = x^\text{(lon)}_{t-1} + u^\text{(lon)} + w^\text{(lon)}_t \\
+\Downarrow \\
+\begin{bmatrix}
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_t =
+\begin{bmatrix}
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_{t-1} + 
+\begin{bmatrix}
+u^\text{(lat)} \\
+u^\text{(lon)} \\
+\end{bmatrix} + 
+\begin{bmatrix}
+w^\text{(lat)} \\
+w^\text{(lon)} \\
+\end{bmatrix}_t \\
+\Downarrow \\
+\mathbf{x}_t = \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{w}_t \\
+$$
+
+where the process errors are again distributed as $\mathbf{w}_t \sim \text{MVN}(\mathbf{0}, \mathbf{Q})$.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** It's common that migrating animals tend to move in one direction more than another (eg, north-south versus east-west), which means we typically assume that the bias term $\mathbf{u}$ is `unconstrained` in `MARSS()`.
+</div>
+
+### Observation model
+
+Our observation model does not change from the original one we used above, and is given by
+
+$$
+y^\text{(lat)}_t = x^\text{(lat)}_t + v^\text{(lat)}_t \\
+y^\text{(lon)}_t = x^\text{(lon)}_t + v^\text{(lon)}_t \\
+\Downarrow \\
+\begin{bmatrix}
+y^\text{(lat)} \\
+y^\text{(lon)} \\
+\end{bmatrix}_t =
+\begin{bmatrix}
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_t + 
+\begin{bmatrix}
+v^\text{(lat)} \\
+v^\text{(lon)} \\
+\end{bmatrix}_t \\
+\Downarrow \\
+\mathbf{y}_t = \mathbf{x}_t + \mathbf{v}_t \\
+$$
+
+where the process errors are distributed as $\mathbf{v}_t \sim \text{MVN}(\mathbf{0}, \mathbf{R})$.
+
+### Full MARSS model
+
+As before with the random walk model, we need to explicitly specify the forms for ***all*** of the vectors and matrices in the full MARSS model given by
+
+$$
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{C} \mathbf{c}_{t-k} + \mathbf{w}_t \\
+\mathbf{y}_t = \mathbf{Z} \mathbf{x}_t + \mathbf{a} + \mathbf{D} \mathbf{d}_{t-h}+ \mathbf{v}_t \\
+$$
+
+Thus, to fit our movement model for a migrating animal, we need to set the various elements of the vectors and matrices in the full form model to either 0 or 1. Specifically, we set the following:
+
+$$
+\begin{align}
+\mathbf{B} &= 
+\begin{bmatrix}
+1 & 0 \\ 0 & 1
+\end{bmatrix} \\
+\mathbf{C} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{c}_{t-k} &=
+\begin{bmatrix}
+0
+\end{bmatrix} \\
+\mathbf{Z} &= 
+\begin{bmatrix}
+1 & 0 \\ 0 & 1
+\end{bmatrix} \\
+\mathbf{a} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{D} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{d}_{t-h} &=
+\begin{bmatrix}
+0
+\end{bmatrix}
+\end{align}
+$$
+
+
+***
+
+# Home range
+
+Many animals that are not actively migrating to or from a breeding location or simply wandering around tend to establish some form of home range with which they move in search of food. For example, a female cougar with kittens in a den will forage for prey in various directions and distances from her den, but she will then return there to feed her young.
+
+## Mean-reverting model
+
+For animals moving within a home range, we want a model that doesn't allow for unrestricted or directional movement and instead treats movements as temporary deviations away from some central location (ie, "mean reverting"). To do so, we will add two terms to our random walk model that account for the general stationarity in location.
+
+### State model
+
+Our state model for movement in two dimensions around a central location includes an additional term for the degree of mean-reversion in both the *x* and *y* directions, such that
+
+$$
+x^\text{(lat)}_t = b^\text{(lat)}x^\text{(lat)}_{t-1} + w^\text{(lat)}_t \\
+x^\text{(lon)}_t = b^\text{(lon)}x^\text{(lon)}_{t-1} + w^\text{(lon)}_t \\
+\Downarrow \\
+\begin{bmatrix}
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_t =
+\begin{bmatrix}
+b^\text{(lat)} & 0 \\
+0 & b^\text{(lon)} \\
+\end{bmatrix}_t\begin{bmatrix}
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_{t-1} + 
+\begin{bmatrix}
+w^\text{(lat)} \\
+w^\text{(lon)} \\
+\end{bmatrix}_t \\
+\Downarrow \\
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{w}_t \\
+$$
+
+where the process errors are again distributed as $\mathbf{w}_t \sim \text{MVN}(\mathbf{0}, \mathbf{Q})$.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** In most cases, we would expect an animal's home range to be non-circular, which is why we've set the diagonal elements of $\mathbf{B}$ to be unequal. There is, however, no reason you couldn't assume the elements were the same.
+</div>
+
+### Observation model
+
+Our observation model does not change from the original one we've been using, and is given by
+
+$$
+y^\text{(lat)}_t = x^\text{(lat)}_t + v^\text{(lat)}_t \\
+y^\text{(lon)}_t = x^\text{(lon)}_t + v^\text{(lon)}_t \\
+\Downarrow \\
+\begin{bmatrix}
+y^\text{(lat)} \\
+y^\text{(lon)} \\
+\end{bmatrix}_t =
+\begin{bmatrix}
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_t + 
+\begin{bmatrix}
+v^\text{(lat)} \\
+v^\text{(lon)} \\
+\end{bmatrix}_t \\
+\Downarrow \\
+\mathbf{y}_t = \mathbf{x}_t + \mathbf{v}_t \\
+$$
+
+where the process errors are distributed as $\mathbf{v}_t \sim \text{MVN}(\mathbf{0}, \mathbf{R})$.
+
+### Full MARSS model
+
+As with our models, we need to explicitly specify the forms for ***all*** of the vectors and matrices in the full MARSS model given by
+
+$$
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{C} \mathbf{c}_{t-k} + \mathbf{w}_t \\
+\mathbf{y}_t = \mathbf{Z} \mathbf{x}_t + \mathbf{a} + \mathbf{D} \mathbf{d}_{t-h}+ \mathbf{v}_t \\
+$$
+
+To fit our movement model for a animal moving around a central location, we need to set the various elements of the vectors and matrices in the full form model to either 0 or 1. Specifically, we set the following:
+
+$$
+\begin{align}
+\mathbf{u} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{C} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{c}_{t-k} &=
+\begin{bmatrix}
+0
+\end{bmatrix} \\
+\mathbf{Z} &= 
+\begin{bmatrix}
+1 & 0 \\ 0 & 1
+\end{bmatrix} \\
+\mathbf{a} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{D} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{d}_{t-h} &=
+\begin{bmatrix}
+0
+\end{bmatrix}
+\end{align}
+$$
+
+
 
 # Model comparisons
 
@@ -48,7 +404,7 @@ mod_list <- list(
 
 ```{r rw_fit, echo = TRUE, eval=TRUE}
 ## fit the model
-mod_fit_2 <- MARSS(y = YY, model = mod_list)
+# mod_fit_2 <- MARSS(y = YY, model = mod_list)
 ```
 
 
@@ -56,10 +412,10 @@ mod_fit_2 <- MARSS(y = YY, model = mod_list)
 
 ```{r compare_AICc, echo = TRUE, eval = TRUE}
 ## biased RW
-mod_fit$AICc
+# mod_fit$AICc
 
 ## unbiased RW
-mod_fit_2$AICc
+# mod_fit_2$AICc
 ```
 
 ***
