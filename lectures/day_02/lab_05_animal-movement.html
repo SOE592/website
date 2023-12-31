@@ -5584,7 +5584,7 @@ model to either 0 or 1. Specifically, we set the following:</p>
 \begin{bmatrix}
 0 \\ 0
 \end{bmatrix} \\
-\mathbf{d}_{t-k} &amp;=
+\mathbf{d}_{t-h} &amp;=
 \begin{bmatrix}
 0
 \end{bmatrix}
@@ -5596,27 +5596,129 @@ model to either 0 or 1. Specifically, we set the following:</p>
 </div>
 <div id="migration" class="section level1">
 <h1>Migration</h1>
+<p>Daily or seasonal migrations are one of the most fascinating and well
+studied behaviors in animal ecology. When modeling these behaviors, we
+typically want to estimate the rates of movement (eg, kilometers per
+day) in addition to the actual track the animal took during its
+migration.</p>
 <div id="biased-random-walk" class="section level2">
 <h2>Biased random walk</h2>
+<p>For animals undertaking a directed migration, we need to modify our
+random walk model to include an additional term for the bias in movement
+direction.</p>
+<div id="state-model-1" class="section level3">
+<h3>State model</h3>
+<p>Our state model for directional movement (migration) in two
+dimensions simply includes an additional term for the bias in both the
+<em>x</em> and <em>y</em> directions, such that</p>
 <p><span class="math display">\[
+x^\text{(lat)}_t = x^\text{(lat)}_{t-1} + u^\text{(lat)} +
+w^\text{(lat)}_t \\
+x^\text{(lon)}_t = x^\text{(lon)}_{t-1} + u^\text{(lon)} +
+w^\text{(lon)}_t \\
+\Downarrow \\
 \begin{bmatrix}
-x^\text{(lat)}_{t} \\
-x^\text{(lon)}_{t} \\
-\end{bmatrix} =
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_t =
 \begin{bmatrix}
-x^\text{(lat)}_{t-1} \\
-x^\text{(lon)}_{t-1} \\
-\end{bmatrix} +
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_{t-1} +
 \begin{bmatrix}
 u^\text{(lat)} \\
 u^\text{(lon)} \\
 \end{bmatrix} +
 \begin{bmatrix}
-w^\text{(lat)}_{t} \\
-w^\text{(lon)}_{t} \\
+w^\text{(lat)} \\
+w^\text{(lon)} \\
+\end{bmatrix}_t \\
+\Downarrow \\
+\mathbf{x}_t = \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{w}_t \\
+\]</span></p>
+<p>where the process errors are again distributed as <span class="math inline">\(\mathbf{w}_t \sim \text{MVN}(\mathbf{0},
+\mathbf{Q})\)</span>.</p>
+<div class="boxy boxy-orange boxy-lightbulb">
+<p><strong>Tip:</strong> It’s common that migrating animals tend to move
+in one direction more than another (eg, north-south versus east-west),
+which means we typically assume that the bias term <span class="math inline">\(\mathbf{u}\)</span> is <code>unconstrained</code>
+in <code>MARSS()</code>.</p>
+</div>
+</div>
+<div id="observation-model-1" class="section level3">
+<h3>Observation model</h3>
+<p>Our observation model does not change from the original one we used
+above, and is given by</p>
+<p><span class="math display">\[
+y^\text{(lat)}_t = x^\text{(lat)}_t + v^\text{(lat)}_t \\
+y^\text{(lon)}_t = x^\text{(lon)}_t + v^\text{(lon)}_t \\
+\Downarrow \\
+\begin{bmatrix}
+y^\text{(lat)} \\
+y^\text{(lon)} \\
+\end{bmatrix}_t =
+\begin{bmatrix}
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_t +
+\begin{bmatrix}
+v^\text{(lat)} \\
+v^\text{(lon)} \\
+\end{bmatrix}_t \\
+\Downarrow \\
+\mathbf{y}_t = \mathbf{x}_t + \mathbf{v}_t \\
+\]</span></p>
+<p>where the process errors are distributed as <span class="math inline">\(\mathbf{v}_t \sim \text{MVN}(\mathbf{0},
+\mathbf{R})\)</span>.</p>
+</div>
+<div id="full-marss-model-1" class="section level3">
+<h3>Full MARSS model</h3>
+<p>As before with the random walk model, we need to explicitly specify
+the forms for <strong><em>all</em></strong> of the vectors and matrices
+in the full MARSS model given by</p>
+<p><span class="math display">\[
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{C}
+\mathbf{c}_{t-k} + \mathbf{w}_t \\
+\mathbf{y}_t = \mathbf{Z} \mathbf{x}_t + \mathbf{a} + \mathbf{D}
+\mathbf{d}_{t-h}+ \mathbf{v}_t \\
+\]</span></p>
+<p>Thus, to fit our movement model for a migrating animal, we need to
+set the various elements of the vectors and matrices in the full form
+model to either 0 or 1. Specifically, we set the following:</p>
+<p><span class="math display">\[
+\begin{align}
+\mathbf{B} &amp;=
+\begin{bmatrix}
+1 &amp; 0 \\ 0 &amp; 1
+\end{bmatrix} \\
+\mathbf{C} &amp;=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{c}_{t-k} &amp;=
+\begin{bmatrix}
+0
+\end{bmatrix} \\
+\mathbf{Z} &amp;=
+\begin{bmatrix}
+1 &amp; 0 \\ 0 &amp; 1
+\end{bmatrix} \\
+\mathbf{a} &amp;=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{D} &amp;=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{d}_{t-h} &amp;=
+\begin{bmatrix}
+0
 \end{bmatrix}
+\end{align}
 \]</span></p>
 <hr />
+</div>
 </div>
 </div>
 <div id="home-range" class="section level1">

@@ -151,25 +151,114 @@ $$
 
 # Migration
 
+Daily or seasonal migrations are one of the most fascinating and well studied behaviors in animal ecology. When modeling these behaviors, we typically want to estimate the rates of movement (eg, kilometers per day) in addition to the actual track the animal took during its migration.
+
 ## Biased random walk
 
+For animals undertaking a directed migration, we need to modify our random walk model to include an additional term for the bias in movement direction.
+
+### State model
+
+Our state model for directional movement (migration) in two dimensions simply includes an additional term for the bias in both the *x* and *y* directions, such that
+
 $$
+x^\text{(lat)}_t = x^\text{(lat)}_{t-1} + u^\text{(lat)} + w^\text{(lat)}_t \\
+x^\text{(lon)}_t = x^\text{(lon)}_{t-1} + u^\text{(lon)} + w^\text{(lon)}_t \\
+\Downarrow \\
 \begin{bmatrix}
-x^\text{(lat)}_{t} \\
-x^\text{(lon)}_{t} \\
-\end{bmatrix} =
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_t =
 \begin{bmatrix}
-x^\text{(lat)}_{t-1} \\
-x^\text{(lon)}_{t-1} \\
-\end{bmatrix} + 
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_{t-1} + 
 \begin{bmatrix}
 u^\text{(lat)} \\
 u^\text{(lon)} \\
 \end{bmatrix} + 
 \begin{bmatrix}
-w^\text{(lat)}_{t} \\
-w^\text{(lon)}_{t} \\
+w^\text{(lat)} \\
+w^\text{(lon)} \\
+\end{bmatrix}_t \\
+\Downarrow \\
+\mathbf{x}_t = \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{w}_t \\
+$$
+
+where the process errors are again distributed as $\mathbf{w}_t \sim \text{MVN}(\mathbf{0}, \mathbf{Q})$.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** It's common that migrating animals tend to move in one direction more than another (eg, north-south versus east-west), which means we typically assume that the bias term $\mathbf{u}$ is `unconstrained` in `MARSS()`.
+</div>
+
+### Observation model
+
+Our observation model does not change from the original one we used above, and is given by
+
+$$
+y^\text{(lat)}_t = x^\text{(lat)}_t + v^\text{(lat)}_t \\
+y^\text{(lon)}_t = x^\text{(lon)}_t + v^\text{(lon)}_t \\
+\Downarrow \\
+\begin{bmatrix}
+y^\text{(lat)} \\
+y^\text{(lon)} \\
+\end{bmatrix}_t =
+\begin{bmatrix}
+x^\text{(lat)} \\
+x^\text{(lon)} \\
+\end{bmatrix}_t + 
+\begin{bmatrix}
+v^\text{(lat)} \\
+v^\text{(lon)} \\
+\end{bmatrix}_t \\
+\Downarrow \\
+\mathbf{y}_t = \mathbf{x}_t + \mathbf{v}_t \\
+$$
+
+where the process errors are distributed as $\mathbf{v}_t \sim \text{MVN}(\mathbf{0}, \mathbf{R})$.
+
+### Full MARSS model
+
+As before with the random walk model, we need to explicitly specify the forms for ***all*** of the vectors and matrices in the full MARSS model given by
+
+$$
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{C} \mathbf{c}_{t-k} + \mathbf{w}_t \\
+\mathbf{y}_t = \mathbf{Z} \mathbf{x}_t + \mathbf{a} + \mathbf{D} \mathbf{d}_{t-h}+ \mathbf{v}_t \\
+$$
+
+Thus, to fit our movement model for a migrating animal, we need to set the various elements of the vectors and matrices in the full form model to either 0 or 1. Specifically, we set the following:
+
+$$
+\begin{align}
+\mathbf{B} &= 
+\begin{bmatrix}
+1 & 0 \\ 0 & 1
+\end{bmatrix} \\
+\mathbf{C} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{c}_{t-k} &=
+\begin{bmatrix}
+0
+\end{bmatrix} \\
+\mathbf{Z} &= 
+\begin{bmatrix}
+1 & 0 \\ 0 & 1
+\end{bmatrix} \\
+\mathbf{a} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{D} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{d}_{t-h} &=
+\begin{bmatrix}
+0
 \end{bmatrix}
+\end{align}
 $$
 
 
