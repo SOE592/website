@@ -15,7 +15,7 @@ output:
 ```{r setup, include=FALSE, purl=FALSE}
 ## in case you forget to add a chunk label
 knitr::opts_chunk$set(
-  fig.dim = c(8, 5),
+  fig.dim = c(6, 6),
   fig.align = "center"
   )
 set.seed(592)
@@ -98,7 +98,110 @@ where the process errors are distributed as $\mathbf{v}_t \sim \text{MVN}(\mathb
 **Tip:** It's rare that the variance in observation errors would be different for latitude or longitude so we typically assume that they're "independent and identically distributed" (IID), such that the form for $\mathbf{R}$ is `diagonal and equal` in `MARSS()`.
 </div>
 
-### Full MARSS model
+## Simulated data
+
+As we've discussed before, it's a great idea to use simulated data when first learning to fit models, estimate parameters, and interpret their meaning. We'll begin by simulating some data indicative of an animal that was tracked while wandering aimlessly through its habitat.
+
+### `mvrnorm()` function
+
+We can use the `mvrnorm()` function from the {MASS} package (note spelling here) to draw random numbers from a multivariate normal distribution, such as the process and observation errors in a MARSS model.
+
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** If you do not already have the {MASS} package installed, do so now with `install.packages("MASS")`.
+</div>
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** The `mvrnorm()` function requires 3 arguments:
+
+1. `n`: the desired number of samples
+
+2. `mu`: the vector specifying the means (all 0's in our models)
+
+3. `Sigma`: the variance-covariance matrix
+</div>
+
+## Create animal track
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Simulate some data from a two-dimensional random walk and plot the animal's track.
+</div>
+
+```{r sim_data_x_1, fig.cap = "Simulated track of an animal wandering around its habitat, starting at the diamond and ending at the square."}
+## load MASS library
+library(MASS)
+
+## number of time steps
+TT <- 40
+
+## var-cov matrix for process errors (Q); no covariance
+QQ <- diag(c(0.009, 0.009))
+
+## process errors; transposed to match equational form
+ww <- mvrnorm(n = TT, mu = c(0, 0), Sigma = QQ) |> t()
+
+## initialize state vector
+xx <- ww
+
+## set starting lat & lon (degrees N & W)
+xx[,1] <- c(45, 120)
+
+## random walk; 1st row is latitude, 2nd row is longitude
+for(t in 2:TT) {
+  xx[,t] <- xx[,t-1] + ww[,t]
+}
+
+## plot the true locations
+par(mai = c(1.2, 1, 0.3, 0),
+    omi = c(0, 0, 0.5, 1))
+plot(xx[2,], xx[1, ],
+     pch = 16, type = "o", col = "blue",
+     xlab = "Longitude (W)", ylab = "Latitude (N)")
+## add start & end points
+points(xx[2, 1], xx[1, 1],
+       pch = 5, cex = 2, col = "blue")
+points(xx[2, TT], xx[1, TT],
+       pch = 0, cex = 2, col = "blue")
+```
+
+<br>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Add some observation error to the true locations and plot both time series.
+</div>
+
+```{r sim_data_y_1, fig.cap = "Simulated true track of an animal wandering around its habitat (blue) and the observed locations (gray). Each track starts at the diamond and ends at the square."}
+## var-cov matrix for obs errors (R); no covariance
+RR <- diag(c(0.004, 0.004))
+
+## obs errors; transposed to match states
+vv <- mvrnorm(n = TT, mu = c(0, 0), Sigma = RR) |> t()
+
+## add errors to true locations
+yy <- xx + vv
+
+## plot the true locations
+par(mai = c(1.2, 1, 0.3, 0),
+    omi = c(0, 0, 0.5, 1))
+plot(xx[2,], xx[1, ],
+     xlim = range(xx[2, ], yy[2, ]), ylim = range(xx[1, ], yy[1, ]),
+     pch = 16, type = "o", col = "blue",
+     xlab = "Longitude (W)", ylab = "Latitude (N)")
+## add start & end points
+points(xx[2, 1], xx[1, 1],
+       pch = 5, cex = 2, col = "blue")
+points(xx[2, TT], xx[1, TT],
+       pch = 0, cex = 2, col = "blue")
+## add the obs
+lines(yy[2,], yy[1,],
+      type = "o", pch = 16, col = "darkgray")
+points(yy[2, 1], yy[1, 1],
+       pch = 5, cex = 2, col = "darkgray")
+points(yy[2, TT], yy[1, TT],
+       pch = 0, cex = 2, col = "darkgray")
+```
+
+
+## Fitting the model
 
 Recall that when fitting models with the {MARSS} package, we need to explicitly specify the forms for ***all*** of the vectors and matrices in the full MARSS model given by
 
@@ -145,6 +248,135 @@ $$
 \end{bmatrix}
 \end{align}
 $$
+
+### Matrices as lists
+
+Because `MARSS()` uses model definitions as written in equation form, we need a way to mix both numbers and characters inside a matrix. Unfortunately, however, **R** does not let us mix `numeric` and `character` classes within a matrix. So, for example, the following code block tries to mix them in a 2x2 matrix, but everything will become a `character`.
+
+```{r ex_matrix_list_n}
+## characters along the diagonal, numbers in the off-diagonals
+M <- matrix(c("a", 0, 1, "b"), 2, 2)
+
+## this won't work
+M
+```
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** We can create a matrix in R where every element is instead a `list`, which will allow us to mix `numeric` and `character` classes within a matrix.
+</div>
+
+```{r ex_matrix_list_y}
+## 2x2 matrix with empty lists
+M <- matrix(list(), 2, 2)
+
+## characters along the diagonal, numbers in the off-diagonals
+diag(M) <- c("a", "b")
+M[1, 2] <- 1
+M[2, 1] <- 0
+
+## this works!
+M
+```
+
+### Define the model
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Create the model list for specifying our multivariate random walk in `MARSS()`. Use a diagonal and equal $\mathbf{Q}$ and $\mathbf{R}$.
+</div>
+
+```{r mod_list_rw}
+## create model list for MARSS()
+mod_list <- list(
+  ## state model
+  B = diag(2),             # 2x2 identity matrix
+  U = matrix(0, 2, 1),     # 2x1 vector of biases = 0
+  C = matrix(0, 2, 1),     # 2x1 vector of covariate effects = 0
+  c = matrix(0),           # 1x1 matrix of covariates (none)
+  Q = matrix(c(list("q"),  # 2x2 covariance matrix
+               list(0),
+               list(0),
+               list("q")),
+             2, 2),
+  ## obs model
+  Z = diag(2),             # 2x2 identity matrix
+  A = matrix(0, 2, 1),     # 2x1 vector of offsets = 0
+  D = matrix(0, 2, 1),     # 2x1 vector of covariate effects = 0
+  d = matrix(0),           # 1x1 matrix of covariates (none)
+  R = matrix(c(list("r"),  # 2x2 covariance matrix
+               list(0),
+               list(0),
+               list("r")),
+             2, 2)
+  )
+
+```
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** There are textual shortcuts in {MARSS} that we can use when defining the specific forms for vectors and matrices in a model list. For example, `"diagonal and equal"` gives a covariance matrix with the same elements on the diagonal and 0's elsewhere. Type `?MARSS.marxss` or check the User Guide [here]("https://cran.r-project.org/web/packages/MARSS/vignettes/UserGuide.pdf) for more info.
+</div>
+
+### Fit with `MARSS()`
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Fit a random walk model to our simulated data with `MARSS()`.
+</div>
+
+```{r fit_rw, cache = FALSE}
+## load {MARSS}
+library(MARSS)
+
+## fit the model
+mod_rw <- MARSS(y = yy, model = mod_list)
+```
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** How do the estimated parameters compare the true values?
+</div>
+
+### Compare the results
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Compare our estimated states with the simulate values.
+</div>
+
+```{r compare_rw_model, fig.cap = "Simulated true track of an animal wandering around its habitat (blue), the observed locations (gray), and the estimated true locations (red). Each track starts at the diamond and ends at the square."}
+## extract the estimated states
+xx_hat <- mod_rw$states
+
+## plot the estimated states with the data
+par(mai = c(1.2, 1, 0.3, 0),
+    omi = c(0, 0, 0.5, 1))
+plot(xx[2,], xx[1, ],
+     xlim = range(xx[2, ], yy[2, ], xx_hat[2, ]),
+     ylim = range(xx[1, ], yy[1, ], xx_hat[1, ]),
+     pch = 16, type = "o", col = "blue",
+     xlab = "Longitude (W)", ylab = "Latitude (N)")
+## add start & end points
+points(xx[2, 1], xx[1, 1],
+       pch = 5, cex = 2, col = "blue")
+points(xx[2, TT], xx[1, TT],
+       pch = 0, cex = 2, col = "blue")
+## add the obs
+lines(yy[2,], yy[1,],
+      type = "o", pch = 16, col = "darkgray")
+points(yy[2, 1], yy[1, 1],
+       pch = 5, cex = 2, col = "darkgray")
+points(yy[2, TT], yy[1, TT],
+       pch = 0, cex = 2, col = "darkgray")
+## add the estimated states
+lines(xx_hat[2,], xx_hat[1,],
+      type = "o", pch = 16, col = "darkred")
+points(xx_hat[2, 1], xx_hat[1, 1],
+       pch = 5, cex = 2, col = "darkred")
+points(xx_hat[2, TT], xx_hat[1, TT],
+       pch = 0, cex = 2, col = "darkred")
+```
+
+<br>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** What do you notice about the true track and its estimate? What does this say about the relative levels of estimated process and observation errors?
+</div>
 
 
 ***
@@ -217,7 +449,87 @@ $$
 
 where the process errors are distributed as $\mathbf{v}_t \sim \text{MVN}(\mathbf{0}, \mathbf{R})$.
 
-### Full MARSS model
+## Create animal track
+
+We'll begin by simulating some data indicative of an animal that was tracked while migrating through its habitat.
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Simulate some data from a two-dimensional biased random walk and plot the animal's track.
+</div>
+
+```{r sim_data_x_2, fig.cap = "Simulated track of an animal wandering around its habitat, starting at the diamond and ending at the square."}
+## var-cov matrix for process errors (Q); no covariance
+QQ <- diag(c(0.009, 0.009))
+
+## bias terms for migration; tends north and east
+uu <- matrix(c(0.1, 0.02), 2, 1)
+
+## process errors; transposed to match equational form
+ww <- mvrnorm(n = TT, mu = c(0, 0), Sigma = QQ) |> t()
+
+## initialize state vector
+xx <- ww
+
+## set starting lat & lon (degrees N & W)
+xx[,1] <- c(45, 120)
+
+## biased random walk; 1st row is latitude, 2nd row is longitude
+for(t in 2:TT) {
+  xx[,t] <- xx[,t-1] + uu + ww[,t]
+}
+
+## plot the true locations
+par(mai = c(1.2, 1, 0.3, 0),
+    omi = c(0, 0, 0.5, 1))
+plot(xx[2,], xx[1, ],
+     pch = 16, type = "o", col = "blue",
+     xlab = "Longitude (W)", ylab = "Latitude (N)")
+## add start & end points
+points(xx[2, 1], xx[1, 1],
+       pch = 5, cex = 2, col = "blue")
+points(xx[2, TT], xx[1, TT],
+       pch = 0, cex = 2, col = "blue")
+```
+
+<br>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Add some observation error to the true locations and plot both time series.
+</div>
+
+```{r sim_data_y_2, fig.cap = "Simulated true track of an animal wandering around its habitat (blue) and the observed locations (gray). Each track starts at the diamond and ends at the square."}
+## var-cov matrix for obs errors (R); no covariance
+RR <- diag(c(0.004, 0.004))
+
+## obs errors; transposed to match states
+vv <- mvrnorm(n = TT, mu = c(0, 0), Sigma = RR) |> t()
+
+## add errors to true locations
+yy <- xx + vv
+
+## plot the true locations
+par(mai = c(1.2, 1, 0.3, 0),
+    omi = c(0, 0, 0.5, 1))
+plot(xx[2,], xx[1, ],
+     xlim = range(xx[2, ], yy[2, ]), ylim = range(xx[1, ], yy[1, ]),
+     pch = 16, type = "o", col = "blue",
+     xlab = "Longitude (W)", ylab = "Latitude (N)")
+## add start & end points
+points(xx[2, 1], xx[1, 1],
+       pch = 5, cex = 2, col = "blue")
+points(xx[2, TT], xx[1, TT],
+       pch = 0, cex = 2, col = "blue")
+## add the obs
+lines(yy[2,], yy[1,],
+      type = "o", pch = 16, col = "darkgray")
+points(yy[2, 1], yy[1, 1],
+       pch = 5, cex = 2, col = "darkgray")
+points(yy[2, TT], yy[1, TT],
+       pch = 0, cex = 2, col = "darkgray")
+```
+
+
+## Fitting the model
 
 As before with the random walk model, we need to explicitly specify the forms for ***all*** of the vectors and matrices in the full MARSS model given by
 
@@ -260,6 +572,113 @@ $$
 \end{bmatrix}
 \end{align}
 $$
+
+### Define the model
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Create the model list for specifying our multivariate random walk in `MARSS()`. Use a diagonal and equal $\mathbf{Q}$ and $\mathbf{R}$.
+</div>
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** The code block below also includes the textual shortcuts for defining a model for `MARSS()`.
+</div>
+
+```{r mod_list_brw}
+## create model list for MARSS()
+mod_list <- list(
+  ## state model
+  # B = "identity",
+  B = diag(2),              # 2x2 identity matrix
+  # U = "unconstrained",
+  U = matrix(c("NS", "EW"),  # 2x1 vector of bias terms
+             2, 1),
+  # C = "zero",
+  C = matrix(0, 2, 1),       # 2x1 vector of covariate effects = 0
+  # c = "zero",
+  c = matrix(0),             # 1x1 matrix of covariates (none)
+  # Q = "diagonal and equal",
+  Q = matrix(c(list("q"),    # 2x2 covariance matrix
+               list(0),
+               list(0),
+               list("q")),
+             2, 2),
+  ## obs model
+  # Z = "identity",
+  Z = diag(2),               # 2x2 identity matrix
+  # A = "zero",
+  A = matrix(0, 2, 1),       # 2x1 vector of offsets = 0
+  # D = "zero",
+  D = matrix(0, 2, 1),       # 2x1 vector of covariate effects = 0
+  # d = "zero",
+  d = matrix(0),             # 1x1 matrix of covariates (none)
+  # R = "diagonal and equal",
+  R = matrix(c(list("r"),    # 2x2 covariance matrix
+               list(0),
+               list(0),
+               list("r")),
+             2, 2)
+  )
+```
+
+### Fit with `MARSS()`
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Fit a biased random walk model to our simulated data with `MARSS()`.
+</div>
+
+```{r fit_brw, cache = FALSE}
+## fit the model
+mod_brw <- MARSS(y = yy, model = mod_list)
+```
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** How do the estimated parameters compare the true values?
+</div>
+
+### Compare the results
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Compare our estimated states with the simulate values.
+</div>
+
+```{r compare_brw_model, fig.cap = "Simulated true track of an animal migrating through its habitat (blue), the observed locations (gray), and the estimated true locations (red). Each track starts at the diamond and ends at the square."}
+## extract the estimated states
+xx_hat <- mod_brw$states
+
+## plot the estimated states with the data
+par(mai = c(1.2, 1, 0.3, 0),
+    omi = c(0, 0, 0.5, 1))
+plot(xx[2,], xx[1, ],
+     xlim = range(xx[2, ], yy[2, ], xx_hat[2, ]),
+     ylim = range(xx[1, ], yy[1, ], xx_hat[1, ]),
+     pch = 16, type = "o", col = "blue",
+     xlab = "Longitude (W)", ylab = "Latitude (N)")
+## add start & end points
+points(xx[2, 1], xx[1, 1],
+       pch = 5, cex = 2, col = "blue")
+points(xx[2, TT], xx[1, TT],
+       pch = 0, cex = 2, col = "blue")
+## add the obs
+lines(yy[2,], yy[1,],
+      type = "o", pch = 16, col = "darkgray")
+points(yy[2, 1], yy[1, 1],
+       pch = 5, cex = 2, col = "darkgray")
+points(yy[2, TT], yy[1, TT],
+       pch = 0, cex = 2, col = "darkgray")
+## add the estimated states
+lines(xx_hat[2,], xx_hat[1,],
+      type = "o", pch = 16, col = "darkred")
+points(xx_hat[2, 1], xx_hat[1, 1],
+       pch = 5, cex = 2, col = "darkred")
+points(xx_hat[2, TT], xx_hat[1, TT],
+       pch = 0, cex = 2, col = "darkred")
+```
+
+<br>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** What do you notice about the true track and its estimate? What does this say about the relative levels of estimated process and observation errors?
+</div>
 
 
 ***
@@ -331,9 +750,94 @@ $$
 
 where the process errors are distributed as $\mathbf{v}_t \sim \text{MVN}(\mathbf{0}, \mathbf{R})$.
 
-### Full MARSS model
+## Create animal track
 
-As with our models, we need to explicitly specify the forms for ***all*** of the vectors and matrices in the full MARSS model given by
+We'll begin by simulating some data indicative of an animal that was tracked while migrating through its habitat.
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Simulate some data from a two-dimensional biased random walk and plot the animal's track. Ignore the actual location by assuming the mean latitude and longitude are both zero.
+</div>
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** Matrix multiplication in **R** is done with the `%*%` operator.
+</div>
+
+```{r sim_data_x_3, fig.cap = "Simulated track of an animal wandering around its habitat, starting at the diamond and ending at the square."}
+## var-cov matrix for process errors (Q); no covariance
+QQ <- diag(c(0.009, 0.009))
+
+## bias terms for mean-reversion; territory is larger from E-W than N-S
+BB <- matrix(c(0.7, 0, 0, 0.4),
+             2, 2)
+
+## process errors; transposed to match equational form
+ww <- mvrnorm(n = TT, mu = c(0, 0), Sigma = QQ) |> t()
+
+## initialize state vector
+xx <- ww
+
+## set starting lat & lon (degrees N & W)
+# xx[,1] <- c(45, 120)
+
+## true states; 1st row is latitude, 2nd row is longitude
+for(t in 2:TT) {
+  xx[,t] <- BB %*% xx[,t-1] + ww[,t]
+}
+
+## plot the true locations
+par(mai = c(1.2, 1, 0.3, 0),
+    omi = c(0, 0, 0.5, 1))
+plot(xx[2,], xx[1, ],
+     pch = 16, type = "o", col = "blue",
+     xlab = "Longitude (W)", ylab = "Latitude (N)")
+## add start & end points
+points(xx[2, 1], xx[1, 1],
+       pch = 5, cex = 2, col = "blue")
+points(xx[2, TT], xx[1, TT],
+       pch = 0, cex = 2, col = "blue")
+```
+
+<br>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Add some observation error to the true locations and plot both time series.
+</div>
+
+```{r sim_data_y_3, fig.cap = "Simulated true track of an animal wandering around its habitat (blue) and the observed locations (gray). Each track starts at the diamond and ends at the square."}
+## var-cov matrix for obs errors (R); no covariance
+RR <- diag(c(0.004, 0.004))
+
+## obs errors; transposed to match states
+vv <- mvrnorm(n = TT, mu = c(0, 0), Sigma = RR) |> t()
+
+## add errors to true locations
+yy <- xx + vv
+
+## plot the true locations
+par(mai = c(1.2, 1, 0.3, 0),
+    omi = c(0, 0, 0.5, 1))
+plot(xx[2,], xx[1, ],
+     xlim = range(xx[2, ], yy[2, ]), ylim = range(xx[1, ], yy[1, ]),
+     pch = 16, type = "o", col = "blue",
+     xlab = "Longitude (W)", ylab = "Latitude (N)")
+## add start & end points
+points(xx[2, 1], xx[1, 1],
+       pch = 5, cex = 2, col = "blue")
+points(xx[2, TT], xx[1, TT],
+       pch = 0, cex = 2, col = "blue")
+## add the obs
+lines(yy[2,], yy[1,],
+      type = "o", pch = 16, col = "darkgray")
+points(yy[2, 1], yy[1, 1],
+       pch = 5, cex = 2, col = "darkgray")
+points(yy[2, TT], yy[1, TT],
+       pch = 0, cex = 2, col = "darkgray")
+```
+
+
+## Fitting the model
+
+As with our other models, we need to explicitly specify the forms for ***all*** of the vectors and matrices in the full MARSS model given by
 
 $$
 \mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{C} \mathbf{c}_{t-k} + \mathbf{w}_t \\
@@ -376,82 +880,102 @@ $$
 $$
 
 
+### Define the model
 
-# Model comparisons
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Create the model list for specifying our multivariate random walk in `MARSS()`. Use a diagonal and equal $\mathbf{Q}$ and $\mathbf{R}$.
+</div>
 
-## Evidence for bias
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** The code block below uses the textual shortcuts for defining a model for `MARSS()`.
+</div>
 
-Q: Is there data support for the bias term?
-
-To answer this, we can fit a model without the bias term and compare AICc
-
-
-## Evidence for bias
-
-We need to modify the model definition for `MARSS()` by setting `U = matrix(0)` 
-
-```{r rw_model, echo=TRUE}
+```{r mod_list_mar}
+## create model list for MARSS()
 mod_list <- list(
   ## state model
-  B = matrix(1), U = matrix(0), Q = matrix("q"),
+  B = "diagonal and unequal",  # 2x2 matrix with mean-reversion on diagonal
+  U = "zero",                  # 2x1 vector of bias terms
+  C = "zero",                  # 2x1 vector of covariate effects = 0
+  c = "zero",                  # 1x1 matrix of covariates (none)
+  Q = "diagonal and equal",    # 2x2 covariance matrix
   ## obs model
-  Z = matrix(1), A = matrix(0), R = matrix("r")
+  Z = "identity",              # 2x2 identity matrix
+  A = "zero",                  # 2x1 vector of offsets = 0
+  D = "zero",                  # 2x1 vector of covariate effects = 0
+  d = "zero",                  # 1x1 matrix of covariates (none)
+  R = "diagonal and equal"     # 2x2 covariance matrix
   )
 ```
 
+### Fit with `MARSS()`
 
-## Re-fit the model with `MARSS()`
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Fit a mean-reverting model (MAR[1]) to our simulated data with `MARSS()`. Add an additional control list to increase the maximum number of iterations for `MARSS()`.
+</div>
 
-```{r rw_fit, echo = TRUE, eval=TRUE}
+```{r fit_mar, cache = FALSE}
+## define control list
+con_list <- list(maxit = 2000)
+
 ## fit the model
-# mod_fit_2 <- MARSS(y = YY, model = mod_list)
+mod_mar <- MARSS(y = yy, model = mod_list, control = con_list)
 ```
 
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** What happened to the estimated observation variance **R**?
+</div>
 
-## Compare AIC values
+### Compare the results
 
-```{r compare_AICc, echo = TRUE, eval = TRUE}
-## biased RW
-# mod_fit$AICc
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Compare our estimated states with the simulate values.
+</div>
 
-## unbiased RW
-# mod_fit_2$AICc
+```{r compare_mar_model, fig.cap = "Simulated true track of an animal migrating through its habitat (blue), the observed locations (gray), and the estimated true locations (red). Each track starts at the diamond and ends at the square."}
+## extract the estimated states
+xx_hat <- mod_mar$states
+
+## plot the estimated states with the data
+par(mai = c(1.2, 1, 0.3, 0),
+    omi = c(0, 0, 0.5, 1))
+plot(xx[2,], xx[1, ],
+     xlim = range(xx[2, ], yy[2, ], xx_hat[2, ]),
+     ylim = range(xx[1, ], yy[1, ], xx_hat[1, ]),
+     pch = 16, type = "o", col = "blue",
+     xlab = "Longitude (W)", ylab = "Latitude (N)")
+## add start & end points
+points(xx[2, 1], xx[1, 1],
+       pch = 5, cex = 2, col = "blue")
+points(xx[2, TT], xx[1, TT],
+       pch = 0, cex = 2, col = "blue")
+## add the obs
+lines(yy[2,], yy[1,],
+      type = "o", pch = 16, col = "darkgray")
+points(yy[2, 1], yy[1, 1],
+       pch = 5, cex = 2, col = "darkgray")
+points(yy[2, TT], yy[1, TT],
+       pch = 0, cex = 2, col = "darkgray")
+## add the estimated states
+lines(xx_hat[2,], xx_hat[1,],
+      type = "o", pch = 16, col = "darkred")
+points(xx_hat[2, 1], xx_hat[1, 1],
+       pch = 5, cex = 2, col = "darkred")
+points(xx_hat[2, TT], xx_hat[1, TT],
+       pch = 0, cex = 2, col = "darkred")
 ```
+
+<br>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** What do you notice about the true track and its estimate? What does this say about the relative levels of estimated process and observation errors?
+</div>
 
 ***
 
-## A note on model fitting
+# Model selection
 
-When we have 2+ observations of process, our estimates of model parameters are much more accurate and precise.
+Here we have seen how to fit movement models to simulated data, but it would be quite rare to know what specific form of underlying model upon which the true states were based. Thus, we're presented with the situation of fitting several candidate models and evaluating the data support for each of them via an information criterion like AICc.
 
-$$
-\begin{align}
-x_t &= x_{t-1} + u + w_t ~~ \text{with} ~ w_t \sim \text{N}(0,q) \\
-~ \\
-\begin{bmatrix}
-y_1 \\
-y_2 \\
-\vdots \\
-y_n
-\end{bmatrix}_t
-&=
-\begin{bmatrix}
-1 \\
-1 \\
-\vdots \\
-1
-\end{bmatrix}
-x_t + 
-\begin{bmatrix}
-v_1 \\
-v_2 \\
-\vdots \\
-v_n
-\end{bmatrix}_t
-~~ \text{with} ~
-\mathbf{v_t} \sim \text{MVN}(\mathbf{0},\mathbf{R})
-\end{align}
-$$
-
-
+In the models we fit above, an analyst might change the forms for the variance terms $\mathbf{Q}$ and $\mathbf{R}$ to be nonequal or contain covariance terms. They might also explore different options for the bias terms $\mathbf{u}$ in the random walk model and the mean-reverting terms $\mathbf{B}$ in the MAR(1) model.
 
