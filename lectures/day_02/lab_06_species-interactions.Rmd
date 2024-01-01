@@ -4,17 +4,37 @@ subtitle: "SOE 592 – Intro to Time Series Analysis"
 date: "<br>4 Jan 2024"
 output:
   html_document:
-    theme: sandstone
+    theme: simplex
     highlight: textmate
+    css: ["lecture_inst.css", "fontawesome.css", "solid.css"]
     toc: true
     toc_float: true
     toc_depth: 3
 ---
 
-```{r dfa-setup, include=FALSE, purl=FALSE}
-## in case you forget to add a chunk label
-knitr::opts_knit$set(unnamed.chunk.label = "dfa-")
+```{r setup, include=FALSE, purl=FALSE}
+knitr::opts_chunk$set(
+  fig.dim = c(6, 6),
+  fig.align = "center"
+  )
+set.seed(592)
 ```
 
+***
+
 # Introduction
+
+
+## Model form
+
+
+***
+
+# Simulating data
+
+
+***
+
+# Fitting the model
+
 
