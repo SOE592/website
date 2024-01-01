@@ -134,7 +134,7 @@ library(MASS)
 TT <- 40
 
 ## var-cov matrix for process errors (Q); no covariance
-QQ <- diag(c(0.007, 0.007))
+QQ <- diag(c(0.009, 0.009))
 
 ## process errors; transposed to match equational form
 ww <- mvrnorm(n = TT, mu = c(0, 0), Sigma = QQ) |> t()
@@ -329,6 +329,10 @@ library(MARSS)
 mod_rw <- MARSS(y = yy, model = mod_list)
 ```
 
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** How do the estimated parameters compare the true values?
+</div>
+
 ### Compare the results
 
 <div class="boxy boxy-blue boxy-clipboard-list">
@@ -455,7 +459,7 @@ We'll begin by simulating some data indicative of an animal that was tracked whi
 
 ```{r sim_data_x_2, fig.cap = "Simulated track of an animal wandering around its habitat, starting at the diamond and ending at the square."}
 ## var-cov matrix for process errors (Q); no covariance
-QQ <- diag(c(0.007, 0.007))
+QQ <- diag(c(0.009, 0.009))
 
 ## bias terms for migration; tends north and east
 uu <- matrix(c(0.1, 0.02), 2, 1)
@@ -627,6 +631,10 @@ mod_list <- list(
 mod_brw <- MARSS(y = yy, model = mod_list)
 ```
 
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** How do the estimated parameters compare the true values?
+</div>
+
 ### Compare the results
 
 <div class="boxy boxy-blue boxy-clipboard-list">
@@ -756,10 +764,10 @@ We'll begin by simulating some data indicative of an animal that was tracked whi
 
 ```{r sim_data_x_3, fig.cap = "Simulated track of an animal wandering around its habitat, starting at the diamond and ending at the square."}
 ## var-cov matrix for process errors (Q); no covariance
-QQ <- diag(c(0.007, 0.007))
+QQ <- diag(c(0.009, 0.009))
 
 ## bias terms for mean-reversion; territory is larger from E-W than N-S
-BB <- matrix(c(0.8, 0, 0, 0.5),
+BB <- matrix(c(0.7, 0, 0, 0.4),
              2, 2)
 
 ## process errors; transposed to match equational form
@@ -903,13 +911,20 @@ mod_list <- list(
 ### Fit with `MARSS()`
 
 <div class="boxy boxy-blue boxy-clipboard-list">
-**Task:** Fit a biased random walk model to our simulated data with `MARSS()`.
+**Task:** Fit a mean-reverting model (MAR[1]) to our simulated data with `MARSS()`. Add an additional control list to increase the maximum number of iterations for `MARSS()`.
 </div>
 
 ```{r fit_mar, cache = FALSE}
+## define control list
+con_list <- list(maxit = 2000)
+
 ## fit the model
-mod_mar <- MARSS(y = yy, model = mod_list)
+mod_mar <- MARSS(y = yy, model = mod_list, control = con_list)
 ```
+
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** What happened to the estimated observation variance **R**?
+</div>
 
 ### Compare the results
 
@@ -958,81 +973,9 @@ points(xx_hat[2, TT], xx_hat[1, TT],
 
 ***
 
-# Model comparisons
+# Model selection
 
-## Evidence for bias
+Here we have seen how to fit movement models to simulated data, but it would be quite rare to know what specific form of underlying model upon which the true states were based. Thus, we're presented with the situation of fitting several candidate models and evaluating the data support for each of them via an information criterion like AICc.
 
-Q: Is there data support for the bias term?
-
-To answer this, we can fit a model without the bias term and compare AICc
-
-
-## Evidence for bias
-
-We need to modify the model definition for `MARSS()` by setting `U = matrix(0)` 
-
-```{r rw_model, echo=TRUE}
-mod_list <- list(
-  ## state model
-  B = matrix(1), U = matrix(0), Q = matrix("q"),
-  ## obs model
-  Z = matrix(1), A = matrix(0), R = matrix("r")
-  )
-```
-
-
-## Re-fit the model with `MARSS()`
-
-```{r rw_fit, echo = TRUE, eval=TRUE}
-## fit the model
-# mod_fit_2 <- MARSS(y = YY, model = mod_list)
-```
-
-
-## Compare AIC values
-
-```{r compare_AICc, echo = TRUE, eval = TRUE}
-## biased RW
-# mod_fit$AICc
-
-## unbiased RW
-# mod_fit_2$AICc
-```
-
-***
-
-## A note on model fitting
-
-When we have 2+ observations of process, our estimates of model parameters are much more accurate and precise.
-
-$$
-\begin{align}
-x_t &= x_{t-1} + u + w_t ~~ \text{with} ~ w_t \sim \text{N}(0,q) \\
-~ \\
-\begin{bmatrix}
-y_1 \\
-y_2 \\
-\vdots \\
-y_n
-\end{bmatrix}_t
-&=
-\begin{bmatrix}
-1 \\
-1 \\
-\vdots \\
-1
-\end{bmatrix}
-x_t + 
-\begin{bmatrix}
-v_1 \\
-v_2 \\
-\vdots \\
-v_n
-\end{bmatrix}_t
-~~ \text{with} ~
-\mathbf{v_t} \sim \text{MVN}(\mathbf{0},\mathbf{R})
-\end{align}
-$$
-
-
+In the models we fit above, an analyst might change the forms for the variance terms $\mathbf{Q}$ and $\mathbf{R}$ to be nonequal or contain covariance terms. They might also explore different options for the bias terms $\mathbf{u}$ in the random walk model and the mean-reverting terms $\mathbf{B}$ in the MAR(1) model.
 
