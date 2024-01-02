@@ -677,7 +677,7 @@ text("today", x=xm[2], y=ymb, cex=1.8, col="#ffffff", pos=1)
 ## State model for species interactions
 
 $$
-x_{i,t} = \sum^{m}_{j = 1}{b_{i,j} x_{j,t}} + w_t
+x_{i,t} = u_i + \sum^{m}_{j = 1}{b_{i,j} x_{j,t}} + w_t
 $$
 
 where $b_{i,j}$ is the effect of the $j^{th}$ species on species $i$
@@ -690,12 +690,20 @@ $b_{i,j}$ with $i = j$ is the density-dependent effect
 We can write this model in matrix notation as
 
 $$
-\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{w}_t
+\mathbf{x}_t = \mathbf{u} + \mathbf{B} \mathbf{x}_{t-1} + \mathbf{w}_t
 $$
 
 with
 
 $$
+\mathbf{u} =
+\begin{bmatrix}
+u_1 \\
+u_2 \\
+\vdots \\
+u_m
+\end{bmatrix}
+~ ~ ~ ~ ~ ~ ~
 \mathbf{B} =
 \begin{bmatrix}
 b_{1,1} & b_{1,2} & \dots & b_{1,m} \\
@@ -711,7 +719,7 @@ $$
 Including the effects of exogenous drivers yields
 
 $$
-\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{C} \mathbf{c}_{t-k} + \mathbf{w}_t
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{C} \mathbf{c}_{t-k} + \mathbf{w}_t
 $$
 
 Note that the lag $k \geq 0$
@@ -722,7 +730,7 @@ Note that the lag $k \geq 0$
 Including the effects of exogenous drivers
 
 $$
-\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{C} \mathbf{c}_{t-k} + \mathbf{w}_t
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{C} \mathbf{c}_{t-k} + \mathbf{w}_t
 $$
 
 The $m \times p$ matrix $\mathbf{C}$ contains the effect(s) of each covariate (cols) on each state (rows)
@@ -737,18 +745,18 @@ The effect(s) of covariates can vary by state/species/etc
 $$
 \mathbf{C} =
 \begin{bmatrix}
-C_{1, Temp} & C_{1, DO} \\ 
-C_{2, Temp} & C_{2, DO} \\ 
+C_{1, Temp} & C_{1, Rain} \\ 
+C_{2, Temp} & C_{2, Rain} \\ 
 \vdots & \vdots \\ 
-C_{m, Temp} & C_{m, DO}
+C_{m, Temp} & C_{m, Rain}
 \end{bmatrix}
 ~~ \text{or} ~~
 \mathbf{C} =
 \begin{bmatrix}
-C_{Temp} & C_{DO} \\ 
-C_{Temp} & C_{DO} \\ 
+C_{Temp} & C_{Rain} \\ 
+C_{Temp} & C_{Rain} \\ 
 \vdots & \vdots \\ 
-C_{Temp} & C_{DO}
+C_{Temp} & C_{Rain}
 \end{bmatrix}
 $$
 
@@ -758,13 +766,20 @@ $$
 \mathbf{c}_{t-k} =
 \begin{bmatrix}
 Temp_{t-k} \\
-DO_{t-k}
+Rain_{t-k}
 \end{bmatrix}
 $$
 
 
+## A note on $\mathbf{u}$
+
+Recall that when we discussed univariate state-space models, we saw that it's ***very*** difficult to estimate both $\mathbf{u}$ and $\mathbf{B}$
+
+We will typically subtract the mean from each time series and assume $\mathbf{u}$ = 0
+
+
 ## Estimating species interactions
 
-Here is an example of estimating species interactions from time series data
+We'll see an example of estimating species interactions later in lab
 
-[Holmes, Ward & Scheuerell (2018) Chap 13](https://cran.r-project.org/web/packages/MARSS/vignettes/UserGuide.pdf)
+There are some other examples [here](https://cran.r-project.org/web/packages/MARSS/vignettes/UserGuide.pdf)
