@@ -5449,17 +5449,101 @@ border-radius: 0px;
 <hr />
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<div id="model-form" class="section level2">
-<h2>Model form</h2>
+<p>There are numerous ways to estimate the strength of ecological
+interactions among members of a food web, including top-down, bottom-up,
+and competitive interactions. These methods include experimental
+manipulation, stable isotope analysis, bioenergetics, and observational
+studies Back in the 1990s, a group of researchers began working on
+multivariate time series models that would allow people to estimate
+interactions among community members based on density (biomass)
+estimates collected over time. Among the best examples, is a 2003 paper
+by Tony Ives and colleagues, which you can find <a href="https://doi.org/10.1890/0012-9615(2003)073%5B0301:ECSAEI%5D2.0.CO;2">here</a>.</p>
+<div id="state-model-for-species-interactions" class="section level2">
+<h2>State model for species interactions</h2>
+<p>Earlier we saw that we can use a discrete-time Gompertz model to
+estimate the intrinsic rate of increase and density-dependent effects on
+population growth. Here we extend the Gompertz model to a multispecies
+framework. For 2+ interacting species (taxa), we can write</p>
+<p><span class="math display">\[
+x_{i,t} = u_i + \sum^{m}_{j = 1}{b_{i,j} x_{j,t}} + w_t
+\]</span></p>
+<p>where <span class="math inline">\(u_i\)</span> is the intrinsic
+(density independent) growth rate, <span class="math inline">\(b_{i,j}\)</span> is the effect of the <span class="math inline">\(j^{th}\)</span> species on species <span class="math inline">\(i\)</span>, and <span class="math inline">\(b_{i,j}\)</span> with <span class="math inline">\(i = j\)</span> is the density-dependent
+effect.</p>
+<p>We can write this model in matrix notation as</p>
+<p><span class="math display">\[
+\mathbf{x}_t = \mathbf{u} + \mathbf{B} \mathbf{x}_{t-1} + \mathbf{w}_t
+\]</span></p>
+<p>with</p>
+<p><span class="math display">\[
+\mathbf{u} =
+\begin{bmatrix}
+u_1 \\
+u_2 \\
+\vdots \\
+u_m
+\end{bmatrix}
+~ ~ ~ ~ ~ ~ ~
+\mathbf{B} =
+\begin{bmatrix}
+b_{1,1} &amp; b_{1,2} &amp; \dots &amp; b_{1,m} \\
+b_{2,1} &amp; b_{1,2} &amp; \dots &amp; b_{2,m} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+b_{m,1} &amp; b_{m,2} &amp; \dots &amp; b_{m,m}
+\end{bmatrix}
+\]</span></p>
+</div>
+<div id="covariate-effects" class="section level2">
+<h2>Covariate effects</h2>
+<p>We can easily accommodate the effects of exogenous drivers
+(covariates) by including two additional terms in the model, such
+that</p>
+<p><span class="math display">\[
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{C}
+\mathbf{c}_{t-k} + \mathbf{w}_t
+\]</span></p>
+<p>with the lag <span class="math inline">\(k \geq 0\)</span>. The <span class="math inline">\(m \times p\)</span> matrix <span class="math inline">\(\mathbf{C}\)</span> contains the effect(s) of each
+covariate (cols) on each state (rows). The <span class="math inline">\(p
+\times 1\)</span> column vector <span class="math inline">\(\mathbf{c}_{t-k}\)</span> contains each of the
+<span class="math inline">\(p\)</span> covariates at time <span class="math inline">\(t - k\)</span>.</p>
+<p>The effect(s) of covariates can vary by state/process, species, etc,
+such that these are both possibilites (that could be compared via some
+information criterion like AICc):</p>
+<p><span class="math display">\[
+\mathbf{C} =
+\begin{bmatrix}
+C_{1, Temp} &amp; C_{1, Rain} \\
+C_{2, Temp} &amp; C_{2, Rain} \\
+\vdots &amp; \vdots \\
+C_{m, Temp} &amp; C_{m, Rain}
+\end{bmatrix}
+~~ \text{or} ~~
+\mathbf{C} =
+\begin{bmatrix}
+C_{Temp} &amp; C_{Rain} \\
+C_{Temp} &amp; C_{Rain} \\
+\vdots &amp; \vdots \\
+C_{Temp} &amp; C_{Rain}
+\end{bmatrix}
+\]</span></p>
+<p>with</p>
+<p><span class="math display">\[
+\mathbf{c}_{t-k} =
+\begin{bmatrix}
+Temp_{t-k} \\
+Rain_{t-k}
+\end{bmatrix}
+\]</span></p>
+</div>
+<div id="a-note-on-mathbfu" class="section level2">
+<h2>A note on <span class="math inline">\(\mathbf{u}\)</span></h2>
+<p>Recall that when we discussed univariate state-space models, we saw
+that it’s <strong><em>very</em></strong> difficult to estimate both
+<span class="math inline">\(\mathbf{u}\)</span> and <span class="math inline">\(\mathbf{B}\)</span></p>
+<p>We will typically subtract the mean from each time series and assume
+<span class="math inline">\(\mathbf{u}\)</span> = 0</p>
 <hr />
 </div>
-</div>
-<div id="simulating-data" class="section level1">
-<h1>Simulating data</h1>
-<hr />
-</div>
-<div id="fitting-the-model" class="section level1">
-<h1>Fitting the model</h1>
 </div>
 <div id="wolves-moose" class="section level1">
 <h1>Wolves &amp; moose</h1>

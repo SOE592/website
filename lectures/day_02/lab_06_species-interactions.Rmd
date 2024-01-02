@@ -24,18 +24,94 @@ set.seed(592)
 
 # Introduction
 
+There are numerous ways to estimate the strength of ecological interactions among members of a food web, including top-down, bottom-up, and competitive interactions. These methods include experimental manipulation, stable isotope analysis, bioenergetics, and observational studies Back in the 1990s, a group of researchers began working on multivariate time series models that would allow people to estimate interactions among community members based on density (biomass) estimates collected over time. Among the best examples, is a 2003 paper by Tony Ives and colleagues, which you can find [here](https://doi.org/10.1890/0012-9615(2003)073[0301:ECSAEI]2.0.CO;2).
 
-## Model form
+
+## State model for species interactions
+
+Earlier we saw that we can use a discrete-time Gompertz model to estimate the intrinsic rate of increase and density-dependent effects on population growth. Here we extend the Gompertz model to a multispecies framework. For 2+ interacting species (taxa), we can write
+
+$$
+x_{i,t} = u_i + \sum^{m}_{j = 1}{b_{i,j} x_{j,t}} + w_t
+$$
+
+where $u_i$ is the intrinsic (density independent) growth rate, $b_{i,j}$ is the effect of the $j^{th}$ species on species $i$, and $b_{i,j}$ with $i = j$ is the density-dependent effect. 
+
+We can write this model in matrix notation as
+
+$$
+\mathbf{x}_t = \mathbf{u} + \mathbf{B} \mathbf{x}_{t-1} + \mathbf{w}_t
+$$
+
+with
+
+$$
+\mathbf{u} =
+\begin{bmatrix}
+u_1 \\
+u_2 \\
+\vdots \\
+u_m
+\end{bmatrix}
+~ ~ ~ ~ ~ ~ ~
+\mathbf{B} =
+\begin{bmatrix}
+b_{1,1} & b_{1,2} & \dots & b_{1,m} \\
+b_{2,1} & b_{1,2} & \dots & b_{2,m} \\
+\vdots & \vdots & \ddots & \vdots \\
+b_{m,1} & b_{m,2} & \dots & b_{m,m}
+\end{bmatrix}
+$$
+
+## Covariate effects
+
+We can easily accommodate the effects of exogenous drivers (covariates) by including two additional terms in the model, such that
+
+$$
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{C} \mathbf{c}_{t-k} + \mathbf{w}_t
+$$
+
+with the lag $k \geq 0$. The $m \times p$ matrix $\mathbf{C}$ contains the effect(s) of each covariate (cols) on each state (rows). The $p \times 1$ column vector $\mathbf{c}_{t-k}$ contains each of the $p$ covariates at time $t - k$.
+
+The effect(s) of covariates can vary by state/process, species, etc, such that these are both possibilites (that could be compared via some information criterion like AICc):
+
+$$
+\mathbf{C} =
+\begin{bmatrix}
+C_{1, Temp} & C_{1, Rain} \\ 
+C_{2, Temp} & C_{2, Rain} \\ 
+\vdots & \vdots \\ 
+C_{m, Temp} & C_{m, Rain}
+\end{bmatrix}
+~~ \text{or} ~~
+\mathbf{C} =
+\begin{bmatrix}
+C_{Temp} & C_{Rain} \\ 
+C_{Temp} & C_{Rain} \\ 
+\vdots & \vdots \\ 
+C_{Temp} & C_{Rain}
+\end{bmatrix}
+$$
+
+with
+
+$$
+\mathbf{c}_{t-k} =
+\begin{bmatrix}
+Temp_{t-k} \\
+Rain_{t-k}
+\end{bmatrix}
+$$
+
+
+## A note on $\mathbf{u}$
+
+Recall that when we discussed univariate state-space models, we saw that it's ***very*** difficult to estimate both $\mathbf{u}$ and $\mathbf{B}$
+
+We will typically subtract the mean from each time series and assume $\mathbf{u}$ = 0
 
 
 ***
-
-# Simulating data
-
-
-***
-
-# Fitting the model
 
 # Wolves & moose
 
