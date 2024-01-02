@@ -164,21 +164,31 @@ where $w$ denotes wolf and $m$ denotes moose. $w \rightarrow w$ is the effect of
 
 ## Get the data
 
-We will use 1960 to 2011.  We will hold out 1959 as we will need that year when we look at the effect of covariates.
+The data are available in the {MARSS} package, so we won't have to download them the project site; we'll use the years 1960 to 2011.
 
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Get the data and plot the time series.
+</div>
 
-```{r}
+```{r get-data}
 ## load MARSS library
 library(MARSS)
 
-yr1960to2011 <- isleRoyal[, "Year"] >= 1960 & isleRoyal[, "Year"] <= 2011
-royale.dat <- log(t(isleRoyal[yr1960to2011, c("Wolf", "Moose")]))
+## set the years
+yr_set <- seq(1960, 2011) #isleRoyal[, "Year"] >= 1960 & isleRoyal[, "Year"] <= 2011
 
-x <- isleRoyal[, "Year"]
-y <- log(isleRoyal[, c("Wolf", "Moose")])
-matplot(x, y,
-  ylab = "Log count", xlab = "Year", type = "l",
-  lwd = 3, bty = "L", col = "black"
+## select the wolf & moose data & log-transform them
+royale_data <- isleRoyal[isleRoyal[,"Year"] %in% yr_set,
+                         c("Wolf", "Moose")] |>
+  log()
+
+## set of years
+tt <- isleRoyal[, "Year"]
+
+## plot the data
+matplot(yr_set, royale_data,
+  ylab = "Log of counts", xlab = "Year", type = "b", pch = 16,
+  lwd = 2, bty = "L", col = c("darkgray", "brown")
 )
 ```
 
@@ -190,14 +200,18 @@ royale.model.0 <- list(
   B = "unconstrained", Q = "diagonal and unequal",
   R = "diagonal and unequal", U = "unequal"
 )
-kem.0 <- MARSS(royale.dat, model = royale.model.0)
+
+## transform the data for MARSS()
+royale_data <- t(royale_data)
+
+kem.0 <- MARSS(royale_data, model = royale.model.0)
 ```
 
 If you try this, you will notice that it does not converge but stops when it reaches  and prints a number of warnings about non-convergence.  The problem is that when you try to estimate $\mathbf{B}$ and $\mathbf{u}$, they are often confounded.  This a well-known problem, and you will need to find a way to fix $\mathbf{u}$ at some value.  If you are willing to assume that the process is at equilibrium (i.e., not recovering to equilibrium from a big perturbation), then you can simply demean the data and set $\mathbf{u}$ to 0.  It is also common to standardize the variance by dividing by the square root of the variance of the data.  This is called z-scoring the data.
 
 ```{r}
 # if missing values are in the data, they should be NAs
-z.royale.dat <- zscore(royale.dat)
+z.royale_data <- zscore(royale_data)
 ```
 
 We can fit the model to the z-scored data, but we still have convergence issues.
@@ -209,7 +223,7 @@ royale.model.1 <- list(
   U = "zero", tinitx = 1
 )
 cntl.list <- list(allow.degen = FALSE, maxit = 200)
-kem.1 <- MARSS(z.royale.dat, model = royale.model.1, control = cntl.list)
+kem.1 <- MARSS(z.royale_data, model = royale.model.1, control = cntl.list)
 ```
 
 It looks like $\mathbf{R}$ is going to zero, meaning that the maximum-likelihood model is a process error only model.   That is not too surprising given that the data look more like a random walk than white noise.  We will set $\mathbf{R}$ manually to zero and assume that the census is complete (they count all individuals):
@@ -219,7 +233,7 @@ royale.model.2 <- list(
   Z = "identity", B = "unconstrained",
   Q = "diagonal and unequal", R = "zero", U = "zero"
 )
-kem.2 <- MARSS(z.royale.dat, model = royale.model.2)
+kem.2 <- MARSS(z.royale_data, model = royale.model.2)
 ```
 
 ## Examine the interaction effects
@@ -228,7 +242,7 @@ The estimated $\mathbf{B}$ elements
 
 ```{r}
 wolf.B <- coef(kem.2, type = "matrix")$B
-rownames(wolf.B) <- colnames(wolf.B) <- rownames(royale.dat)
+rownames(wolf.B) <- colnames(wolf.B) <- rownames(royale_data)
 print(wolf.B, digits = 2)
 ```
 
@@ -302,7 +316,7 @@ royale.model.3 <- list(
 Then we fit the model with covariates.
 
 ```{r}
-kem.3 <- MARSS(z.royale.dat, model = royale.model.3)
+kem.3 <- MARSS(z.royale_data, model = royale.model.3)
 ```
 
 The results suggest what is already known about this system: cold winters and heavy snow are bad for moose as are hot summers.
@@ -321,7 +335,7 @@ pairs(t(z.score.clim.dat), lower.panel = cor.fun)
 You can explore the sensitivity of the $\mathbf{B}$ estimates when the measurement error is increased by adding white noise to the data:
 
 ```{r, eval = FALSE}
-bad.data <- z.royale.dat + matrix(rnorm(100, 0, sqrt(.2)), 2, 50)
+bad.data <- z.royale_data + matrix(rnorm(100, 0, sqrt(.2)), 2, 50)
 kem.bad <- MARSS(bad.data, model = model)
 ```
 
@@ -338,7 +352,7 @@ royale.model.4 <- list(
   B = "unconstrained", U = "zero", Q = "diagonal and unequal",
   Z = "identity", R = "zero", tinitx = 1
 )
-kem.4 <- MARSS(z.royale.dat, model = royale.model.4)
+kem.4 <- MARSS(z.royale_data, model = royale.model.4)
 ```
 
 \index{troubleshooting!degenerate variances}The other setting we may want to change is `allow.degen` in the control list.  This sets the diagonals of $\mathbf{Q}$ or $\mathbf{R}$ to zero if they are heading towards zero.  When the initial $\mathbf{x}$ is at $t = 1$, this can have non-intuitive (not wrong but puzzling) consequences if $\mathbf{R}$ is going to zero.   So, we will set `control$allow.degen = FALSE` and manually set $\mathbf{R}$ to $\mathbf{0}$ if needed.
