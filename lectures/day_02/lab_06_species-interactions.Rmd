@@ -35,9 +35,7 @@ $$
 x_{i,t} = u_i + \sum^{m}_{j = 1}{b_{i,j} x_{j,t}} + w_t
 $$
 
-where $u_i$ is the intrinsic (density independent) growth rate, $b_{i,j}$ is the effect of the $j^{th}$ species on species $i$, and $b_{i,j}$ with $i = j$ is the density-dependent effect. 
-
-We can write this model in matrix notation as
+where $u_i$ is the intrinsic (density independent) growth rate, $b_{i,j}$ is the effect of the $j^{th}$ species on species $i$, and $b_{i,j}$ with $i = j$ is the density-dependent effect. We can write this model in matrix notation as
 
 $$
 \mathbf{x}_t = \mathbf{u} + \mathbf{B} \mathbf{x}_{t-1} + \mathbf{w}_t
@@ -186,64 +184,150 @@ royale_data <- isleRoyal[isleRoyal[,"Year"] %in% yr_set,
 tt <- isleRoyal[, "Year"]
 
 ## plot the data
+par(mai = c(1.2, 1, 0.3, 0),
+    omi = c(0, 0, 0.5, 1))
 matplot(yr_set, royale_data,
-  ylab = "Log of counts", xlab = "Year", type = "b", pch = 16,
-  lwd = 2, bty = "L", col = c("darkgray", "brown")
+  ylab = "Log of counts", xlab = "Year", type = "o", pch = 16,
+  lwd = 2, col = c("darkgray", "brown")
 )
+legend(x = "center", legend = c("Moose", "Wolves"),
+       col = c("brown", "darkgray"), lwd = 2, bty = "n")
 ```
 
 
 ## Fit the model
 
-```{r}
-royale.model.0 <- list(
-  B = "unconstrained", Q = "diagonal and unequal",
-  R = "diagonal and unequal", U = "unequal"
-)
+Fitting our species interaction model with `MARSS()` is similar to how we've done it for other problems. The key is to set up the model list correctly and everything should work. Thus, we need to explicitly specify the forms for ***all*** of the vectors and matrices in the full MARSS model given by
 
+$$
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{C} \mathbf{c}_{t-k} + \mathbf{w}_t \\
+\mathbf{y}_t = \mathbf{Z} \mathbf{x}_t + \mathbf{a} + \mathbf{D} \mathbf{d}_{t-h}+ \mathbf{v}_t \\
+$$
+
+Thus, to fit our species interaction model, we need to set the following:
+
+$$
+\begin{align}
+\mathbf{C} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{c}_{t-k} &=
+\begin{bmatrix}
+0
+\end{bmatrix} \\
+\mathbf{Z} &= 
+\begin{bmatrix}
+1 & 0 \\ 0 & 1
+\end{bmatrix} \\
+\mathbf{a} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{D} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{d}_{t-h} &=
+\begin{bmatrix}
+0
+\end{bmatrix}
+\end{align}
+$$
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Set up the model list for `MARSS()` (the code below uses textual shortcuts).
+</div>
+
+```{r define-model-1}
+## create model list for MARSS()
+mod_list <- list(
+  ## state model
+  B = "unconstrained",
+  U = "unequal",
+  C = "zero",
+  c = "zero",
+  Q = "diagonal and unequal",
+  ## obs model
+  Z = "identity",
+  A = "zero",
+  D = "zero",
+  d = "zero",
+  R = "diagonal and unequal"
+  )
+```
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Fit the species interaction model define above with `MARSS()`.
+</div>
+
+```{r fit-model-1, cache = TRUE}
 ## transform the data for MARSS()
 royale_data <- t(royale_data)
 
-kem.0 <- MARSS(royale_data, model = royale.model.0)
+## fit the model
+mod_first <- MARSS(royale_data, model = mod_list)
 ```
 
-If you try this, you will notice that it does not converge but stops when it reaches  and prints a number of warnings about non-convergence.  The problem is that when you try to estimate $\mathbf{B}$ and $\mathbf{u}$, they are often confounded.  This a well-known problem, and you will need to find a way to fix $\mathbf{u}$ at some value.  If you are willing to assume that the process is at equilibrium (i.e., not recovering to equilibrium from a big perturbation), then you can simply demean the data and set $\mathbf{u}$ to 0.  It is also common to standardize the variance by dividing by the square root of the variance of the data.  This is called z-scoring the data.
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** This model has not converged because we're trying to estimate both $\mathbf{B}$ and $\mathbf{u}$, which are highly confounded.
+</div>
 
-```{r}
-# if missing values are in the data, they should be NAs
-z.royale_data <- zscore(royale_data)
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** We can assume the populations are stationay about the mean and subtract the mean from each time series. We can then assume $\mathbf{u}$ = 0.
+</div>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Use the `zscore()` function from the {MARSS} package to remove the mean and also standardize the variance.
+</div>
+
+```{r z-score-data}
+## z-score the data
+royale_data_z <- zscore(royale_data)
 ```
 
-We can fit the model to the z-scored data, but we still have convergence issues.
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Update the model list for `MARSS()` by setting $\mathbf{u}$ to **0** and then refit the model.
+</div>
 
-```{r}
-royale.model.1 <- list(
-  Z = "identity", B = "unconstrained",
-  Q = "diagonal and unequal", R = "diagonal and unequal",
-  U = "zero", tinitx = 1
-)
-cntl.list <- list(allow.degen = FALSE, maxit = 200)
-kem.1 <- MARSS(z.royale_data, model = royale.model.1, control = cntl.list)
+```{r fit-model-2, cache = TRUE}
+## set u vector to all 0's
+mod_list$U <- "zero"
+
+## refit model
+mod_second <- MARSS(royale_data_z, model = mod_list) #, control = cntl.list)
 ```
 
-It looks like $\mathbf{R}$ is going to zero, meaning that the maximum-likelihood model is a process error only model.   That is not too surprising given that the data look more like a random walk than white noise.  We will set $\mathbf{R}$ manually to zero and assume that the census is complete (they count all individuals):
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** This model is still not converging, but this time it looks like the terms in $\mathbf{R}$ for the observation variance are heading toward 0.
+</div>
 
-```{r}
-royale.model.2 <- list(
-  Z = "identity", B = "unconstrained",
-  Q = "diagonal and unequal", R = "zero", U = "zero"
-)
-kem.2 <- MARSS(z.royale_data, model = royale.model.2)
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Go back and inspect the plot of the log-counts for moose and wolves. Does it look smooth like a random walk or choppy like white noise?
+</div>
+
+We could try increasing the minimum number iterations via the `control` argument to `MARSS()` like we've done before, but that probably won't help in this case. Instead, let's assume the animals on the island are relatively easy to count and that the data represent a complete census.
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Set $\mathbf{R}$ equal to **0** in the model list and refit the model.
+</div>
+
+```{r fit-model-3, cache = TRUE}
+## set the observation variance to 0
+mod_list$R <- "zero"
+
+## refit the model
+mod_third <- MARSS(royale_data_z, model = mod_list)
 ```
 
 ## Examine the interaction effects
 
 The estimated $\mathbf{B}$ elements 
 
-```{r}
-wolf.B <- coef(kem.2, type = "matrix")$B
-rownames(wolf.B) <- colnames(wolf.B) <- rownames(royale_data)
-print(wolf.B, digits = 2)
+```{r model-coef}
+B_hat <- coef(mod_third, type = "matrix")$B
+rownames(B_hat) <- colnames(B_hat) <- rownames(royale_data)
+print(B_hat, digits = 2)
 ```
 
 The function returns the estimated parameters, but in this case we want to see the estimates in matrix form. Element row=$i$, col=$j$ in $\mathbf{B}$ is the effect of species $j$ on species $i$, so $\mathbf{B}_{2,1}$ is the effect of wolves on moose and $\mathbf{B}_{1,2}$ is the effect of moose on wolves. The $\mathbf{B}$ matrix suggests that wolves have a negative effect on moose and that moose have a positive effect on wolves---as one would expect.  The diagonals are interpreted differently than the off-diagonals since the diagonals are ($b_{i,i}-1$) so subtract off 1 from the diagonals to get the effect of species $i$ on itself.   If the species are density-independent, then $\mathbf{B}_{i,i}$ would equal 1.  Smaller $\mathbf{B}_{i,i}$ means more density dependence.   
@@ -316,7 +400,7 @@ royale.model.3 <- list(
 Then we fit the model with covariates.
 
 ```{r}
-kem.3 <- MARSS(z.royale_data, model = royale.model.3)
+kem.3 <- MARSS(royale_data_z, model = royale.model.3)
 ```
 
 The results suggest what is already known about this system: cold winters and heavy snow are bad for moose as are hot summers.
@@ -335,7 +419,7 @@ pairs(t(z.score.clim.dat), lower.panel = cor.fun)
 You can explore the sensitivity of the $\mathbf{B}$ estimates when the measurement error is increased by adding white noise to the data:
 
 ```{r, eval = FALSE}
-bad.data <- z.royale_data + matrix(rnorm(100, 0, sqrt(.2)), 2, 50)
+bad.data <- royale_data_z + matrix(rnorm(100, 0, sqrt(.2)), 2, 50)
 kem.bad <- MARSS(bad.data, model = model)
 ```
 
@@ -352,7 +436,7 @@ royale.model.4 <- list(
   B = "unconstrained", U = "zero", Q = "diagonal and unequal",
   Z = "identity", R = "zero", tinitx = 1
 )
-kem.4 <- MARSS(z.royale_data, model = royale.model.4)
+kem.4 <- MARSS(royale_data_z, model = royale.model.4)
 ```
 
 \index{troubleshooting!degenerate variances}The other setting we may want to change is `allow.degen` in the control list.  This sets the diagonals of $\mathbf{Q}$ or $\mathbf{R}$ to zero if they are heading towards zero.  When the initial $\mathbf{x}$ is at $t = 1$, this can have non-intuitive (not wrong but puzzling) consequences if $\mathbf{R}$ is going to zero.   So, we will set `control$allow.degen = FALSE` and manually set $\mathbf{R}$ to $\mathbf{0}$ if needed.
