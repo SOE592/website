@@ -5854,25 +5854,63 @@ mod_third &lt;- MARSS(royale_data_z, model = mod_list)</code></pre>
 </div>
 <div id="examine-the-interaction-effects" class="section level2">
 <h2>Examine the interaction effects</h2>
-<p>The estimated <span class="math inline">\(\mathbf{B}\)</span>
-elements</p>
-<pre class="r"><code>B_hat &lt;- coef(mod_third, type = &quot;matrix&quot;)$B
+<p>Recall that the matrix <span class="math inline">\(\mathbf{B}\)</span> contains the intra-specific
+effects (density-dependence) along its diagonal and the inter-specific
+effects in the off-diagonals.</p>
+<div class="boxy boxy-orange boxy-lightbulb">
+<p><strong>Tip:</strong> We can use the <code>coef()</code> function to
+extract the elements of <span class="math inline">\(\mathbf{B}\)</span>
+from the <code>MARSS()</code> fitted object.</p>
+</div>
+<div class="boxy boxy-blue boxy-clipboard-list">
+<p><strong>Task:</strong> Use <code>coef()</code> to extract the
+elements of <span class="math inline">\(\mathbf{B}\)</span>.</p>
+</div>
+<pre class="r"><code>## get the B matrix
+B_hat &lt;- coef(mod_third, type = &quot;matrix&quot;)$B
+
+## add some nicer names
 rownames(B_hat) &lt;- colnames(B_hat) &lt;- rownames(royale_data)
+
+## inspect the values
 print(B_hat, digits = 2)</code></pre>
 <pre><code>##        Wolf Moose
 ## Wolf   0.77 0.078
 ## Moose -0.18 0.828</code></pre>
-<p>The function returns the estimated parameters, but in this case we
-want to see the estimates in matrix form. Element row=<span class="math inline">\(i\)</span>, col=<span class="math inline">\(j\)</span> in <span class="math inline">\(\mathbf{B}\)</span> is the effect of species <span class="math inline">\(j\)</span> on species <span class="math inline">\(i\)</span>, so <span class="math inline">\(\mathbf{B}_{2,1}\)</span> is the effect of wolves
+<p>Recall that the off-diagonal elements represent the effect of species
+<span class="math inline">\(j\)</span> (columns) on species <span class="math inline">\(i\)</span> (rows), so <span class="math inline">\(\mathbf{B}_{2,1}\)</span> is the effect of wolves
 on moose and <span class="math inline">\(\mathbf{B}_{1,2}\)</span> is
-the effect of moose on wolves. The <span class="math inline">\(\mathbf{B}\)</span> matrix suggests that wolves
-have a negative effect on moose and that moose have a positive effect on
-wolves—as one would expect. The diagonals are interpreted differently
-than the off-diagonals since the diagonals are (<span class="math inline">\(b_{i,i}-1\)</span>) so subtract off 1 from the
-diagonals to get the effect of species <span class="math inline">\(i\)</span> on itself. If the species are
-density-independent, then <span class="math inline">\(\mathbf{B}_{i,i}\)</span> would equal 1. Smaller
-<span class="math inline">\(\mathbf{B}_{i,i}\)</span> means more density
-dependence.</p>
+the effect of moose on wolves. As expected, wolves have a negative
+effect on moose (top-down predation) and moose have a positive effect on
+wolves (bottom-up supply).</p>
+<div class="boxy boxy-red boxy-exclamation">
+<p><strong>Note:</strong> We made a mathematical shortcut in converting
+our model from a single-species Gompertz model to one for the full
+community. As such, the strength of density dependence is really <span class="math inline">\(1 - b_{i,i}\)</span>. This means that population
+growth approaches density-independence as <span class="math inline">\(1
+- b_{i,i}\)</span> goes to 1, and the strength of density dependence
+increases as <span class="math inline">\(1 - b_{i,i}\)</span> goes to
+0.</p>
+</div>
+<div class="boxy boxy-orange boxy-lightbulb">
+<p><strong>Tip:</strong> We can do the subtraction in matrix form
+through the use of the identity matrix <span class="math inline">\(\mathbf{I}\)</span> which is <code>diag(n)</code>
+in <strong>R</strong>, where <code>n</code> is the length of the
+diagonal element of <span class="math inline">\(\mathbf{B}\)</span> (ie,
+the dimension of <span class="math inline">\(\mathbf{B}\)</span> is
+<span class="math inline">\(n \times n\)</span>).</p>
+</div>
+<div class="boxy boxy-blue boxy-clipboard-list">
+<p><strong>Task:</strong> Subtract the diagonal elements of <span class="math inline">\(\mathbf{B}\)</span> from 1 to obtain the strength
+of density dependence.</p>
+</div>
+<pre class="r"><code>## calculate (I - B)
+round(diag(2) - B_hat, 2)</code></pre>
+<pre><code>##       Wolf Moose
+## Wolf  0.23 -0.08
+## Moose 0.18  0.17</code></pre>
+<p>Both moose and wolves appear to be existing under strong
+density-dependence.</p>
 </div>
 <div id="adding-covariates" class="section level2">
 <h2>Adding covariates</h2>

@@ -319,15 +319,47 @@ mod_third <- MARSS(royale_data_z, model = mod_list)
 
 ## Examine the interaction effects
 
-The estimated $\mathbf{B}$ elements 
+Recall that the matrix $\mathbf{B}$ contains the intra-specific effects (density-dependence) along its diagonal and the inter-specific effects in the off-diagonals.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** We can use the `coef()` function to extract the elements of $\mathbf{B}$ from the `MARSS()` fitted object.
+</div>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Use `coef()` to extract the elements of $\mathbf{B}$.
+</div>
 
 ```{r model-coef}
+## get the B matrix
 B_hat <- coef(mod_third, type = "matrix")$B
+
+## add some nicer names
 rownames(B_hat) <- colnames(B_hat) <- rownames(royale_data)
+
+## inspect the values
 print(B_hat, digits = 2)
 ```
 
-The function returns the estimated parameters, but in this case we want to see the estimates in matrix form. Element row=$i$, col=$j$ in $\mathbf{B}$ is the effect of species $j$ on species $i$, so $\mathbf{B}_{2,1}$ is the effect of wolves on moose and $\mathbf{B}_{1,2}$ is the effect of moose on wolves. The $\mathbf{B}$ matrix suggests that wolves have a negative effect on moose and that moose have a positive effect on wolves---as one would expect.  The diagonals are interpreted differently than the off-diagonals since the diagonals are ($b_{i,i}-1$) so subtract off 1 from the diagonals to get the effect of species $i$ on itself.   If the species are density-independent, then $\mathbf{B}_{i,i}$ would equal 1.  Smaller $\mathbf{B}_{i,i}$ means more density dependence.   
+Recall that the off-diagonal elements represent the effect of species $j$ (columns) on species $i$ (rows), so $\mathbf{B}_{2,1}$ is the effect of wolves on moose and $\mathbf{B}_{1,2}$ is the effect of moose on wolves. As expected, wolves have a negative effect on moose (top-down predation) and moose have a positive effect on wolves (bottom-up supply).
+
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** We made a mathematical shortcut in converting our model from a single-species Gompertz model to one for the full community. As such, the strength of density dependence is really $1 - b_{i,i}$. This means that population growth approaches density-independence as $1 - b_{i,i}$ goes to 1, and the strength of density dependence increases as $1 - b_{i,i}$ goes to 0.
+</div>
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** We can do the subtraction in matrix form through the use of the identity matrix $\mathbf{I}$ which is `diag(n)` in **R**, where `n` is the length of the diagonal element of $\mathbf{B}$ (ie, the dimension of $\mathbf{B}$ is $n \times n$).
+</div>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Subtract the diagonal elements of $\mathbf{B}$ from 1 to obtain the strength of density dependence.
+</div>
+   
+```{r diagonal-B-corrected}
+## calculate (I - B)
+round(diag(2) - B_hat, 2)
+```
+
+Both moose and wolves appear to be existing under strong density-dependence.
 
 ## Adding covariates
 
