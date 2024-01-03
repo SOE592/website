@@ -28,11 +28,6 @@ Autoregressive moving average (ARMA) models
 Using ACF & PACF for model ID
 
 
-## Code for today
-
-You can find the R code for these lecture notes and other related exercises [here](lec_03_ARMA_models.R).
-
-
 ## White noise (WN)
 
 A time series $\{w_t\}$ is discrete white noise if its values are
