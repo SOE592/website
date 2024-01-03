@@ -363,9 +363,15 @@ Both moose and wolves appear to be existing under strong density-dependence.
 
 ## Adding covariates
 
-It is well-known that moose numbers are strongly affected by winter and summer climate.  The Isle Royale data set provided with MARSS has climate data from climate stations in Northeastern Minnesota, near Isle Royale.  The covariate data include January-February, July-September and April-May average temperature and precipitation.  Also included are three-year running means of these data, where the number for year $t$ is the average of years $t-1$, $t$ and $t+1$.  We will include these covariates in the analysis to see how they change our interaction estimates.  We have to adjust our covariates because the census numbers are from winter in year $t$ and we want the climate data from the previous year to affect this winter's moose count.  As usual, we will need to demean our covariate data so that we can set $\mathbf{u}$ equal to zero.  We will standardize the variance also so that we can more easily compare the effects across different covariates.
+As we've seen before, adding meaningful covariates to the process or observation models can help to better explain temporal patterns in the data. In a forecasting context, covariates can also provide a means for predicting the future response of a state. However, caution is warranted when including covariates, as their should be good rationale for including them in any model because you'll have to explain *why* they're good at explaining the current state or predicting future states.
 
-The mathematical form of our new process model for the wolf-moose population dynamics is
+In the current case, moose numbers are strongly affected by environmental conditions during the winter and summer. The Isle Royale data set provided with MARSS has climate data from stations in northeastern Minnesota, not far from Isle Royale. The covariate data include the average temperature and precipitation from January-February, July-September, and April-May. The dataset also include three-year running means of these data, where the number for year $t$ is the average of years $t-1$, $t$ and $t+1$ (akin to the linear filter we saw at the beginning of class).
+
+Let's include these covariates in our analysis to see if and how they change our interaction estimates. Before doing so, however, we have to adjust our covariates because the census numbers are taken in the winter of year $t$ and we want the climate data from the previous year to affect this year's winter moose count. We will also need to demean our covariate data so that we can set $\mathbf{u}$ equal to zero. Furthermore, we can standardize the variance of the covariates so we can more easily compare their effects across different covariates (ie, the estimated effects in $\mathbf{C}$ will be dimensionless).
+
+## Updated model form
+
+Let's update our model for community interactions to include the effects of covariates. In this case, we only want the environment to affect moose and not wolves, so our new process model is given by
 
 $$
 \begin{equation}
@@ -374,19 +380,22 @@ $$
   x_{w} \\
   x_{m}
 \end{bmatrix}_t =
-\mathbf{B} 
+\begin{bmatrix}
+  b_{w \rightarrow w} & b_{m \rightarrow w} \\
+  b_{w \rightarrow m} & b_{m \rightarrow m}
+\end{bmatrix} 
 \begin{bmatrix}
   x_{w} \\
   x_{m}
 \end{bmatrix}_{t-1} + 
 \begin{bmatrix}
   0 & 0 & 0 \\
-  C_{21} & C_{22} & C_{23}
+  C_{WT \rightarrow m} & C_{WP \rightarrow m} & C_{ST \rightarrow m}
 \end{bmatrix} 
 \begin{bmatrix}
-  \text{win temp} \\
-  \text{win precip} \\
-  \text{sum temp}
+  c_{WT} \\
+  c_{WP} \\
+  c_{ST}
 \end{bmatrix}_{t-1} +
 \begin{bmatrix}
   w_{w} \\
@@ -396,63 +405,92 @@ $$
 \end{equation}
 $$
 
-The $C_{21}$, $C_{22}$, etc. terms are the effect of winter temperature, winter precipitation, previous summer temperature and previous summer precipitation on winter moose numbers.  Since climate is known to mainly affect the moose, we set the climate effects to 0 for wolves (top row of $\mathbf{C}$).  
+where $WT$ is winter temperature, $WP$ is winter precipitation (snow), and $ST$ is summer temperature.
 
-First we prepare the covariate data and select the winter temperature and precipitation data and the summer temperature  data.  We need to use the previous year's climate data with this winter's abundance data, so 1959 to 2010.
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Prepare the covariate data by selecting the winter temperature and precipitation data, and the summer temperature.
+</div>
 
-```{r}
-clim.variables <- c(
-  "jan.feb.ave.temp", "jan.feb.ave.precip",
-  "july.sept.ave.temp"
-)
-yr1959to2010 <- isleRoyal[, "Year"] >= 1959 & isleRoyal[, "Year"] <= 2010
-clim.dat <- t(isleRoyal[yr1959to2010, clim.variables])
-z.score.clim.dat <- zscore(clim.dat)
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** We need to use the previous year's climate data with this winter's abundance data, so the covariates will run from 1959 through 2010.
+</div>
+
+```{r get-covariates}
+## names of climatic covariates
+covar_names <- c("jan.feb.ave.temp", "jan.feb.ave.precip", "july.sept.ave.temp")
+
+## set the years for the covariates
+yr_covars <- seq(1959, 2010)
+
+## select the appropriate covariates
+covars <- isleRoyal[isleRoyal[,"Year"] %in% yr_covars, covar_names]
+
+## transpose the covariates & z-score for MARSS()
+covars_z <- t(covars) |> zscore()
+
+## rename covariates to match model
+rownames(covars_z) <- c("WT", "WP", "ST")
 ```
 
-A plot of the covariate data against each other indicates that there is not much correlation between winter temperature and precipitation, which is good for analysis purposes, but warm winters are somewhat correlated with warm summers.  The latter will make it harder to interpret the effect of winter versus summer temperature although the correlation is not too strong fortunately.
+### Multicolinearity
+
+Just as with ordinary regression analysis, including two or more covariates that are highly correlated in the same model leads to so-called *multicolineairty*. In these cases, some of the variance in the data will be attributed incorrectly to some of the covariates and give incorrect estimates of the effect size(s).
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** We can use the code below to estimate and plot the correlation among the covariates.
+</div>
+
+```{r corr-covars}
+## function to estimate correlation
+cor_fun <- function(x, y) {
+  text(0.5, 0.5, format(cor(x, y), digits = 2), cex = 2)
+}
+
+## pair plots & associated correlations
+pairs(t(covars_z), lower.panel = cor_fun)
+```
+
+A plot of the covariate data against each other indicates that there is not much correlation between winter temperature and precipitation, which is good for analysis purposes, but warm winters are somewhat correlated with warm summers.  The latter will make it harder to interpret the effect of winter versus summer temperature, although the correlation is not too strong.
+
+## Update model list
 
 Next we prepare the list with the structure of all the model matrices.  We give descriptive names to the $\mathbf{C}$ elements so we can remember what each $\mathbf{C}$ element means.
 
-```{r}
-royale.model.3 <- list(
-  Z = "identity", B = "unconstrained",
-  Q = "diagonal and unequal", R = "zero", U = "zero",
-  C = matrix(list(
-    0, "Moose win temp", 0, "Moose win precip",
-    0, "Moose sum temp"
-  ), 2, 3),
-  c = z.score.clim.dat
-)
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Update the model list for `MARSS()`. Note the use of a `list` for the definition of $\mathbf{C}$.
+</div>
+
+```{r define-model-4}
+## create model list for MARSS()
+mod_list <- list(
+  ## state model
+  B = "unconstrained",
+  U = "unequal",
+  C = matrix(list(  0,    0,    0,
+                  "WT", "WP", "ST"),
+    nrow = 2, ncol = 3, byrow = TRUE),
+  c = covars_z,
+  Q = "diagonal and unequal",
+  ## obs model
+  Z = "identity",
+  A = "zero",
+  D = "zero",
+  d = "zero",
+  R = "zero"
+  )
 ```
 
-Then we fit the model with covariates.
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Fit the updated model with `MARSS()`.
+</div>
 
-```{r}
-kem.3 <- MARSS(royale_data_z, model = royale.model.3)
+```{r fit_model-4}
+## fit the model
+mod_fourth <- MARSS(royale_data_z, model = mod_list)
 ```
 
 The results suggest what is already known about this system: cold winters and heavy snow are bad for moose as are hot summers.
 
-
-```{r}
-cor.fun <- function(x, y) {
-  text(0.5, 0.5, format(cor(x, y), digits = 2), cex = 2)
-}
-pairs(t(z.score.clim.dat), lower.panel = cor.fun)
-```
-
-
-## Change the model and data
-
-You can explore the sensitivity of the $\mathbf{B}$ estimates when the measurement error is increased by adding white noise to the data:
-
-```{r, eval = FALSE}
-bad.data <- royale_data_z + matrix(rnorm(100, 0, sqrt(.2)), 2, 50)
-kem.bad <- MARSS(bad.data, model = model)
-```
-
-You can change the model by changing the constraints on $\mathbf{R}$ and $\mathbf{Q}$.
 
 ## Improving performance
 
