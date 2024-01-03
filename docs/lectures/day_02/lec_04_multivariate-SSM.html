@@ -3779,7 +3779,7 @@ v_{3,t}
 </article></slide><slide class=""><hgroup><h2>State model for species interactions</h2></hgroup><article  id="state-model-for-species-interactions-1">
 
 <p>\[
-x_{i,t} = \sum^{m}_{j = 1}{b_{i,j} x_{j,t}} + w_t
+x_{i,t} = u_i + \sum^{m}_{j = 1}{b_{i,j} x_{j,t}} + w_t
 \]</p>
 
 <p>where \(b_{i,j}\) is the effect of the \(j^{th}\) species on species \(i\)</p>
@@ -3791,12 +3791,20 @@ x_{i,t} = \sum^{m}_{j = 1}{b_{i,j} x_{j,t}} + w_t
 <p>We can write this model in matrix notation as</p>
 
 <p>\[
-\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{w}_t
+\mathbf{x}_t = \mathbf{u} + \mathbf{B} \mathbf{x}_{t-1} + \mathbf{w}_t
 \]</p>
 
 <p>with</p>
 
 <p>\[
+\mathbf{u} =
+\begin{bmatrix}
+u_1 \\
+u_2 \\
+\vdots \\
+u_m
+\end{bmatrix}
+~ ~ ~ ~ ~ ~ ~
 \mathbf{B} =
 \begin{bmatrix}
 b_{1,1} &amp; b_{1,2} &amp; \dots &amp; b_{1,m} \\
@@ -3811,7 +3819,7 @@ b_{m,1} &amp; b_{m,2} &amp; \dots &amp; b_{m,m}
 <p>Including the effects of exogenous drivers yields</p>
 
 <p>\[
-\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{C} \mathbf{c}_{t-k} + \mathbf{w}_t
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{C} \mathbf{c}_{t-k} + \mathbf{w}_t
 \]</p>
 
 <p>Note that the lag \(k \geq 0\)</p>
@@ -3821,7 +3829,7 @@ b_{m,1} &amp; b_{m,2} &amp; \dots &amp; b_{m,m}
 <p>Including the effects of exogenous drivers</p>
 
 <p>\[
-\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{C} \mathbf{c}_{t-k} + \mathbf{w}_t
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{C} \mathbf{c}_{t-k} + \mathbf{w}_t
 \]</p>
 
 <p>The \(m \times p\) matrix \(\mathbf{C}\) contains the effect(s) of each covariate (cols) on each state (rows)</p>
@@ -3835,18 +3843,18 @@ b_{m,1} &amp; b_{m,2} &amp; \dots &amp; b_{m,m}
 <p>\[
 \mathbf{C} =
 \begin{bmatrix}
-C_{1, Temp} &amp; C_{1, DO} \\ 
-C_{2, Temp} &amp; C_{2, DO} \\ 
+C_{1, Temp} &amp; C_{1, Rain} \\ 
+C_{2, Temp} &amp; C_{2, Rain} \\ 
 \vdots &amp; \vdots \\ 
-C_{m, Temp} &amp; C_{m, DO}
+C_{m, Temp} &amp; C_{m, Rain}
 \end{bmatrix}
 ~~ \text{or} ~~
 \mathbf{C} =
 \begin{bmatrix}
-C_{Temp} &amp; C_{DO} \\ 
-C_{Temp} &amp; C_{DO} \\ 
+C_{Temp} &amp; C_{Rain} \\ 
+C_{Temp} &amp; C_{Rain} \\ 
 \vdots &amp; \vdots \\ 
-C_{Temp} &amp; C_{DO}
+C_{Temp} &amp; C_{Rain}
 \end{bmatrix}
 \]</p>
 
@@ -3856,15 +3864,21 @@ C_{Temp} &amp; C_{DO}
 \mathbf{c}_{t-k} =
 \begin{bmatrix}
 Temp_{t-k} \\
-DO_{t-k}
+Rain_{t-k}
 \end{bmatrix}
 \]</p>
 
+</article></slide><slide class=""><hgroup><h2>A note on \(\mathbf{u}\)</h2></hgroup><article  id="a-note-on-mathbfu">
+
+<p>Recall that when we discussed univariate state-space models, we saw that it’s <strong><em>very</em></strong> difficult to estimate both \(\mathbf{u}\) and \(\mathbf{B}\)</p>
+
+<p>We will typically subtract the mean from each time series and assume \(\mathbf{u}\) = 0</p>
+
 </article></slide><slide class=""><hgroup><h2>Estimating species interactions</h2></hgroup><article  id="estimating-species-interactions">
 
-<p>Here is an example of estimating species interactions from time series data</p>
+<p>We’ll see an example of estimating species interactions later in lab</p>
 
-<p><a href='https://cran.r-project.org/web/packages/MARSS/vignettes/UserGuide.pdf' title=''>Holmes, Ward &amp; Scheuerell (2018) Chap 13</a></p></article></slide>
+<p>There are some other examples <a href='https://cran.r-project.org/web/packages/MARSS/vignettes/UserGuide.pdf' title=''>here</a></p></article></slide>
 
 
   <slide class="backdrop"></slide>

@@ -4,17 +4,506 @@ subtitle: "SOE 592 – Intro to Time Series Analysis"
 date: "<br>4 Jan 2024"
 output:
   html_document:
-    theme: sandstone
+    theme: simplex
     highlight: textmate
+    css: ["lecture_inst.css", "fontawesome.css", "solid.css"]
     toc: true
     toc_float: true
     toc_depth: 3
 ---
 
-```{r dfa-setup, include=FALSE, purl=FALSE}
-## in case you forget to add a chunk label
-knitr::opts_knit$set(unnamed.chunk.label = "dfa-")
+```{r setup, include=FALSE, purl=FALSE}
+knitr::opts_chunk$set(
+  fig.dim = c(7, 5),
+  fig.align = "center"
+  )
+set.seed(592)
 ```
+
+***
 
 # Introduction
 
+There are numerous ways to estimate the strength of ecological interactions among members of a food web, including top-down, bottom-up, and competitive interactions. These methods include experimental manipulation, stable isotope analysis, bioenergetics, and observational studies Back in the 1990s, a group of researchers began working on multivariate time series models that would allow people to estimate interactions among community members based on density (biomass) estimates collected over time. Among the best examples is a 2003 paper by Tony Ives and colleagues, which you can find [here](https://doi.org/10.1890/0012-9615(2003)073[0301:ECSAEI]2.0.CO;2).
+
+
+## State model for species interactions
+
+Earlier we saw that we can use a discrete-time Gompertz model to estimate the intrinsic rate of increase and density-dependent effects on population growth. Here we extend the Gompertz model to a multispecies framework. For 2+ interacting species (taxa), we can write
+
+$$
+x_{i,t} = u_i + \sum^{m}_{j = 1}{b_{i,j} x_{j,t}} + w_t
+$$
+
+where $u_i$ is the intrinsic (density independent) growth rate, $b_{i,j}$ is the effect of the $j^{th}$ species on species $i$, and $b_{i,j}$ with $i = j$ is the density-dependent effect. We can write this model in matrix notation as
+
+$$
+\mathbf{x}_t = \mathbf{u} + \mathbf{B} \mathbf{x}_{t-1} + \mathbf{w}_t
+$$
+
+with
+
+$$
+\mathbf{u} =
+\begin{bmatrix}
+u_1 \\
+u_2 \\
+\vdots \\
+u_m
+\end{bmatrix}
+~ ~ ~ ~ ~ ~ ~
+\mathbf{B} =
+\begin{bmatrix}
+b_{1,1} & b_{1,2} & \dots & b_{1,m} \\
+b_{2,1} & b_{1,2} & \dots & b_{2,m} \\
+\vdots & \vdots & \ddots & \vdots \\
+b_{m,1} & b_{m,2} & \dots & b_{m,m}
+\end{bmatrix}
+$$
+
+## Covariate effects
+
+We can easily accommodate the effects of exogenous drivers (covariates) by including two additional terms in the model, such that
+
+$$
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{C} \mathbf{c}_{t-k} + \mathbf{w}_t
+$$
+
+with the lag $k \geq 0$. The $m \times p$ matrix $\mathbf{C}$ contains the effect(s) of each covariate (cols) on each state (rows). The $p \times 1$ column vector $\mathbf{c}_{t-k}$ contains each of the $p$ covariates at time $t - k$.
+
+The effect(s) of covariates can vary by state/process, species, etc, such that these are both possibilites (that could be compared via some information criterion like AICc):
+
+$$
+\mathbf{C} =
+\begin{bmatrix}
+C_{1, Temp} & C_{1, Rain} \\ 
+C_{2, Temp} & C_{2, Rain} \\ 
+\vdots & \vdots \\ 
+C_{m, Temp} & C_{m, Rain}
+\end{bmatrix}
+~~ \text{or} ~~
+\mathbf{C} =
+\begin{bmatrix}
+C_{Temp} & C_{Rain} \\ 
+C_{Temp} & C_{Rain} \\ 
+\vdots & \vdots \\ 
+C_{Temp} & C_{Rain}
+\end{bmatrix}
+$$
+
+with
+
+$$
+\mathbf{c}_{t-k} =
+\begin{bmatrix}
+Temp_{t-k} \\
+Rain_{t-k}
+\end{bmatrix}
+$$
+
+
+***
+
+# Wolves & moose
+
+The population dynamics of wolves and moose on Isle Royale, an island national park located in north-central Lake Superior, make an interesting case study of a two-species predator-prey system. These populations have been studied intensively since 1958 and unlike other populations of gray wolves, the Isle Royale population has a diet composed almost entirely of moose (they eat the occasional beaver). Because Isle Royale is a national park, the moose are not hunted and their only predator is the gray wolf.  
+
+We will use the wolf and moose winter census data from Isle Royale to learn how to fit community interaction models to time series data. The long-term January (wolf) and February (moose) population estimates are provided by the Isle Royale Wolf-Moose Project. You can find out more about the organization and the project [here](http://www.isleroyalewolf.org).
+
+## The model
+
+The mathematical form of the process model for the wolf-moose population dynamics is
+
+$$
+\begin{equation}
+\begin{gathered}
+\begin{bmatrix}
+  x_{w}\\x_{m}
+\end{bmatrix}_t =
+\begin{bmatrix}
+  b_{w \rightarrow w} & b_{m \rightarrow w} \\
+  b_{w \rightarrow m} & b_{m \rightarrow m}
+\end{bmatrix} 
+\begin{bmatrix}
+  x_{w} \\
+  x_{m}
+\end{bmatrix}_{t-1} + 
+\begin{bmatrix}
+  u_{w} \\
+  u_{m}
+\end{bmatrix} +
+\begin{bmatrix}
+  w_{w} \\
+  w_{m}
+\end{bmatrix}_t \\
+\begin{bmatrix}
+  w_{w} \\
+  w_{m}
+\end{bmatrix}_t 
+\sim
+\text{MVN}
+\begin{pmatrix}
+  0,
+  \begin{bmatrix}
+    q_{w} & 0 \\
+    0 & q_{m}
+  \end{bmatrix}
+\end{pmatrix}
+\end{gathered}
+\end{equation}
+$$
+
+where $w$ denotes wolf and $m$ denotes moose. $w \rightarrow w$ is the effect of wolf on wolf (density-dependence) and $w \rightarrow m$ is the effect of wolf on moose (predation effect on moose).
+
+## Get the data
+
+The data are available in the {MARSS} package, so we won't have to download them the project site; we'll use the years 1960 to 2011.
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Get the data and plot the time series.
+</div>
+
+```{r get-data}
+## load MARSS library
+library(MARSS)
+
+## set the years
+yr_set <- seq(1960, 2011)
+
+## select the wolf & moose data & log-transform them
+royale_data <- isleRoyal[isleRoyal[,"Year"] %in% yr_set,
+                         c("Wolf", "Moose")] |>
+  log()
+
+## set of years
+tt <- isleRoyal[, "Year"]
+
+## plot the data
+par(mai = c(1.2, 1, 0.3, 0),
+    omi = c(0, 0, 0.5, 1))
+matplot(yr_set, royale_data,
+  type = "o", pch = 16, lwd = 2, lty = "solid",
+  col = c("darkgray", "brown"),
+  ylab = "Log of counts", xlab = "Year"
+)
+## add a legend
+legend(x = "center", legend = c("Moose", "Wolves"),
+       col = c("brown", "darkgray"),lwd = 2, bty = "n")
+```
+
+
+## Fit the model
+
+Fitting our species interaction model with `MARSS()` is similar to how we've done it for other problems. The key is to set up the model list correctly and everything should work. Thus, we need to explicitly specify the forms for ***all*** of the vectors and matrices in the full MARSS model given by
+
+$$
+\mathbf{x}_t = \mathbf{B} \mathbf{x}_{t-1} + \mathbf{u} + \mathbf{C} \mathbf{c}_{t-k} + \mathbf{w}_t \\
+\mathbf{y}_t = \mathbf{Z} \mathbf{x}_t + \mathbf{a} + \mathbf{D} \mathbf{d}_{t-h}+ \mathbf{v}_t \\
+$$
+
+Thus, to fit our species interaction model, we need to set the following:
+
+$$
+\begin{align}
+\mathbf{C} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{c}_{t-k} &=
+\begin{bmatrix}
+0
+\end{bmatrix} \\
+\mathbf{Z} &= 
+\begin{bmatrix}
+1 & 0 \\ 0 & 1
+\end{bmatrix} \\
+\mathbf{a} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{D} &=
+\begin{bmatrix}
+0 \\ 0
+\end{bmatrix} \\
+\mathbf{d}_{t-h} &=
+\begin{bmatrix}
+0
+\end{bmatrix}
+\end{align}
+$$
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Set up the model list for `MARSS()` (the code below uses textual shortcuts).
+</div>
+
+```{r define-model-1}
+## create model list for MARSS()
+mod_list <- list(
+  ## state model
+  B = "unconstrained",
+  U = "unequal",
+  C = "zero",
+  c = "zero",
+  Q = "diagonal and unequal",
+  ## obs model
+  Z = "identity",
+  A = "zero",
+  D = "zero",
+  d = "zero",
+  R = "diagonal and unequal"
+  )
+```
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Fit the species interaction model define above with `MARSS()`.
+</div>
+
+```{r fit-model-1, cache = TRUE}
+## transform the data for MARSS()
+royale_data <- t(royale_data)
+
+## fit the model
+mod_first <- MARSS(royale_data, model = mod_list)
+```
+
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** This model has not converged because we're trying to estimate both $\mathbf{B}$ and $\mathbf{u}$, which are highly confounded.
+</div>
+
+## A note on $\mathbf{u}$
+
+Recall that when we discussed univariate state-space models, we saw that it's ***very*** difficult to estimate both $\mathbf{u}$ and $\mathbf{B}$. Thus, we can assume the populations are stationay about the mean and subtract the mean from each time series. We can then assume $\mathbf{u}$ = 0.
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Use the `zscore()` function from the {MARSS} package to remove the mean and also standardize the variance.
+</div>
+
+```{r z-score-data}
+## z-score the data
+royale_data_z <- zscore(royale_data)
+```
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Update the model list for `MARSS()` by setting $\mathbf{u}$ to **0** and then refit the model.
+</div>
+
+```{r fit-model-2, cache = TRUE}
+## set u vector to all 0's
+mod_list$U <- "zero"
+
+## refit model
+mod_second <- MARSS(royale_data_z, model = mod_list) #, control = cntl.list)
+```
+
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** This model is still not converging, but this time it looks like the terms in $\mathbf{R}$ for the variances of the observation errors are heading toward 0.
+</div>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Go back and inspect the plot of the log-counts for moose and wolves. Does it look smooth like a random walk or choppy like white noise?
+</div>
+
+We could try increasing the minimum number iterations via the `control` argument to `MARSS()` like we've done before, but that probably won't help in this case. Instead, let's assume the animals on the island are relatively easy to count and that the data represent a complete census.
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Set $\mathbf{R}$ equal to **0** in the model list and refit the model.
+</div>
+
+```{r fit-model-3, cache = TRUE}
+## set the observation variance to 0
+mod_list$R <- "zero"
+
+## refit the model
+mod_third <- MARSS(royale_data_z, model = mod_list)
+```
+
+## Examine the interaction effects
+
+Recall that the matrix $\mathbf{B}$ contains the intra-specific effects (density-dependence) along its diagonal and the inter-specific effects in the off-diagonals.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** We can use the `coef()` function to extract the elements of $\mathbf{B}$ from the `MARSS()` fitted object.
+</div>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Use `coef()` to extract the elements of $\mathbf{B}$.
+</div>
+
+```{r model-coef}
+## get the B matrix
+B_hat <- coef(mod_third, type = "matrix")$B
+
+## add some nicer names
+rownames(B_hat) <- colnames(B_hat) <- rownames(royale_data)
+
+## inspect the values
+print(B_hat, digits = 2)
+```
+
+Recall that the off-diagonal elements represent the effect of species $j$ (columns) on species $i$ (rows), so $\mathbf{B}_{2,1}$ is the effect of wolves on moose and $\mathbf{B}_{1,2}$ is the effect of moose on wolves. As expected, wolves have a negative effect on moose (top-down predation) and moose have a positive effect on wolves (bottom-up supply).
+
+<div class="boxy boxy-red boxy-exclamation">
+**Note:** We made a mathematical shortcut in converting our model from a single-species Gompertz model to one for the full community. As such, the strength of density dependence is really $1 - b_{i,i}$. This means that population growth approaches density-independence as $1 - b_{i,i}$ goes to 1, and the strength of density dependence increases as $1 - b_{i,i}$ goes to 0.
+</div>
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** We can do the subtraction in matrix form through the use of the identity matrix $\mathbf{I}$ which is `diag(n)` in **R**, where `n` is the length of the diagonal element of $\mathbf{B}$ (ie, the dimension of $\mathbf{B}$ is $n \times n$).
+</div>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Subtract the diagonal elements of $\mathbf{B}$ from 1 to obtain the strength of density dependence.
+</div>
+   
+```{r diagonal-B-corrected}
+## calculate (I - B)
+round(diag(2) - B_hat, 2)
+```
+
+Both moose and wolves appear to be existing under strong density-dependence.
+
+## Adding covariates
+
+As we've seen before, adding meaningful covariates to the process or observation models can help to better explain temporal patterns in the data. In a forecasting context, covariates can also provide a means for predicting the future response of a state. However, caution is warranted when including covariates, as their should be good rationale for including them in any model because you'll have to explain *why* they're good at explaining the current state or predicting future states.
+
+In the current case, moose numbers are strongly affected by environmental conditions during the winter and summer. The Isle Royale data set provided with MARSS has climate data from stations in northeastern Minnesota, not far from Isle Royale. The covariate data include the average temperature and precipitation from January-February, July-September, and April-May. The dataset also include three-year running means of these data, where the number for year $t$ is the average of years $t-1$, $t$ and $t+1$ (akin to the linear filter we saw at the beginning of class).
+
+Let's include these covariates in our analysis to see if and how they change our interaction estimates. Before doing so, however, we have to adjust our covariates because the census numbers are taken in the winter of year $t$ and we want the climate data from the previous year to affect this year's winter moose count. We will also need to demean our covariate data so that we can set $\mathbf{u}$ equal to zero. Furthermore, we can standardize the variance of the covariates so we can more easily compare their effects across different covariates (ie, the estimated effects in $\mathbf{C}$ will be dimensionless).
+
+## Updated model form
+
+Let's update our model for community interactions to include the effects of covariates. In this case, we only want the environment to affect moose and not wolves, so our new process model is given by
+
+$$
+\begin{equation}
+\begin{gathered}
+\begin{bmatrix}
+  x_{w} \\
+  x_{m}
+\end{bmatrix}_t =
+\begin{bmatrix}
+  b_{w \rightarrow w} & b_{m \rightarrow w} \\
+  b_{w \rightarrow m} & b_{m \rightarrow m}
+\end{bmatrix} 
+\begin{bmatrix}
+  x_{w} \\
+  x_{m}
+\end{bmatrix}_{t-1} + 
+\begin{bmatrix}
+  0 & 0 & 0 \\
+  C_{WT \rightarrow m} & C_{WP \rightarrow m} & C_{ST \rightarrow m}
+\end{bmatrix} 
+\begin{bmatrix}
+  c_{WT} \\
+  c_{WP} \\
+  c_{ST}
+\end{bmatrix}_{t-1} +
+\begin{bmatrix}
+  w_{w} \\
+  w_{m}
+\end{bmatrix}_t
+\end{gathered}
+\end{equation}
+$$
+
+where $WT$ is winter temperature, $WP$ is winter precipitation (snow), and $ST$ is summer temperature.
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Prepare the covariate data by selecting the winter temperature and precipitation data, and the summer temperature.
+</div>
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** We need to use the previous year's climate data with this winter's abundance data, so the covariates will run from 1959 through 2010.
+</div>
+
+```{r get-covariates}
+## names of climatic covariates
+covar_names <- c("jan.feb.ave.temp", "jan.feb.ave.precip", "july.sept.ave.temp")
+
+## set the years for the covariates
+yr_covars <- seq(1959, 2010)
+
+## select the appropriate covariates
+covars <- isleRoyal[isleRoyal[,"Year"] %in% yr_covars, covar_names]
+
+## transpose the covariates & z-score for MARSS()
+covars_z <- t(covars) |> zscore()
+
+## rename covariates to match model
+rownames(covars_z) <- c("WT", "WP", "ST")
+```
+
+### Multicolinearity
+
+Just as with ordinary regression analysis, including two or more covariates that are highly correlated in the same model leads to so-called *multicolineairty*. In these cases, some of the variance in the data will be attributed incorrectly to some of the covariates and give incorrect estimates of the effect size(s).
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** We can use the code below to estimate and plot the correlation among the covariates.
+</div>
+
+```{r corr-covars}
+## function to estimate correlation
+cor_fun <- function(x, y) {
+  text(0.5, 0.5, format(cor(x, y), digits = 2), cex = 2)
+}
+
+## pair plots & associated correlations
+pairs(t(covars_z), lower.panel = cor_fun)
+```
+
+A plot of the covariate data against each other indicates that there is not much correlation between winter temperature and precipitation, which is good for analysis purposes, but warm winters are somewhat correlated with warm summers.  The latter will make it harder to interpret the effect of winter versus summer temperature, although the correlation is not too strong.
+
+## Update model list
+
+Next we prepare the list with the structure of all the model matrices.  We give descriptive names to the $\mathbf{C}$ elements so we can remember what each $\mathbf{C}$ element means.
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Update the model list for `MARSS()`. Note the use of a `list` for the definition of $\mathbf{C}$.
+</div>
+
+```{r define-model-4}
+## create model list for MARSS()
+mod_list <- list(
+  ## state model
+  B = "unconstrained",
+  U = "unequal",
+  C = matrix(list(  0,    0,    0,
+                  "WT", "WP", "ST"),
+    nrow = 2, ncol = 3, byrow = TRUE),
+  c = covars_z,
+  Q = "diagonal and unequal",
+  ## obs model
+  Z = "identity",
+  A = "zero",
+  D = "zero",
+  d = "zero",
+  R = "zero"
+  )
+```
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Fit the updated model with `MARSS()`.
+</div>
+
+```{r fit_model-4}
+## fit the model
+mod_fourth <- MARSS(royale_data_z, model = mod_list)
+```
+
+The results suggest what is already known about this system: cold winters and heavy snow are bad for moose as are hot summers.
+
+
+## Improving performance
+
+In the default MARSS model, the value of $\mathbb{E}[\mathbf{x}_0|\mathbf{y}_0]$ (what `x0` denotes when `tinitx = 0` in the model list) is estimated.  If we are estimating the $\mathbf{B}$ matrix, it is better to set `tinitx = 1` so that we are estimating $\mathbb{E}[\mathbf{x}_1|\mathbf{y}_0]$ instead.  The model will fit either way, but setting `tinitx = 1` in the model list will speed up and stabilize the fitting. It does not make much of a difference for the wolf-moose dataset but can have a large effect for larger models.  The reason is that the likelihood surface for $\mathbb{E}[\mathbf{x}_1|\mathbf{y}_0]$ is better behaved when $\mathbf{B}$ is small.  For example, if $\mathbf{B}$ equal to 0, there is little information about $\mathbb{E}[\mathbf{x}_0|\mathbf{y}_0]$ so the algorithm goes in circles trying to estimate it while there is good information $\mathbb{E}[\mathbf{x}_1|\mathbf{y}_0]$ from $\mathbf{y}_1$.  We could use a prior on the initial $\mathbf{x}$ but this requires its variance-covariance structure, which depends on the unknown $\mathbf{B}$ and specifying a variance-covariance structure that conflicts with $\mathbf{B}$ will change your $\mathbf{B}$ estimates.\index{troubleshooting!sensitivity to x0 prior}
+
+For the wolf-moose model, we set $\mathbf{R}=0$.  The EM algorithm (default) cannot estimate `x0` when `tinitx = 1` therefore to fit the model with `tinitx = 1` we need to use `method = "BFGS"`.  This is only for the case when $\mathbf{R} = 0$.
+
+```{r}
+royale.model.4 <- list(
+  B = "unconstrained", U = "zero", Q = "diagonal and unequal",
+  Z = "identity", R = "zero", tinitx = 1
+)
+kem.4 <- MARSS(royale_data_z, model = royale.model.4)
+```
+
+\index{troubleshooting!degenerate variances}The other setting we may want to change is `allow.degen` in the control list.  This sets the diagonals of $\mathbf{Q}$ or $\mathbf{R}$ to zero if they are heading towards zero.  When the initial $\mathbf{x}$ is at $t = 1$, this can have non-intuitive (not wrong but puzzling) consequences if $\mathbf{R}$ is going to zero.   So, we will set `control$allow.degen = FALSE` and manually set $\mathbf{R}$ to $\mathbf{0}$ if needed.
