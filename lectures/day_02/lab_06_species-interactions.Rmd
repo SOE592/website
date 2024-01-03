@@ -14,7 +14,7 @@ output:
 
 ```{r setup, include=FALSE, purl=FALSE}
 knitr::opts_chunk$set(
-  fig.dim = c(6, 6),
+  fig.dim = c(7, 5),
   fig.align = "center"
   )
 set.seed(592)
@@ -24,7 +24,7 @@ set.seed(592)
 
 # Introduction
 
-There are numerous ways to estimate the strength of ecological interactions among members of a food web, including top-down, bottom-up, and competitive interactions. These methods include experimental manipulation, stable isotope analysis, bioenergetics, and observational studies Back in the 1990s, a group of researchers began working on multivariate time series models that would allow people to estimate interactions among community members based on density (biomass) estimates collected over time. Among the best examples, is a 2003 paper by Tony Ives and colleagues, which you can find [here](https://doi.org/10.1890/0012-9615(2003)073[0301:ECSAEI]2.0.CO;2).
+There are numerous ways to estimate the strength of ecological interactions among members of a food web, including top-down, bottom-up, and competitive interactions. These methods include experimental manipulation, stable isotope analysis, bioenergetics, and observational studies Back in the 1990s, a group of researchers began working on multivariate time series models that would allow people to estimate interactions among community members based on density (biomass) estimates collected over time. Among the best examples is a 2003 paper by Tony Ives and colleagues, which you can find [here](https://doi.org/10.1890/0012-9615(2003)073[0301:ECSAEI]2.0.CO;2).
 
 
 ## State model for species interactions
@@ -102,20 +102,15 @@ Rain_{t-k}
 $$
 
 
-## A note on $\mathbf{u}$
-
-Recall that when we discussed univariate state-space models, we saw that it's ***very*** difficult to estimate both $\mathbf{u}$ and $\mathbf{B}$
-
-We will typically subtract the mean from each time series and assume $\mathbf{u}$ = 0
-
-
 ***
 
 # Wolves & moose
 
-Population dynamics of wolves and moose on Isle Royale, Michigan make an interesting case study of a two-species predator-prey interactions.  These populations have been studied intensively since 1958.  Unlike other populations of gray wolves, the Isle Royale population has a diet dominated by one prey item, moose. The only predator of moose on Isle Royale is the gray wolf, as this population is not hunted.  
+The population dynamics of wolves and moose on Isle Royale, an island national park located in north-central Lake Superior, make an interesting case study of a two-species predator-prey system. These populations have been studied intensively since 1958 and unlike other populations of gray wolves, the Isle Royale population has a diet composed almost entirely of moose (they eat the occasional beaver). Because Isle Royale is a national park, the moose are not hunted and their only predator is the gray wolf.  
 
-We will use the wolf and moose winter census data from Isle Royale to learn how to fit community dynamics models to time series data.  The long-term January (wolf) and February (moose) population estimates are provided by the Isle Royale Wolf-Moose Project. You can find out more about the organization and the project [here](http://www.isleroyalewolf.org).
+We will use the wolf and moose winter census data from Isle Royale to learn how to fit community interaction models to time series data. The long-term January (wolf) and February (moose) population estimates are provided by the Isle Royale Wolf-Moose Project. You can find out more about the organization and the project [here](http://www.isleroyalewolf.org).
+
+## The model
 
 The mathematical form of the process model for the wolf-moose population dynamics is
 
@@ -173,7 +168,7 @@ The data are available in the {MARSS} package, so we won't have to download them
 library(MARSS)
 
 ## set the years
-yr_set <- seq(1960, 2011) #isleRoyal[, "Year"] >= 1960 & isleRoyal[, "Year"] <= 2011
+yr_set <- seq(1960, 2011)
 
 ## select the wolf & moose data & log-transform them
 royale_data <- isleRoyal[isleRoyal[,"Year"] %in% yr_set,
@@ -187,11 +182,13 @@ tt <- isleRoyal[, "Year"]
 par(mai = c(1.2, 1, 0.3, 0),
     omi = c(0, 0, 0.5, 1))
 matplot(yr_set, royale_data,
-  ylab = "Log of counts", xlab = "Year", type = "o", pch = 16,
-  lwd = 2, col = c("darkgray", "brown")
+  type = "o", pch = 16, lwd = 2, lty = "solid",
+  col = c("darkgray", "brown"),
+  ylab = "Log of counts", xlab = "Year"
 )
+## add a legend
 legend(x = "center", legend = c("Moose", "Wolves"),
-       col = c("brown", "darkgray"), lwd = 2, bty = "n")
+       col = c("brown", "darkgray"),lwd = 2, bty = "n")
 ```
 
 
@@ -273,9 +270,9 @@ mod_first <- MARSS(royale_data, model = mod_list)
 **Note:** This model has not converged because we're trying to estimate both $\mathbf{B}$ and $\mathbf{u}$, which are highly confounded.
 </div>
 
-<div class="boxy boxy-orange boxy-lightbulb">
-**Tip:** We can assume the populations are stationay about the mean and subtract the mean from each time series. We can then assume $\mathbf{u}$ = 0.
-</div>
+## A note on $\mathbf{u}$
+
+Recall that when we discussed univariate state-space models, we saw that it's ***very*** difficult to estimate both $\mathbf{u}$ and $\mathbf{B}$. Thus, we can assume the populations are stationay about the mean and subtract the mean from each time series. We can then assume $\mathbf{u}$ = 0.
 
 <div class="boxy boxy-blue boxy-clipboard-list">
 **Task:** Use the `zscore()` function from the {MARSS} package to remove the mean and also standardize the variance.
@@ -299,7 +296,7 @@ mod_second <- MARSS(royale_data_z, model = mod_list) #, control = cntl.list)
 ```
 
 <div class="boxy boxy-red boxy-exclamation">
-**Note:** This model is still not converging, but this time it looks like the terms in $\mathbf{R}$ for the observation variance are heading toward 0.
+**Note:** This model is still not converging, but this time it looks like the terms in $\mathbf{R}$ for the variances of the observation errors are heading toward 0.
 </div>
 
 <div class="boxy boxy-blue boxy-clipboard-list">
