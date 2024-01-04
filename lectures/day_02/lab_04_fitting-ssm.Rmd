@@ -295,6 +295,24 @@ mod_fits_SE <- mod_fit$states.se |> t()
 
 ## Model parameters
 
+We can extract the parameters directly from a fitted MARSS model object rather than having to transcribe or copy/paste them from the output.
+
+<div class="boxy boxy-orange boxy-lightbulb">
+**Tip:** We can use the `coef()` function to extract $b$ from the `MARSS()` fitted object.
+</div>
+
+<div class="boxy boxy-blue boxy-clipboard-list">
+**Task:** Use `coef()` to extract $b$.
+</div>
+
+```{r model-coef}
+## get the estimated parameters
+params_est <- coef(mod_fit, type = "vector")
+
+## get `b` (strength of density dependence)
+params_est["B.b"] |> round(2)
+```
+
 
 ***
 
