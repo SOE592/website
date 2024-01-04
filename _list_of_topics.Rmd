@@ -109,7 +109,7 @@ lab_5 <- list(
   pdf = c(""),
   rmd = "",
   html = "lectures/day_02/lab_05_animal-movement.html",
-  background = c("<br><br>"),
+  background = c("[Jonsen et al 2003](references/Jonsen_2003_animal_movement.pdf)","<br>"),
   zoom = ""
 )
 
@@ -120,7 +120,7 @@ lab_6 <- list(
   pdf = c(""),
   rmd = "",
   html = "lectures/day_02/lab_06_species-interactions.html",
-  background = c("<br><br>"),
+  background = c("[Ives et al (2003)](references/Ives_2003_MAR_models.pdf)","[Hampton et al 2013](references/Hampton_2013_MAR_review.pdf)"),
   zoom = ""
 )
 
