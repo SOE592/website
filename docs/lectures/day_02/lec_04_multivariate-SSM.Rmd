@@ -61,7 +61,7 @@ $$
 y_{1,t} = x_{1,t} + a_1 + v_{1,t} \\
 y_{2,t} = x_{2,t} + a_2 + v_{2,t} \\
 \vdots \\
-y_{n,t} = x_{n,t} + a_2 + v_{n,t} \\
+y_{n,t} = x_{n,t} + a_n + v_{n,t} \\
 $$
 
 
@@ -564,7 +564,7 @@ $$
 \mathbf{Z} =
 \begin{bmatrix}
 1 & 0 & \dots & 0 \\
-1 & 0 & \dots & 0 \\
+0 & 1 & \dots & 0 \\
 \vdots & \vdots & \ddots & 0 \\
 0 & 0 & \dots & 1 
 \end{bmatrix}
@@ -575,7 +575,7 @@ $$
 
 Here is an example of using different forms of $\mathbf{Z}$ to evaluate the possible metapopulation structure of Harbor Seals
 
-[Harbor seal example](https://nwfsc-timeseries.github.io/atsa-labs/sec-mss-west-coast-harbor-seals-counts.html)
+[Harbor seal example](https://atsa-es.github.io/atsa-labs/sec-mss-west-coast-harbor-seals-counts.html)
 
 
 ## Estimating community interactions
