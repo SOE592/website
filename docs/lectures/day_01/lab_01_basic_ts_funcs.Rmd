@@ -686,7 +686,7 @@ par(mfrow = c(1, 2))
 plot.ts(tt, ylab = expression(italic(x[t])))
 
 ## get ACF
-sine_acf <- acf(tt)
+acf(tt)
 ```
 
 ```{r plotSineACF, eval = TRUE, echo = FALSE, fig.cap = "Time series plot of a discrete sine wave (left) and the correlogram of its ACF (right)."}
@@ -722,10 +722,7 @@ par(mfrow = c(1, 2))
 plot.ts(tt, ylab = expression(italic(x[t])))
 
 ## get ACF
-sili_acf <- acf(tt, plot = FALSE)
-
-## plot ACF
-plot_acf(sili_acf)
+acf(tt)
 ```
 
 ```{r plotSiLiACF, eval = TRUE, echo = FALSE, fig.cap = "Time series plot of a discrete sine wave (left) and the correlogram of its ACF (right)."}
