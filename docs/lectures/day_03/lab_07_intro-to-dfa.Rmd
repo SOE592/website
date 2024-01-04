@@ -1,7 +1,7 @@
 ---
 title: "Introduction to Dynamic Factor Analysis"
 subtitle: "SOE 592 – Intro to Time Series Analysis"
-date: "<br>3 Jan 2024"
+date: "<br>5 Jan 2024"
 output:
   html_document:
     theme: simplex
