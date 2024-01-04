@@ -162,12 +162,13 @@ lec_6 <- list(
 
 ## session 14 ####
 lab_8 <- list(
-  title = "Forecasting",
-  topics = c("Forecasting"),
+  title = "Models in practice",
+  topics = c("Models in practice"),
   pdf = c(""),
   rmd = "",
-  html = "lectures/day_03/lab_08_forecasting.html",
-  background = c("<br><br>"),
+  html = "",
+  background = c("[Bulltrout in the PNW](lectures/day_03/Scheuerell_SCCS_2021.pdf)",
+                 "[Chinook from the Tengu Derby](lectures/day_03/Scheuerell_SCCS_2021.pdf)"),
   zoom = ""
 )
 
