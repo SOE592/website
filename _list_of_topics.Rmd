@@ -98,7 +98,7 @@ lec_4 <- list(
   rmd = "",
   html = "lectures/day_02/lec_04_multivariate-SSM.html",
   background = c("[Matrix math review](https://atsa-es.github.io/atsa-labs/chap-basicmat.html)",
-                 "<br>"),
+                 "[Tolimieri et al (2017)](references/Tolimieri_2017_rockfish.pdf)"),
   zoom = ""
 )
 
@@ -134,7 +134,7 @@ lec_5 <- list(
   rmd = "",
   html = "lectures/day_03/lec_05_intro-to-DFA.html",
   background = c("[Zuur et al (2003)](references/Zuur_2003_DFA.pdf)",
-                 "<br><br>"),
+                 "[Ohlberger et al (2016)](references/Ohlberger_2016_population_coherence.pdf)"),
   zoom = ""
 )
 
