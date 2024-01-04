@@ -37,11 +37,6 @@ Univariate response
 Multivariate response
 
 
-## Code for today
-
-You can find the R code for these lecture notes and other related exercises [here](lec_09_intro_to_DLMs.R).
-
-
 ## Simple linear regression
 
 Let's begin with a linear regression model
@@ -57,8 +52,8 @@ The index $i$ has no explicit meaning in that shuffling ($y_i,x_i$) pairs has no
 
 We can write the model in matrix form
 
-\begin{equation*}
-\begin{gathered}
+$$
+\begin{gather}
 y_i = \alpha + \beta x_i + e_i \\
 \Downarrow \\
 y_i = 
@@ -70,16 +65,15 @@ y_i =
   \beta
 \end{bmatrix} +
 e_i
-\end{gathered}
-\end{equation*}
-
+\end{gather}
+$$
 
 ## Simple linear regression
 
 We can write the model in matrix form
 
-\begin{equation*}
-\begin{gathered}
+$$
+\begin{gather}
 y_i = \alpha + \beta x_i + e_i \\
 \Downarrow \\
 y_i = 
@@ -93,8 +87,8 @@ y_i =
 e_i \\
 \Downarrow \\
 y_i = \mathbf{X}^{\top}_i \boldsymbol{\theta} + e_i
-\end{gathered}
-\end{equation*}
+\end{gather}
+$$
 
 with
 
