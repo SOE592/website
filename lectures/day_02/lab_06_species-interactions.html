@@ -5941,8 +5941,8 @@ compare their effects across different covariates (ie, the estimated
 effects in <span class="math inline">\(\mathbf{C}\)</span> will be
 dimensionless).</p>
 </div>
-<div id="updated-model-form" class="section level2">
-<h2>Updated model form</h2>
+<div id="update-model-form" class="section level2">
+<h2>Update model form</h2>
 <p>Let’s update our model for community interactions to include the
 effects of covariates. In this case, we only want the environment to
 affect moose and not wolves, so our new process model is given by</p>
@@ -6032,12 +6032,12 @@ interpret the effect of winter versus summer temperature, although the
 correlation is not too strong.</p>
 </div>
 </div>
-<div id="update-model-list" class="section level2">
-<h2>Update model list</h2>
-<p>Next we prepare the list with the structure of all the model
-matrices. We give descriptive names to the <span class="math inline">\(\mathbf{C}\)</span> elements so we can remember
-what each <span class="math inline">\(\mathbf{C}\)</span> element
-means.</p>
+<div id="update-model-definition" class="section level2">
+<h2>Update model definition</h2>
+<p>Before we can estimate the effects of the environmental covariates on
+moose, we need to update our model definition for <code>MARSS()</code>.
+We’ll give the elements in <span class="math inline">\(\mathbf{C}\)</span> descriptive names so we can
+easily identify their values in the <code>MARSS()</code> output.</p>
 <div class="boxy boxy-blue boxy-clipboard-list">
 <p><strong>Task:</strong> Update the model list for
 <code>MARSS()</code>. Note the use of a <code>list</code> for the
@@ -6096,50 +6096,19 @@ mod_fourth &lt;- MARSS(royale_data_z, model = mod_list)</code></pre>
 ## Standard errors have not been calculated. 
 ## Use MARSSparamCIs to compute CIs and bias estimates.</code></pre>
 <p>The results suggest what is already known about this system: cold
-winters and heavy snow are bad for moose as are hot summers.</p>
+winters and heavy snow are bad for moose, as are hot summers.</p>
 </div>
-<div id="improving-performance" class="section level2">
-<h2>Improving performance</h2>
-<p>In the default MARSS model, the value of <span class="math inline">\(\mathbb{E}[\mathbf{x}_0|\mathbf{y}_0]\)</span>
-(what <code>x0</code> denotes when <code>tinitx = 0</code> in the model
-list) is estimated. If we are estimating the <span class="math inline">\(\mathbf{B}\)</span> matrix, it is better to set
-<code>tinitx = 1</code> so that we are estimating <span class="math inline">\(\mathbb{E}[\mathbf{x}_1|\mathbf{y}_0]\)</span>
-instead. The model will fit either way, but setting
-<code>tinitx = 1</code> in the model list will speed up and stabilize
-the fitting. It does not make much of a difference for the wolf-moose
-dataset but can have a large effect for larger models. The reason is
-that the likelihood surface for <span class="math inline">\(\mathbb{E}[\mathbf{x}_1|\mathbf{y}_0]\)</span> is
-better behaved when <span class="math inline">\(\mathbf{B}\)</span> is
-small. For example, if <span class="math inline">\(\mathbf{B}\)</span>
-equal to 0, there is little information about <span class="math inline">\(\mathbb{E}[\mathbf{x}_0|\mathbf{y}_0]\)</span> so
-the algorithm goes in circles trying to estimate it while there is good
-information <span class="math inline">\(\mathbb{E}[\mathbf{x}_1|\mathbf{y}_0]\)</span>
-from <span class="math inline">\(\mathbf{y}_1\)</span>. We could use a
-prior on the initial <span class="math inline">\(\mathbf{x}\)</span> but
-this requires its variance-covariance structure, which depends on the
-unknown <span class="math inline">\(\mathbf{B}\)</span> and specifying a
-variance-covariance structure that conflicts with <span class="math inline">\(\mathbf{B}\)</span> will change your <span class="math inline">\(\mathbf{B}\)</span> estimates.</p>
-<p>For the wolf-moose model, we set <span class="math inline">\(\mathbf{R}=0\)</span>. The EM algorithm (default)
-cannot estimate <code>x0</code> when <code>tinitx = 1</code> therefore
-to fit the model with <code>tinitx = 1</code> we need to use
-<code>method = &quot;BFGS&quot;</code>. This is only for the case when <span class="math inline">\(\mathbf{R} = 0\)</span>.</p>
-<pre class="r"><code>royale.model.4 &lt;- list(
-  B = &quot;unconstrained&quot;, U = &quot;zero&quot;, Q = &quot;diagonal and unequal&quot;,
-  Z = &quot;identity&quot;, R = &quot;zero&quot;, tinitx = 1
-)
-kem.4 &lt;- MARSS(royale_data_z, model = royale.model.4)</code></pre>
-<pre><code>## Stopped at iter=1 in MARSSkem at x0 update.
-##  There are 0s on R diagonal. x0 assoc with these must be fixed (not estimated)
-##  when using the EM algorithm. Try method=&quot;BFGS&quot;.  Type MARSSinfo(&quot;x0R0&quot;) for help.
-##  par, kf, states, iter, loglike are the last values before the error.
-##  Try control$safe=TRUE which uses a slower but slightly more robust algorithm.
-##  Use control$trace=1 to generate a more detailed error report. See user guide for insight.</code></pre>
-<p>The other setting we may want to change is <code>allow.degen</code>
-in the control list. This sets the diagonals of <span class="math inline">\(\mathbf{Q}\)</span> or <span class="math inline">\(\mathbf{R}\)</span> to zero if they are heading
-towards zero. When the initial <span class="math inline">\(\mathbf{x}\)</span> is at <span class="math inline">\(t = 1\)</span>, this can have non-intuitive (not
-wrong but puzzling) consequences if <span class="math inline">\(\mathbf{R}\)</span> is going to zero. So, we will
-set <code>control$allow.degen = FALSE</code> and manually set <span class="math inline">\(\mathbf{R}\)</span> to <span class="math inline">\(\mathbf{0}\)</span> if needed.</p>
 </div>
+<div id="endnote" class="section level1">
+<h1>Endnote</h1>
+<p>Here we’ve examined a relatively simple predator-prey system, but
+often the system of interest is much more complex and may include 10 or
+more species. In these cases, care must be given as to how we set up the
+<span class="math inline">\(mathbf{B}\)</span> matrix with respect to
+meaningful interactions, such that some elements may need to set to 0 at
+the outset. Alternatively, we could use a different approach like lasso
+regression that assumes <em>a priori</em> that most of the interactions
+will be 0 unless the data strongly suggest otherwise (e.g., <a href="https://peerj.com/articles/14332/">Ward et al. 2022</a>).</p>
 </div>
 
 

@@ -369,7 +369,7 @@ In the current case, moose numbers are strongly affected by environmental condit
 
 Let's include these covariates in our analysis to see if and how they change our interaction estimates. Before doing so, however, we have to adjust our covariates because the census numbers are taken in the winter of year $t$ and we want the climate data from the previous year to affect this year's winter moose count. We will also need to demean our covariate data so that we can set $\mathbf{u}$ equal to zero. Furthermore, we can standardize the variance of the covariates so we can more easily compare their effects across different covariates (ie, the estimated effects in $\mathbf{C}$ will be dimensionless).
 
-## Updated model form
+## Update model form
 
 Let's update our model for community interactions to include the effects of covariates. In this case, we only want the environment to affect moose and not wolves, so our new process model is given by
 
@@ -452,9 +452,9 @@ pairs(t(covars_z), lower.panel = cor_fun)
 
 A plot of the covariate data against each other indicates that there is not much correlation between winter temperature and precipitation, which is good for analysis purposes, but warm winters are somewhat correlated with warm summers.  The latter will make it harder to interpret the effect of winter versus summer temperature, although the correlation is not too strong.
 
-## Update model list
+## Update model definition
 
-Next we prepare the list with the structure of all the model matrices.  We give descriptive names to the $\mathbf{C}$ elements so we can remember what each $\mathbf{C}$ element means.
+Before we can estimate the effects of the environmental covariates on moose, we need to update our model definition for `MARSS()`. We'll give the elements in $\mathbf{C}$ descriptive names so we can easily identify their values in the `MARSS()` output.
 
 <div class="boxy boxy-blue boxy-clipboard-list">
 **Task:** Update the model list for `MARSS()`. Note the use of a `list` for the definition of $\mathbf{C}$.
@@ -489,21 +489,10 @@ mod_list <- list(
 mod_fourth <- MARSS(royale_data_z, model = mod_list)
 ```
 
-The results suggest what is already known about this system: cold winters and heavy snow are bad for moose as are hot summers.
+The results suggest what is already known about this system: cold winters and heavy snow are bad for moose, as are hot summers.
+
+# Endnote
+
+Here we've examined a relatively simple predator-prey system, but often the system of interest is much more complex and may include 10 or more species. In these cases, care must be given as to how we set up the $mathbf{B}$ matrix with respect to meaningful interactions, such that some elements may need to set to 0 at the outset. Alternatively, we could use a different approach like lasso regression that assumes *a priori* that most of the interactions will be 0 unless the data strongly suggest otherwise (e.g., [Ward et al. 2022](https://peerj.com/articles/14332/)).
 
 
-## Improving performance
-
-In the default MARSS model, the value of $\mathbb{E}[\mathbf{x}_0|\mathbf{y}_0]$ (what `x0` denotes when `tinitx = 0` in the model list) is estimated.  If we are estimating the $\mathbf{B}$ matrix, it is better to set `tinitx = 1` so that we are estimating $\mathbb{E}[\mathbf{x}_1|\mathbf{y}_0]$ instead.  The model will fit either way, but setting `tinitx = 1` in the model list will speed up and stabilize the fitting. It does not make much of a difference for the wolf-moose dataset but can have a large effect for larger models.  The reason is that the likelihood surface for $\mathbb{E}[\mathbf{x}_1|\mathbf{y}_0]$ is better behaved when $\mathbf{B}$ is small.  For example, if $\mathbf{B}$ equal to 0, there is little information about $\mathbb{E}[\mathbf{x}_0|\mathbf{y}_0]$ so the algorithm goes in circles trying to estimate it while there is good information $\mathbb{E}[\mathbf{x}_1|\mathbf{y}_0]$ from $\mathbf{y}_1$.  We could use a prior on the initial $\mathbf{x}$ but this requires its variance-covariance structure, which depends on the unknown $\mathbf{B}$ and specifying a variance-covariance structure that conflicts with $\mathbf{B}$ will change your $\mathbf{B}$ estimates.\index{troubleshooting!sensitivity to x0 prior}
-
-For the wolf-moose model, we set $\mathbf{R}=0$.  The EM algorithm (default) cannot estimate `x0` when `tinitx = 1` therefore to fit the model with `tinitx = 1` we need to use `method = "BFGS"`.  This is only for the case when $\mathbf{R} = 0$.
-
-```{r}
-royale.model.4 <- list(
-  B = "unconstrained", U = "zero", Q = "diagonal and unequal",
-  Z = "identity", R = "zero", tinitx = 1
-)
-kem.4 <- MARSS(royale_data_z, model = royale.model.4)
-```
-
-\index{troubleshooting!degenerate variances}The other setting we may want to change is `allow.degen` in the control list.  This sets the diagonals of $\mathbf{Q}$ or $\mathbf{R}$ to zero if they are heading towards zero.  When the initial $\mathbf{x}$ is at $t = 1$, this can have non-intuitive (not wrong but puzzling) consequences if $\mathbf{R}$ is going to zero.   So, we will set `control$allow.degen = FALSE` and manually set $\mathbf{R}$ to $\mathbf{0}$ if needed.
