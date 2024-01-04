@@ -144,7 +144,7 @@ lab_7 <- list(
   topics = c("Identifying common trends"),
   pdf = c(""),
   rmd = "",
-  html = "lectures/day_03/lab_07_intro-to-DFA.html",
+  html = "lectures/day_03/lab_07_intro-to-dfa.html",
   background = c("<br><br>"),
   zoom = ""
 )
