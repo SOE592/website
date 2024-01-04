@@ -3166,6 +3166,11 @@ bottom: 3em;
 left: 5em;
 font-size: 90%;
 }
+blockquote {
+background: #f9f9f9;
+border-left: 5px solid #ccc;
+padding: 0.5em 1.5em;
+}
 </style>
 
 </head>
@@ -3198,10 +3203,6 @@ font-size: 90%;
 
 <p>Multivariate response</p>
 
-</article></slide><slide class=""><hgroup><h2>Code for today</h2></hgroup><article  id="code-for-today">
-
-<p>You can find the R code for these lecture notes and other related exercises <a href='lec_09_intro_to_DLMs.R' title=''>here</a>.</p>
-
 </article></slide><slide class=""><hgroup><h2>Simple linear regression</h2></hgroup><article  id="simple-linear-regression">
 
 <p>Let’s begin with a linear regression model</p>
@@ -3216,13 +3217,43 @@ y_i = \alpha + \beta x_i + e_i ~ \text{with} ~ e_i \sim \text{N}(0,\sigma^2)
 
 <p>We can write the model in matrix form</p>
 
-<p></p>
+<p>\[
+\begin{gather}
+y_i = \alpha + \beta x_i + e_i \\
+\Downarrow \\
+y_i = 
+\begin{bmatrix}
+  1 &amp; x_i
+\end{bmatrix}
+\begin{bmatrix}
+  \alpha \\
+  \beta
+\end{bmatrix} +
+e_i
+\end{gather}
+\]</p>
 
 </article></slide><slide class=""><hgroup><h2>Simple linear regression</h2></hgroup><article  id="simple-linear-regression-2">
 
 <p>We can write the model in matrix form</p>
 
-<p></p>
+<p>\[
+\begin{gather}
+y_i = \alpha + \beta x_i + e_i \\
+\Downarrow \\
+y_i = 
+\begin{bmatrix}
+  1 &amp; x_i
+\end{bmatrix}
+\begin{bmatrix}
+  \alpha \\
+  \beta
+\end{bmatrix} +
+e_i \\
+\Downarrow \\
+y_i = \mathbf{X}^{\top}_i \boldsymbol{\theta} + e_i
+\end{gather}
+\]</p>
 
 <p>with</p>
 
