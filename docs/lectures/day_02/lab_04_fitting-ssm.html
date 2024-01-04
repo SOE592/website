@@ -5736,6 +5736,24 @@ mod_fits_SE &lt;- mod_fit$states.se |&gt; t()</code></pre>
 </div>
 <div id="model-parameters" class="section level2">
 <h2>Model parameters</h2>
+<p>We can extract the parameters directly from a fitted MARSS model
+object rather than having to transcribe or copy/paste them from the
+output.</p>
+<div class="boxy boxy-orange boxy-lightbulb">
+<p><strong>Tip:</strong> We can use the <code>coef()</code> function to
+extract <span class="math inline">\(b\)</span> from the
+<code>MARSS()</code> fitted object.</p>
+</div>
+<div class="boxy boxy-blue boxy-clipboard-list">
+<p><strong>Task:</strong> Use <code>coef()</code> to extract <span class="math inline">\(b\)</span>.</p>
+</div>
+<pre class="r"><code>## get the estimated parameters
+params_est &lt;- coef(mod_fit, type = &quot;vector&quot;)
+
+## get `b` (strength of density dependence)
+params_est[&quot;B.b&quot;] |&gt; round(2)</code></pre>
+<pre><code>##  B.b 
+## 0.68</code></pre>
 <hr />
 </div>
 </div>
