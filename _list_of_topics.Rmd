@@ -74,8 +74,7 @@ lec_3 <- list(
   rmd = "",
   html = "lectures/day_02/lec_03_univariate-SSM.html",
   background = c("[Chap 12, Cowperwait & Metcalf (2009)](references/Introductory_Time_Series_With_R.pdf)",
-                 "[Auger-Méthé et al (2021)](references/Auger‐Methe_guide_state-space_models.pdf)",
-                 "<br>"),
+                 "[Auger-Méthé et al (2021)](references/Auger‐Methe_guide_state-space_models.pdf)<br>"),
   zoom = ""
 )
 
@@ -98,7 +97,7 @@ lec_4 <- list(
   rmd = "",
   html = "lectures/day_02/lec_04_multivariate-SSM.html",
   background = c("[Matrix math review](https://atsa-es.github.io/atsa-labs/chap-basicmat.html)",
-                 "[Tolimieri et al (2017)](references/Tolimieri_2017_rockfish.pdf)"),
+                 "[Tolimieri et al (2017)](references/Tolimieri_2017_rockfish.pdf)<br>"),
   zoom = ""
 )
 
@@ -109,7 +108,7 @@ lab_5 <- list(
   pdf = c(""),
   rmd = "",
   html = "lectures/day_02/lab_05_animal-movement.html",
-  background = c("[Jonsen et al (2003)](references/Jonsen_2003_animal_movement.pdf)","<br>"),
+  background = c("[Jonsen et al (2003)](references/Jonsen_2003_animal_movement.pdf)<br><br>"),
   zoom = ""
 )
 
@@ -121,8 +120,7 @@ lab_6 <- list(
   rmd = "",
   html = "lectures/day_02/lab_06_species-interactions.html",
   background = c("[Ives et al (2003)](references/Ives_2003_MAR_models.pdf)",
-                 "[Hampton et al (2013)](references/Hampton_2013_MAR_review.pdf)",
-                 "<br>"),
+                 "[Hampton et al (2013)](references/Hampton_2013_MAR_review.pdf)<br>"),
   zoom = ""
 )
 
@@ -134,7 +132,7 @@ lec_5 <- list(
   rmd = "",
   html = "lectures/day_03/lec_05_intro-to-DFA.html",
   background = c("[Zuur et al (2003)](references/Zuur_2003_DFA.pdf)",
-                 "[Ohlberger et al (2016)](references/Ohlberger_2016_population_coherence.pdf)"),
+                 "[Ohlberger et al (2016)](references/Ohlberger_2016_population_coherence.pdf)<br>"),
   zoom = ""
 )
 
@@ -156,7 +154,7 @@ lec_6 <- list(
   pdf = c(""),
   rmd = "",
   html = "lectures/day_03/lec_06_intro-to-DLMs.html",
-  background = c("<br><br>"),
+  background = c("[Scheuerell & Williams (2005)](references/Scheuerell_2005_forecasting_SARs.pdf)<br><br>"),
   zoom = ""
 )
 
@@ -168,7 +166,7 @@ lab_8 <- list(
   rmd = "",
   html = "",
   background = c("[Bulltrout in the PNW](lectures/day_03/Scheuerell_SCCS_2021.pdf)",
-                 "[Chinook from the Tengu Derby](lectures/day_03/Scheuerell_SCCS_2021.pdf)"),
+                 "[Chinook from the Tengu Derby](lectures/day_03/Scheuerell_SCCS_2021.pdf)<br>"),
   zoom = ""
 )
 
