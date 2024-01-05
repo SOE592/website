@@ -5584,7 +5584,10 @@ population dynamics is</p>
 \sim
 \text{MVN}
 \begin{pmatrix}
-  0,
+\begin{bmatrix}
+  0 \\
+  0
+\end{bmatrix},
   \begin{bmatrix}
     q_{w} &amp; 0 \\
     0 &amp; q_{m}
@@ -5882,46 +5885,18 @@ print(B_hat, digits = 2)</code></pre>
 on moose and <span class="math inline">\(\mathbf{B}_{1,2}\)</span> is
 the effect of moose on wolves. As expected, wolves have a negative
 effect on moose (top-down predation) and moose have a positive effect on
-wolves (bottom-up supply).</p>
-<div class="boxy boxy-red boxy-exclamation">
-<p><strong>Note:</strong> We made a mathematical shortcut in converting
-our model from a single-species Gompertz model to one for the full
-community. As such, the strength of density dependence is really <span class="math inline">\(1 - b_{i,i}\)</span>. This means that population
-growth approaches density-independence as <span class="math inline">\(1
-- b_{i,i}\)</span> goes to 1, and the strength of density dependence
-increases as <span class="math inline">\(1 - b_{i,i}\)</span> goes to
-0.</p>
-</div>
-<div class="boxy boxy-orange boxy-lightbulb">
-<p><strong>Tip:</strong> We can do the subtraction in matrix form
-through the use of the identity matrix <span class="math inline">\(\mathbf{I}\)</span> which is <code>diag(n)</code>
-in <strong>R</strong>, where <code>n</code> is the length of the
-diagonal element of <span class="math inline">\(\mathbf{B}\)</span> (ie,
-the dimension of <span class="math inline">\(\mathbf{B}\)</span> is
-<span class="math inline">\(n \times n\)</span>).</p>
-</div>
-<div class="boxy boxy-blue boxy-clipboard-list">
-<p><strong>Task:</strong> Subtract the diagonal elements of <span class="math inline">\(\mathbf{B}\)</span> from 1 to obtain the strength
-of density dependence.</p>
-</div>
-<pre class="r"><code>## calculate (I - B)
-round(diag(2) - B_hat, 2)</code></pre>
-<pre><code>##       Wolf Moose
-## Wolf  0.23 -0.08
-## Moose 0.18  0.17</code></pre>
-<p>Both moose and wolves appear to be existing under strong
-density-dependence.</p>
+wolves (bottom-up supply). Both moose and wolves appear to be existing
+under relatively strong density-dependence.</p>
 </div>
 <div id="adding-covariates" class="section level2">
 <h2>Adding covariates</h2>
 <p>As we’ve seen before, adding meaningful covariates to the process or
 observation models can help to better explain temporal patterns in the
 data. In a forecasting context, covariates can also provide a means for
-predicting the future response of a state. However, caution is warranted
-when including covariates, as their should be good rationale for
-including them in any model because you’ll have to explain <em>why</em>
-they’re good at explaining the current state or predicting future
-states.</p>
+predicting the future response of a state. However, there should be good
+rationale for including them in any model because you’ll have to explain
+<em>why</em> they’re good at explaining the current state or predicting
+future states.</p>
 <p>In the current case, moose numbers are strongly affected by
 environmental conditions during the winter and summer. The Isle Royale
 data set provided with MARSS has climate data from stations in

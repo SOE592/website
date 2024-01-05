@@ -343,30 +343,11 @@ rownames(B_hat) <- colnames(B_hat) <- rownames(royale_data)
 print(B_hat, digits = 2)
 ```
 
-Recall that the off-diagonal elements represent the effect of species $j$ (columns) on species $i$ (rows), so $\mathbf{B}_{2,1}$ is the effect of wolves on moose and $\mathbf{B}_{1,2}$ is the effect of moose on wolves. As expected, wolves have a negative effect on moose (top-down predation) and moose have a positive effect on wolves (bottom-up supply).
-
-<div class="boxy boxy-red boxy-exclamation">
-**Note:** We made a mathematical shortcut in converting our model from a single-species Gompertz model to one for the full community. As such, the strength of density dependence is really $1 - b_{i,i}$. This means that population growth approaches density-independence as $1 - b_{i,i}$ goes to 1, and the strength of density dependence increases as $1 - b_{i,i}$ goes to 0.
-</div>
-
-<div class="boxy boxy-orange boxy-lightbulb">
-**Tip:** We can do the subtraction in matrix form through the use of the identity matrix $\mathbf{I}$ which is `diag(n)` in **R**, where `n` is the length of the diagonal element of $\mathbf{B}$ (ie, the dimension of $\mathbf{B}$ is $n \times n$).
-</div>
-
-<div class="boxy boxy-blue boxy-clipboard-list">
-**Task:** Subtract the diagonal elements of $\mathbf{B}$ from 1 to obtain the strength of density dependence.
-</div>
-   
-```{r diagonal-B-corrected}
-## calculate (I - B)
-round(diag(2) - B_hat, 2)
-```
-
-Both moose and wolves appear to be existing under strong density-dependence.
+Recall that the off-diagonal elements represent the effect of species $j$ (columns) on species $i$ (rows), so $\mathbf{B}_{2,1}$ is the effect of wolves on moose and $\mathbf{B}_{1,2}$ is the effect of moose on wolves. As expected, wolves have a negative effect on moose (top-down predation) and moose have a positive effect on wolves (bottom-up supply). Both moose and wolves appear to be existing under relatively strong density-dependence.
 
 ## Adding covariates
 
-As we've seen before, adding meaningful covariates to the process or observation models can help to better explain temporal patterns in the data. In a forecasting context, covariates can also provide a means for predicting the future response of a state. However, caution is warranted when including covariates, as their should be good rationale for including them in any model because you'll have to explain *why* they're good at explaining the current state or predicting future states.
+As we've seen before, adding meaningful covariates to the process or observation models can help to better explain temporal patterns in the data. In a forecasting context, covariates can also provide a means for predicting the future response of a state. However, there should be good rationale for including them in any model because you'll have to explain *why* they're good at explaining the current state or predicting future states.
 
 In the current case, moose numbers are strongly affected by environmental conditions during the winter and summer. The Isle Royale data set provided with MARSS has climate data from stations in northeastern Minnesota, not far from Isle Royale. The covariate data include the average temperature and precipitation from January-February, July-September, and April-May. The dataset also include three-year running means of these data, where the number for year $t$ is the average of years $t-1$, $t$ and $t+1$ (akin to the linear filter we saw at the beginning of class).
 
