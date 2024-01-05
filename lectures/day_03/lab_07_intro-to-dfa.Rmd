@@ -409,9 +409,9 @@ ZZ <- matrix(Z_vals, nrow = N_ts, ncol = 3, byrow = TRUE)
 ## `aa` is the offset/scaling
 aa <- "zero"
 
-## `DD` and `d` are for covariates
-DD <- "zero"  # matrix(0, mm, 1)
-dd <- "zero"  # matrix(0, 1, wk_last)
+## `DD` and `d` are for covariates; 0 for now
+DD <- "zero"
+dd <- "zero"
 
 ## `RR` is variance-covariance matrix for obs errors
 RR <- "diagonal and unequal"
