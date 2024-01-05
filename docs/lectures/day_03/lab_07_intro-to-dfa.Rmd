@@ -22,7 +22,7 @@ knitr::opts_knit$set(
 
 ***
 
-# Introduction {#sec-dfa-intro}
+# Introduction
 
 DFA is conceptually different than what we have been doing in the previous applications.  Here we are trying to explain temporal variation in a set of $n$ observed time series using linear combinations of a set of $m$ hidden random walks, where $m << n$.  A DFA model is a type of MARSS model with the following structure:
 
@@ -38,7 +38,7 @@ This equation should look rather familiar as it is exactly the same form we used
 
 ***
 
-# Example of a DFA model {#sec-dfa-example1}
+# Example of a DFA model
 
 The general idea is that the observations $\mathbf{y}$ are modeled as a linear combination of covariates $\mathbf{Dd}_t$, hidden processes $\mathbf{x}$ and factor loadings $\mathbf{Z}$, and some offsets $\mathbf{a}$. Ignoring for now the effect(s) of covariates, imagine a case where we had a data set with five observed time series ($n = 5$) and we want to fit a model with three hidden processes ($m = 3$).  If we write out our DFA model in MARSS matrix form, the observation equation would look like
 
@@ -141,7 +141,7 @@ And the process errors would be
 
 ***
 
-# Constraining a DFA model {#sec-dfa-constraining-a-dfa-model}
+# Constraining a DFA model
 
 If $\mathbf{a}$, $\mathbf{Z}$, and $\mathbf{Q}$ are not constrained, the DFA model above is unidentifiable. Nevertheless, we can use the following parameter constraints to make the model identifiable: 
 
@@ -252,7 +252,7 @@ but the distribution of the process errors would become
 
 ***
 
-# Different error structures {#sec-dfa-different-error-structures}
+# Different error structures
 
 The example observation equation we used above had what we refer to as an "unconstrained" variance-covariance matrix $\mathbf{R}$ wherein all of the parameters are unique. In certain applications, however, we may want to change our assumptions about the forms for $\mathbf{R}$. For example, we might have good reason to believe that all of the observations have different error variances and they were independent of one another (e.g., different methods were used for sampling), in which case
 
@@ -284,7 +284,7 @@ Any of these options for $\mathbf{R}$ (and other custom options as well) are ava
 
 ***
 
-# Lake Washington phytoplankton {#sec-dfa-lake-wa-data}
+# Lake Washington phytoplankton
 
 For this exercise, we will use the Lake Washington phytoplankton data contained in the {MARSS} package. 
 
@@ -349,7 +349,7 @@ spp <- rownames(dat_1980)
 rownames(dat) <- spp
 ```
 
-## Plots of the data {#sec-dfa-plot-lake-wa-data}
+## Plots of the data
 
 <div class="boxy boxy-blue boxy-clipboard-list">
 **Task:** Create time series plots of all five phytoplankton functional groups.
@@ -380,7 +380,7 @@ for(i in spp){
 
 ***
 
-# Fitting DFA models with {MARSS} {#sec-dfa-fitting-dfa-models-with-marss}
+# Fitting DFA models with {MARSS}
 
 The {MARSS} package is designed to work with the fully specified matrix form of the multivariate state-space model we wrote out in Sec 3. Thus, we will need to create a model list with forms for each of the vectors and matrices.
 
@@ -393,7 +393,7 @@ The {MARSS} package is designed to work with the fully specified matrix form of 
 </div>
 
 
-## The observation model {#sec-dfa-observation-model}
+## The observation model
 
 Here we will fit the DFA model above where we have `r N_ts` observed time series and we want 3 hidden states. Now we need to set up the observation model for `MARSS()`. Here are the vectors and matrices for our first model where each nutrient follows its own process. Recall that we will need to set the elements in the upper R corner of $\mathbf{Z}$ to 0. We will assume that the observation errors have different variances and they are independent of one another.
 
@@ -417,7 +417,7 @@ dd <- "zero"
 RR <- "diagonal and unequal"
 ```
 
-## The process model {#sec-dfa-process-model}
+## The process model
 
 Just as with other MARSS models, we need to specify the explicit form for all of the vectors and matrices based on the full form of the MARSS model we defined above. 
 
@@ -445,7 +445,7 @@ cc <- "zero"  # matrix(0, 1, wk_last)
 QQ <- "identity"  # diag(mm)
 ```
 
-## Fit the model in MARSS {#sec-dfa-fit-model-in-marss}
+## Fit the model
 
 Now it's time to fit our first DFA model.
 
@@ -487,7 +487,7 @@ dfa_1 <- MARSS(y = dat,
 
 ***
 
-# Interpreting the {MARSS} output {#sec-dfa-interpreting-the-marss-output}
+# Interpreting the output
 
 By now the `MARSS()` output should look familiar. The first 12 parameter estimates `Z.z##` are the loadings of each observed time series on the 3 hidden states. The next 5 estimates `R.(,)` are the variances of the observation errors $(v_{i,t})$. The last 3 values, `x0.X#`, are the estimates of the initial states at $t = 0$.
 
@@ -496,7 +496,7 @@ By now the `MARSS()` output should look familiar. The first 12 parameter estimat
 </div>
 
 
-## Rotating trends and loadings {#sec-dfa-rotating-loadings}
+## Rotating trends and loadings
 
 Before proceeding further, we need to address the constraints we placed on the DFA model in Sec 2.2. In particular, we arbitrarily constrained $\mathbf{Z}$ in such a way to choose only one of these solutions, but fortunately the different solutions are equivalent, and they can be related to each other by a rotation matrix $\mathbf{H}$.
 
@@ -556,7 +556,7 @@ proc_rot = solve(H_inv) %*% dfa_1$states
 
 ***
 
-# Estimated states and loadings {#sec-dfa-estimated-states}
+# Estimated states and loadings
 
 Here are plots of the three hidden processes (left column) and the loadings for each of phytoplankton groups (right column).
 
@@ -634,7 +634,7 @@ ccf(proc_rot[1,],proc_rot[2,], lag.max = 12, main="")
 
 ***
 
-# Plotting the data and model fits {#sec-dfa-plot-data}
+# Plotting the data and model fits
 
 We can now plot the fits for our DFA model along with the data. 
 
@@ -714,7 +714,7 @@ for(i in 1:N_ts) {
 
 ***
 
-# Covariates in DFA models {#sec-dfa-covariates}
+# Covariates in DFA models
 
 It is standard to add covariates to the analysis so that one removes known important drivers. The DFA with covariates is written as:
 
@@ -734,7 +734,7 @@ where the $q \times 1$ vector $\mathbf{d}_t$ contains the covariate(s) at time $
 </div>
 
 
-## Example from Lake Washington {#sec-dfa-lakeWA}
+## Example from Lake Washington
 
 The Lake Washington dataset has two environmental covariates that we might expect to have effects on phytoplankton growth, and hence, abundance: 
 
