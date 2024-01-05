@@ -143,7 +143,10 @@ $$
 \sim
 \text{MVN}
 \begin{pmatrix}
-  0,
+\begin{bmatrix}
+  0 \\
+  0
+\end{bmatrix},
   \begin{bmatrix}
     q_{w} & 0 \\
     0 & q_{m}
