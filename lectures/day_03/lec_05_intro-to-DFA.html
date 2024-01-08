@@ -3069,18 +3069,21 @@ var loadDeck = function(event) {
   });
 };
 
-if (document.readyState !== "loading" &&
-    document.querySelector('slides') === null) { 
-  // if the document is done loading but our element hasn't yet appeared, defer
-  // loading of the deck
-  window.setTimeout(function() {
-    loadDeck(null);
-  }, 0);
-} else {
-  // still loading the DOM, so wait until it's finished
-  document.addEventListener("DOMContentLoaded", loadDeck);
-}
+if (!window.Shiny) {
+  // If Shiny is loaded, the slide deck is initialized in ioslides template
 
+  if (document.readyState !== "loading" &&
+      document.querySelector('slides') === null) {
+    // if the document is done loading but our element hasn't yet appeared, defer
+    // loading of the deck
+    window.setTimeout(function() {
+      loadDeck(null);
+    }, 0);
+  } else {
+    // still loading the DOM, so wait until it's finished
+    document.addEventListener("DOMContentLoaded", loadDeck);
+  }
+}
 
 
 </script>
@@ -3229,6 +3232,11 @@ bottom: 3em;
 left: 5em;
 font-size: 90%;
 }
+blockquote {
+background: #f9f9f9;
+border-left: 5px solid #ccc;
+padding: 0.5em 1.5em;
+}
 </style>
 
 </head>
@@ -3262,10 +3270,6 @@ font-size: 90%;
 <li><p>Constraints for model fitting</p></li>
 <li><p>Interpretation of results</p></li>
 </ul>
-
-</article></slide><slide class=""><hgroup><h2>Code for today</h2></hgroup><article  id="code-for-today">
-
-<p>You can find the R code for these lecture notes and other related exercises <a href='lec_08_intro_to_DFA.R' title=''>here</a>.</p>
 
 </article></slide><slide class=""><hgroup><h2>A very simple model</h2></hgroup><article  id="a-very-simple-model">
 
@@ -3545,7 +3549,7 @@ x_{i,t} = x_{i,t-1} + w_{i,t}
 y_{1,t} = x_{1,t} + a_1 + v_{1,t} \\
 y_{2,t} = x_{2,t} + a_2 + v_{2,t} \\
 \vdots \\
-y_{n,t} = x_{n,t} + a_2 + v_{n,t} \\
+y_{n,t} = x_{n,t} + a_n + v_{n,t} \\
 \]</p>
 
 <p>\[
@@ -4420,6 +4424,11 @@ x_{n,t} = x_{n,t-1} + w_{n,t}
        window.jQuery(document).on('slideenter', function(e) {
          window.jQuery(e.target).trigger('shown');
       });
+    }
+    if (window.Shiny) {
+      // Initialize slides when this script appears on the page, since it
+      // indicates that the <slides> markup has been fully loaded.
+      window.loadDeck();
     }
   })();
 </script>
