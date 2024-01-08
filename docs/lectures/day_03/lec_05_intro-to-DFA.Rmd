@@ -30,11 +30,6 @@ Dynamic Factor Analysis (DFA)
 * Interpretation of results
 
 
-## Code for today
-
-You can find the R code for these lecture notes and other related exercises [here](lec_08_intro_to_DFA.R).
-
-
 ## A very simple model
 
 Consider this simple model, consisting of a mean $\mu$ plus error
@@ -380,7 +375,7 @@ $$
 y_{1,t} = x_{1,t} + a_1 + v_{1,t} \\
 y_{2,t} = x_{2,t} + a_2 + v_{2,t} \\
 \vdots \\
-y_{n,t} = x_{n,t} + a_2 + v_{n,t} \\
+y_{n,t} = x_{n,t} + a_n + v_{n,t} \\
 $$
 
 $$
