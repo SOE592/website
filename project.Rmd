@@ -48,7 +48,7 @@ Things to consider:
 
 #### 20% of final grade
 
-**Due no later than Friday, March 1, 2024 at 11:59pm PDT**
+**Due no later than Friday, March 8, 2024 at 11:59pm PDT**
 
 Your methods section should include two elements:
 
@@ -62,7 +62,7 @@ Your methods section should include two elements:
 
 #### 70% of final grade
 
-**Due no later than Friday, April 5, 2024 at 11:59pm PDT**
+**Due no later than Friday, April 12, 2024 at 11:59pm PDT**
 
 ### Length
 
