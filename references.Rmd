@@ -43,6 +43,16 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <br>
 
+### Examples of papers using MARSS models
+
+* Elmstrom EJ, Holtgrieve GW, Scheuerell MD, Schauer AJ, Leazer K. 2024. Climate and landform interact to control the source and transport of nitrate in Pacific Northwest rivers. Communications Earth & Environment 5:90 (Available [here](./references/Elmstrom_2024_climate_controls.pdf))
+
+* Jankowski K, Houser JN, Scheuerell MD, Smits AP. 2021. Warmer winters increase phytoplankton biomass in a large floodplain river. Journal of Geophysical Research: Biogeosciences 126:e2020JG006135 (Available [here](./references/Jankowski_2021_Mississippi_chla.pdf))
+
+* Quinn TP, Scheuerell MD, Losee JP, Hanada D. 2022. Multidecadal trends in body size of Puget Sound Chinook salmon: Analysis of data from the Tengu Derby, a culturally unique fishery. Marine and Coastal Fisheries 14:e10205 (Available [here](./references/Quinn_2022_tengu_derby.pdf))
+
+<br>
+
 ### Using GitHub
 
 * [Creating a GitHub account](./references/github_signup.html)
