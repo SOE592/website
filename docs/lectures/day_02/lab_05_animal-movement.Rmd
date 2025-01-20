@@ -200,6 +200,7 @@ points(yy[2, TT], yy[1, TT],
        pch = 0, cex = 2, col = "darkgray")
 ```
 
+<br>
 
 ## Fitting the model
 
@@ -288,24 +289,20 @@ M
 ## create model list for MARSS()
 mod_list <- list(
   ## state model
-  B = diag(2),             # 2x2 identity matrix
-  U = matrix(0, 2, 1),     # 2x1 vector of biases = 0
-  C = matrix(0, 2, 1),     # 2x1 vector of covariate effects = 0
-  c = matrix(0),           # 1x1 matrix of covariates (none)
-  Q = matrix(c(list("q"),  # 2x2 covariance matrix
-               list(0),
-               list(0),
-               list("q")),
+  B = diag(2),                       # 2x2 identity matrix
+  U = matrix(0, 2, 1),               # 2x1 vector of biases = 0
+  C = matrix(0, 2, 1),               # 2x1 vector of covariate effects = 0
+  c = matrix(0),                     # 1x1 matrix of covariates (none)
+  Q = matrix(c(list("q"), list(0),   # 2x2 covariance matrix
+               list(0), list("q")),
              2, 2),
   ## obs model
-  Z = diag(2),             # 2x2 identity matrix
-  A = matrix(0, 2, 1),     # 2x1 vector of offsets = 0
-  D = matrix(0, 2, 1),     # 2x1 vector of covariate effects = 0
-  d = matrix(0),           # 1x1 matrix of covariates (none)
-  R = matrix(c(list("r"),  # 2x2 covariance matrix
-               list(0),
-               list(0),
-               list("r")),
+  Z = diag(2),                       # 2x2 identity matrix
+  A = matrix(0, 2, 1),               # 2x1 vector of offsets = 0
+  D = matrix(0, 2, 1),               # 2x1 vector of covariate effects = 0
+  d = matrix(0),                     # 1x1 matrix of covariates (none)
+  R = matrix(c(list("r"), list(0),   # 2x2 covariance matrix
+               list(0), list("r")),
              2, 2)
   )
 
@@ -588,34 +585,30 @@ $$
 mod_list <- list(
   ## state model
   # B = "identity",
-  B = diag(2),              # 2x2 identity matrix
+  B = diag(2),                       # 2x2 identity matrix
   # U = "unconstrained",
-  U = matrix(c("NS", "EW"),  # 2x1 vector of bias terms
+  U = matrix(c("NS", "EW"),          # 2x1 vector of bias terms
              2, 1),
   # C = "zero",
-  C = matrix(0, 2, 1),       # 2x1 vector of covariate effects = 0
+  C = matrix(0, 2, 1),               # 2x1 vector of covariate effects = 0
   # c = "zero",
-  c = matrix(0),             # 1x1 matrix of covariates (none)
+  c = matrix(0),                     # 1x1 matrix of covariates (none)
   # Q = "diagonal and equal",
-  Q = matrix(c(list("q"),    # 2x2 covariance matrix
-               list(0),
-               list(0),
-               list("q")),
+  Q = matrix(c(list("q"), list(0),   # 2x2 covariance matrix
+               list(0), list("q")),
              2, 2),
   ## obs model
   # Z = "identity",
-  Z = diag(2),               # 2x2 identity matrix
+  Z = diag(2),                       # 2x2 identity matrix
   # A = "zero",
-  A = matrix(0, 2, 1),       # 2x1 vector of offsets = 0
+  A = matrix(0, 2, 1),               # 2x1 vector of offsets = 0
   # D = "zero",
-  D = matrix(0, 2, 1),       # 2x1 vector of covariate effects = 0
+  D = matrix(0, 2, 1),               # 2x1 vector of covariate effects = 0
   # d = "zero",
-  d = matrix(0),             # 1x1 matrix of covariates (none)
+  d = matrix(0),                     # 1x1 matrix of covariates (none)
   # R = "diagonal and equal",
-  R = matrix(c(list("r"),    # 2x2 covariance matrix
-               list(0),
-               list(0),
-               list("r")),
+  R = matrix(c(list("r"), list(0),   # 2x2 covariance matrix
+               list(0), list("r")),
              2, 2)
   )
 ```
@@ -685,7 +678,7 @@ points(xx_hat[2, TT], xx_hat[1, TT],
 
 # Home range
 
-Many animals that are not actively migrating to or from a breeding location or simply wandering around tend to establish some form of home range with which they move in search of food. For example, a female cougar with kittens in a den will forage for prey in various directions and distances from her den, but she will then return there to feed her young.
+Many animals that are not actively migrating to or from a breeding location, or simply wandering around, tend to establish some form of home range with which they move in search of food. For example, a female cougar with kittens in a den will forage for prey in various directions and distances from her den, but she will then return there to feed her young.
 
 ## Mean-reverting model
 
